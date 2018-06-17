@@ -55,5 +55,4 @@ function love.draw()
 	love.graphics.setShader()
 	love.graphics.rectangle("fill", 320,320, square_size, square_size)
 	love.graphics.rectangle("fill", 630,320, square_size, square_size)
-	--changes
 end
