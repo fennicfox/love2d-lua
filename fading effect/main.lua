@@ -36,7 +36,7 @@ function love.draw()
 		for y = 0, 100 do
 			random_c[4] = x
 			love.graphics.setColor(random_c)
-			love.graphics.print("I love Sarah. ", i*80,y*11)
+			love.graphics.print("Fading effect. ", i*89,y*11)
 		end
 	end
 end
