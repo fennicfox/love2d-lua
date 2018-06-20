@@ -25,3 +25,11 @@ function love.draw()
 	--love.graphics.setShader(shader1)
 	--love.graphics.setShader()
 end
+
+function love.mousepressed(x,y, key)
+	if key == 1 then
+		print("--------")
+		print("x = "..x)
+		print("y = "..y)
+	end
+end

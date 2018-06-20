@@ -53,10 +53,10 @@ function player:draw_rays(t)
 	local gradient2 = (y2 - self.centery) / (x2 - self.centerx)
 	local gradient3 = (y3 - self.centery) / (x3 - self.centerx)
 	local gradient4 = (y4 - self.centery) / (x4 - self.centerx)
-	-- love.graphics.print("gradient 1 = "..gradient1,0,15)
-	-- love.graphics.print("gradient 2 = "..gradient2,0,30)
-	-- love.graphics.print("gradient 3 = "..gradient3,0,45)
-	-- love.graphics.print("gradient 4 = "..gradient4,0,60)
+	love.graphics.print("gradient 1 = "..gradient1,0,15)
+	love.graphics.print("gradient 2 = "..gradient2,0,30)
+	love.graphics.print("gradient 3 = "..gradient3,0,45)
+	love.graphics.print("gradient 4 = "..gradient4,0,60)
 	
 	--TOP HALF
 	if self.centery < centery and self.centerx < centerx then      --NW
@@ -64,6 +64,7 @@ function player:draw_rays(t)
 			love.graphics.line(self.centerx, self.centery, x1,y1)
 		else
 			love.graphics.line(self.centerx, self.centery, x2,y2)
+			love.graphics.line(x2,y2, (gradient2*self.centery)+love.graphics.getWidth(), (gradient2*self.centerx)+love.graphics.getHeight())
 		end
 	elseif self.centery < centery and self.centerx > centerx then  --NE
 		if gradient1 < 0 then
