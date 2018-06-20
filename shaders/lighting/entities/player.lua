@@ -7,8 +7,8 @@ function player:create(x, y, w, h)
 	return setmetatable({
 		x=x or  0,
 		y=y or  0,
-		w=w or 100,
-		h=h or 100,
+		w=w or 20,
+		h=h or 20,
 		centerx   = x + (w or 100/2),
 		centery   = y + (h or 100/2),
 		speed     = 1500,
@@ -39,7 +39,6 @@ function player:draw()
 end
 
 function player:draw_rays(t)
-	local gradient = (t.y - self.centery) / (t.x - self.centerx)
 	local x1 = t.x
 	local y1 = t.y
 	local x2 = t.x+t.w
@@ -48,7 +47,41 @@ function player:draw_rays(t)
 	local y3 = t.y+t.h
 	local x4 = t.x+t.w
 	local y4 = t.y+t.h
-
-	love.graphics.line(self.centerx, self.centery, t.x,t.y)
-	love.graphics.line(self.centerx, self.centery, (t.x+t.w), (t.y+t.h))
+	local centerx = t.x+t.w/2
+	local centery = t.y+t.h/2
+	local gradient1 = (y1 - self.centery) / (x1 - self.centerx)
+	local gradient2 = (y2 - self.centery) / (x2 - self.centerx)
+	local gradient3 = (y3 - self.centery) / (x3 - self.centerx)
+	local gradient4 = (y4 - self.centery) / (x4 - self.centerx)
+	love.graphics.print("gradient 1"..gradient1,0,15)
+	love.graphics.print("gradient 2"..gradient2,0,30)
+	love.graphics.print("gradient 3"..gradient3,0,45)
+	love.graphics.print("gradient 4"..gradient4,0,60)
+	
+	if self.centery < centery and self.centerx < centerx then      --NW
+		if x1 * gradient1 < x2 * gradient2 then
+			love.graphics.line(self.centerx, self.centery, x1,y1)
+		else
+			love.graphics.line(self.centerx, self.centery, x2,y2)
+		end
+	elseif self.centery < centery and self.centerx > centerx then  --NE
+		if x1 * gradient1 > x2 * gradient2 then
+			love.graphics.line(self.centerx, self.centery, x1,y1)
+		else
+			love.graphics.line(self.centerx, self.centery, x2,y2)
+		end
+	elseif self.centery > centery and self.centerx > centerx then  --SE
+		if y4 * gradient4 > y2 * gradient2 then
+			love.graphics.line(self.centerx, self.centery, x4,y4)
+		else
+			love.graphics.line(self.centerx, self.centery, x2,y2)
+		end
+	elseif self.centery > centery and self.centerx < centerx then  --SW
+		if y1 * gradient1 > y3 * gradient3 then
+			love.graphics.line(self.centerx, self.centery, x3,y3)
+		else
+			love.graphics.line(self.centerx, self.centery, x1,y1)
+		end
+	end
+	--love.graphics.line(self.centerx, self.centery, (t.x+t.w), (t.y+t.h))
 end
