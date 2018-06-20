@@ -7,26 +7,24 @@ function player:create(x, y, w, h)
 	return setmetatable({
 		x=x or  0,
 		y=y or  0,
-		w=w or 20,
-		h=h or 60,
-		speed = 1500,
-		xvel = 0,
-		yvel = 0,
+		w=w or 100,
+		h=h or 100,
+		centerx   = x + (w or 100/2),
+		centery   = y + (h or 100/2),
+		speed     = 1500,
+		xvel      = 0,
+		yvel      = 0,
 		jumpspeed = 100000
 	}, self)
 end
 
 function player:update(dt)
+	self.centerx = self.x + (self.w/2)
+	self.centery = self.y + (self.h/2)
 	if love.keyboard.isDown('a') then self.xvel = self.xvel - (self.speed * dt) end
 	if love.keyboard.isDown('d') then self.xvel = self.xvel + (self.speed * dt) end
-	if self.y+self.h+1 > love.graphics.getHeight() then 
-		self.y = love.graphics.getHeight()-self.h 
-		if love.keyboard.isDown('w') then 
-			self.yvel = self.yvel - (self.jumpspeed * dt) 
-		end
-	else
-	    self.yvel = self.yvel + player.gravity * dt 
-	end
+	if love.keyboard.isDown('w') then self.yvel = self.yvel - (self.speed * dt) end
+	if love.keyboard.isDown('s') then self.yvel = self.yvel + (self.speed * dt) end
 end
 
 function player:physics(dt)
@@ -37,5 +35,10 @@ function player:physics(dt)
 end
 
 function player:draw()
-	love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
+	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+end
+
+function player:draw_rays(t)
+	love.graphics.line(self.centerx, self.centery, t.x,t.y)
+	love.graphics.line(self.centerx, self.centery, (t.x+t.w), (t.y+t.h))
 end
