@@ -35,10 +35,20 @@ function player:physics(dt)
 end
 
 function player:draw()
-	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h, 3, 3)
 end
 
 function player:draw_rays(t)
+	local gradient = (t.y - self.centery) / (t.x - self.centerx)
+	local x1 = t.x
+	local y1 = t.y
+	local x2 = t.x+t.w
+	local y2 = t.y
+	local x3 = t.x
+	local y3 = t.y+t.h
+	local x4 = t.x+t.w
+	local y4 = t.y+t.h
+
 	love.graphics.line(self.centerx, self.centery, t.x,t.y)
 	love.graphics.line(self.centerx, self.centery, (t.x+t.w), (t.y+t.h))
 end

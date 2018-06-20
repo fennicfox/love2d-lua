@@ -20,5 +20,6 @@ end
 
 function scenary:draw()
     love.graphics.setColor(self.r,self.g,self.b,self.a)
-	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+    love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+    
 end
