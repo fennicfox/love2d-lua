@@ -53,28 +53,29 @@ function player:draw_rays(t)
 	local gradient2 = (y2 - self.centery) / (x2 - self.centerx)
 	local gradient3 = (y3 - self.centery) / (x3 - self.centerx)
 	local gradient4 = (y4 - self.centery) / (x4 - self.centerx)
-	love.graphics.print("gradient 1"..gradient1,0,15)
-	love.graphics.print("gradient 2"..gradient2,0,30)
-	love.graphics.print("gradient 3"..gradient3,0,45)
-	love.graphics.print("gradient 4"..gradient4,0,60)
+	-- love.graphics.print("gradient 1 = "..gradient1,0,15)
+	-- love.graphics.print("gradient 2 = "..gradient2,0,30)
+	-- love.graphics.print("gradient 3 = "..gradient3,0,45)
+	-- love.graphics.print("gradient 4 = "..gradient4,0,60)
 	
+	--TOP HALF
 	if self.centery < centery and self.centerx < centerx then      --NW
-		if x1 * gradient1 < x2 * gradient2 then
+		if gradient2 < 0 then
 			love.graphics.line(self.centerx, self.centery, x1,y1)
 		else
 			love.graphics.line(self.centerx, self.centery, x2,y2)
 		end
 	elseif self.centery < centery and self.centerx > centerx then  --NE
-		if x1 * gradient1 > x2 * gradient2 then
+		if gradient1 < 0 then
 			love.graphics.line(self.centerx, self.centery, x1,y1)
 		else
 			love.graphics.line(self.centerx, self.centery, x2,y2)
 		end
 	elseif self.centery > centery and self.centerx > centerx then  --SE
-		if y4 * gradient4 > y2 * gradient2 then
-			love.graphics.line(self.centerx, self.centery, x4,y4)
-		else
+		if gradient2 > 0 then
 			love.graphics.line(self.centerx, self.centery, x2,y2)
+		else
+			love.graphics.line(self.centerx, self.centery, x4,y4)
 		end
 	elseif self.centery > centery and self.centerx < centerx then  --SW
 		if y1 * gradient1 > y3 * gradient3 then
@@ -83,5 +84,31 @@ function player:draw_rays(t)
 			love.graphics.line(self.centerx, self.centery, x1,y1)
 		end
 	end
-	--love.graphics.line(self.centerx, self.centery, (t.x+t.w), (t.y+t.h))
+
+	--BOTTOM HALF
+	if self.centery < centery and self.centerx < centerx then      --NW
+		if x1 * gradient1 > x3 * gradient3 then
+			love.graphics.line(self.centerx, self.centery, x1,y1)
+		else
+			love.graphics.line(self.centerx, self.centery, x3,y3)
+		end
+	elseif self.centery < centery and self.centerx > centerx then  --NE
+		if x2 * gradient2 < x4 * gradient4 then
+			love.graphics.line(self.centerx, self.centery, x2,y2)
+		else
+			love.graphics.line(self.centerx, self.centery, x4,y4)
+		end
+	elseif self.centery > centery and self.centerx > centerx then  --SE
+		if gradient3 > 0 then
+			love.graphics.line(self.centerx, self.centery, x3,y3)
+		else
+			love.graphics.line(self.centerx, self.centery, x4,y4)
+		end
+	elseif self.centery > centery and self.centerx < centerx then  --SW
+		if gradient4 > 0 then
+			love.graphics.line(self.centerx, self.centery, x3,y3)
+		else
+			love.graphics.line(self.centerx, self.centery, x4,y4)
+		end
+	end
 end
