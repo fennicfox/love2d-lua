@@ -39,6 +39,8 @@ function player:draw()
 end
 
 function player:draw_rays(t)
+	local h = love.graphics.getHeight()
+	local w = love.graphics.getWidth()
 	local x1 = t.x
 	local y1 = t.y
 	local x2 = t.x+t.w
@@ -47,69 +49,102 @@ function player:draw_rays(t)
 	local y3 = t.y+t.h
 	local x4 = t.x+t.w
 	local y4 = t.y+t.h
-	local centerx = t.x+t.w/2
-	local centery = t.y+t.h/2
-	local gradient1 = (y1 - self.centery) / (x1 - self.centerx)
-	local gradient2 = (y2 - self.centery) / (x2 - self.centerx)
-	local gradient3 = (y3 - self.centery) / (x3 - self.centerx)
-	local gradient4 = (y4 - self.centery) / (x4 - self.centerx)
-	love.graphics.print("gradient 1 = "..gradient1,0,15)
-	love.graphics.print("gradient 2 = "..gradient2,0,30)
-	love.graphics.print("gradient 3 = "..gradient3,0,45)
-	love.graphics.print("gradient 4 = "..gradient4,0,60)
-	
+	local cx = self.centerx             
+	local cy = self.centery             
+	local centerx = t.x+t.w/2           
+	local centery = t.y+t.h/2           
+	local gradient1 = gradient_calculator(x1,y1,cx,cy) --x1,y1,x2,y2
+	local gradient2 = gradient_calculator(x2,y2,cx,cy) --x1,y1,x2,y2
+	local gradient3 = gradient_calculator(x3,y3,cx,cy) --x1,y1,x2,y2
+	local gradient4 = gradient_calculator(x4,y4,cx,cy) --x1,y1,x2,y2
+	love.graphics.print("gradient 1 = "..gradient1,0,0)
+	love.graphics.print("gradient 2 = "..gradient2,0,15)
+	love.graphics.print("gradient 3 = "..gradient3,0,30)
+	love.graphics.print("gradient 4 = "..gradient4,0,45)
+	love.graphics.print("end line x  = "..w,0,60)  --x = my + c
+	love.graphics.print("end line y  = "..w*gradient2,0,75) --y = mx + c
+	love.graphics.print("x2             = "..x2,0,90)  --x = my + c
+	love.graphics.print("y2             = "..y2,0,105) --y = mx + c
+	love.graphics.print("width        = "..w,0,120)
+	love.graphics.print("height       = "..h,0,135)
+	love.graphics.print("player x     = "..cx,0,150)
+	love.graphics.print("player y     = "..cy,0,165)
+	if love.mouse.isDown(2) then
+		print("gradient 2 = "..gradient2)
+		print("x2             = "..x2)  --x = my + c
+		print("y2             = "..y2) --y = mx + c
+	end
+
+	--problems with gradients
+	--this might help
+	--https://www.desmos.com/calculator
+	--https://www.youtube.com/watch?v=luz27XsnLz4
+
+	-- c = y - mx
+	-- c = x - my
+
+	-- x = my + c
+	-- y = mx + c
+
+	-- 8.3333333 = 10-(0.166666667*10)
+	-- x = (0.166666667*10)+8.3333333
+
 	--TOP HALF
-	if self.centery < centery and self.centerx < centerx then      --NW
+	if cy < centery and cx < centerx then      --NW
 		if gradient2 < 0 then
-			love.graphics.line(self.centerx, self.centery, x1,y1)
+			love.graphics.line(cx, cy, x1,y1)
 		else
-			love.graphics.line(self.centerx, self.centery, x2,y2)
-			love.graphics.line(x2,y2, (gradient2*self.centery)+love.graphics.getWidth(), (gradient2*self.centerx)+love.graphics.getHeight())
+			love.graphics.line(cx, cy, x2, y2)
+			love.graphics.line(x2, y2, w, w*gradient2)
 		end
-	elseif self.centery < centery and self.centerx > centerx then  --NE
+	elseif cy < centery and cx > centerx then  --NE
 		if gradient1 < 0 then
-			love.graphics.line(self.centerx, self.centery, x1,y1)
+			love.graphics.line(cx, cy, x1,y1)
 		else
-			love.graphics.line(self.centerx, self.centery, x2,y2)
+			love.graphics.line(cx, cy, x2,y2)
 		end
-	elseif self.centery > centery and self.centerx > centerx then  --SE
+	elseif cy > centery and cx > centerx then  --SE
 		if gradient2 > 0 then
-			love.graphics.line(self.centerx, self.centery, x2,y2)
+			love.graphics.line(cx, cy, x2,y2)
 		else
-			love.graphics.line(self.centerx, self.centery, x4,y4)
+			love.graphics.line(cx, cy, x4,y4)
 		end
-	elseif self.centery > centery and self.centerx < centerx then  --SW
+	elseif cy > centery and cx < centerx then  --SW
 		if y1 * gradient1 > y3 * gradient3 then
-			love.graphics.line(self.centerx, self.centery, x3,y3)
+			love.graphics.line(cx, cy, x3,y3)
 		else
-			love.graphics.line(self.centerx, self.centery, x1,y1)
+			love.graphics.line(cx, cy, x1,y1)
 		end
 	end
 
 	--BOTTOM HALF
-	if self.centery < centery and self.centerx < centerx then      --NW
+	if cy < centery and cx < centerx then      --NW
 		if x1 * gradient1 > x3 * gradient3 then
-			love.graphics.line(self.centerx, self.centery, x1,y1)
+			love.graphics.line(cx, cy, x1,y1)
 		else
-			love.graphics.line(self.centerx, self.centery, x3,y3)
+			love.graphics.line(cx, cy, x3,y3)
 		end
-	elseif self.centery < centery and self.centerx > centerx then  --NE
+	elseif cy < centery and cx > centerx then  --NE
 		if x2 * gradient2 < x4 * gradient4 then
-			love.graphics.line(self.centerx, self.centery, x2,y2)
+			love.graphics.line(cx, cy, x2,y2)
 		else
-			love.graphics.line(self.centerx, self.centery, x4,y4)
+			love.graphics.line(cx, cy, x4,y4)
 		end
-	elseif self.centery > centery and self.centerx > centerx then  --SE
+	elseif cy > centery and cx > centerx then  --SE
 		if gradient3 > 0 then
-			love.graphics.line(self.centerx, self.centery, x3,y3)
+			love.graphics.line(cx, cy, x3,y3)
 		else
-			love.graphics.line(self.centerx, self.centery, x4,y4)
+			love.graphics.line(cx, cy, x4,y4)
 		end
-	elseif self.centery > centery and self.centerx < centerx then  --SW
+	elseif cy > centery and cx < centerx then  --SW
 		if gradient4 > 0 then
-			love.graphics.line(self.centerx, self.centery, x3,y3)
+			love.graphics.line(cx, cy, x3,y3)
 		else
-			love.graphics.line(self.centerx, self.centery, x4,y4)
+			love.graphics.line(cx, cy, x4,y4)
 		end
 	end
+end
+
+function gradient_calculator(x1, y1, x2, y2)
+	return ((y2-y1)/(x2-x1))
 end
