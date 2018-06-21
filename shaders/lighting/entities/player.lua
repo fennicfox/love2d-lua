@@ -95,7 +95,7 @@ function player:draw_rays(t)
 			love.graphics.line(cx, cy, x1,y1)
 		else
 			love.graphics.line(cx, cy, x2, y2)
-			love.graphics.line(x2, y2, w, w*gradient2)
+			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
 		end
 	elseif cy < centery and cx > centerx then  --NE
 		if gradient1 < 0 then
