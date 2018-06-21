@@ -93,6 +93,7 @@ function player:draw_rays(t)
 	if cy < centery and cx < centerx then      --NW
 		if gradient2 < 0 then
 			love.graphics.line(cx, cy, x1,y1)
+			love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
 		else
 			love.graphics.line(cx, cy, x2, y2)
 			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
@@ -100,20 +101,26 @@ function player:draw_rays(t)
 	elseif cy < centery and cx > centerx then  --NE
 		if gradient1 < 0 then
 			love.graphics.line(cx, cy, x1,y1)
+			love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
 		else
 			love.graphics.line(cx, cy, x2,y2)
+			love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
 		end
 	elseif cy > centery and cx > centerx then  --SE
 		if gradient2 > 0 then
 			love.graphics.line(cx, cy, x2,y2)
+			love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
 		else
 			love.graphics.line(cx, cy, x4,y4)
+			love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
 		end
 	elseif cy > centery and cx < centerx then  --SW
 		if y1 * gradient1 > y3 * gradient3 then
 			love.graphics.line(cx, cy, x3,y3)
+			love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
 		else
 			love.graphics.line(cx, cy, x1,y1)
+			love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
 		end
 	end
 
@@ -121,26 +128,34 @@ function player:draw_rays(t)
 	if cy < centery and cx < centerx then      --NW
 		if x1 * gradient1 > x3 * gradient3 then
 			love.graphics.line(cx, cy, x1,y1)
+			love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
 		else
 			love.graphics.line(cx, cy, x3,y3)
+			love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
 		end
 	elseif cy < centery and cx > centerx then  --NE
 		if x2 * gradient2 < x4 * gradient4 then
 			love.graphics.line(cx, cy, x2,y2)
+			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
 		else
 			love.graphics.line(cx, cy, x4,y4)
+			love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
 		end
 	elseif cy > centery and cx > centerx then  --SE
 		if gradient3 > 0 then
 			love.graphics.line(cx, cy, x3,y3)
+			love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
 		else
 			love.graphics.line(cx, cy, x4,y4)
+			love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
 		end
 	elseif cy > centery and cx < centerx then  --SW
 		if gradient4 > 0 then
 			love.graphics.line(cx, cy, x3,y3)
+			love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
 		else
 			love.graphics.line(cx, cy, x4,y4)
+			love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
 		end
 	end
 end
