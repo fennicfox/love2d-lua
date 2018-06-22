@@ -1,14 +1,18 @@
 player = {}
 
-function player:create(x, y, w, h)
+function player:create(x, y, w, h, r, g, b, a)
 	self.__index = self
 	player.friction = 6
 	player.gravity = 2500
 	return setmetatable({
-		x=x or  0,
-		y=y or  0,
-		w=w or 20,
-		h=h or 20,
+		x		  = x or  0,
+		y		  = y or  0,
+		w		  = w or 20,
+		h		  = h or 20,
+		r         = r or 1,
+		g         = g or 1,
+		b         = b or 1,
+		a         = a or 1,
 		centerx   = x + (w or 100/2),
 		centery   = y + (h or 100/2),
 		speed     = 1500,
@@ -35,11 +39,14 @@ function player:physics(dt)
 end
 
 function player:draw()
-	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h, 3, 3)
+	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+end
+
+function player:get_xy()
+	return {self.x, self.y}
 end
 
 function player:draw_rays(t)
-	local h = love.graphics.getHeight()
 	local w = love.graphics.getWidth()
 	local x1 = t.x
 	local y1 = t.y
@@ -57,18 +64,16 @@ function player:draw_rays(t)
 	local gradient2 = gradient_calculator(x2,y2,cx,cy) --x1,y1,x2,y2
 	local gradient3 = gradient_calculator(x3,y3,cx,cy) --x1,y1,x2,y2
 	local gradient4 = gradient_calculator(x4,y4,cx,cy) --x1,y1,x2,y2
-	love.graphics.print("gradient 1 = "..gradient1,0,0)
-	love.graphics.print("gradient 2 = "..gradient2,0,15)
-	love.graphics.print("gradient 3 = "..gradient3,0,30)
-	love.graphics.print("gradient 4 = "..gradient4,0,45)
-	love.graphics.print("end line x  = "..w,0,60)  --x = my + c
-	love.graphics.print("end line y  = "..w*gradient2,0,75) --y = mx + c
-	love.graphics.print("x2             = "..x2,0,90)  --x = my + c
-	love.graphics.print("y2             = "..y2,0,105) --y = mx + c
-	love.graphics.print("width        = "..w,0,120)
-	love.graphics.print("height       = "..h,0,135)
-	love.graphics.print("player x     = "..cx,0,150)
-	love.graphics.print("player y     = "..cy,0,165)
+	-- love.graphics.print("gradient 1 = "..gradient1,0,0)
+	-- love.graphics.print("gradient 2 = "..gradient2,0,15)
+	-- love.graphics.print("gradient 3 = "..gradient3,0,30)
+	-- love.graphics.print("gradient 4 = "..gradient4,0,45)
+	-- love.graphics.print("end line x  = "..w,0,60)  --x = my + c
+	-- love.graphics.print("end line y  = "..w*gradient2,0,75) --y = mx + c
+	-- love.graphics.print("x2             = "..x2,0,90)  --x = my + c
+	-- love.graphics.print("y2             = "..y2,0,105) --y = mx + c
+	-- love.graphics.print("player x     = "..cx,0,120)
+	-- love.graphics.print("player y     = "..cy,0,135)
 	if love.mouse.isDown(2) then
 		print("gradient 2 = "..gradient2)
 		print("x2             = "..x2)  --x = my + c
@@ -89,37 +94,38 @@ function player:draw_rays(t)
 	-- 8.3333333 = 10-(0.166666667*10)
 	-- x = (0.166666667*10)+8.3333333
 
+	love.graphics.setLineWidth(0.01)
 	--TOP HALF
 	if cy < centery and cx < centerx then      --NW
 		if gradient2 < 0 then
-			love.graphics.line(cx, cy, x1,y1)
+			--love.graphics.line(cx, cy, x1,y1)
 			love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
 		else
-			love.graphics.line(cx, cy, x2, y2)
+			--love.graphics.line(cx, cy, x2, y2)
 			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
 		end
 	elseif cy < centery and cx > centerx then  --NE
 		if gradient1 < 0 then
-			love.graphics.line(cx, cy, x1,y1)
+			--love.graphics.line(cx, cy, x1,y1)
 			love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
 		else
-			love.graphics.line(cx, cy, x2,y2)
+			--love.graphics.line(cx, cy, x2,y2)
 			love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
 		end
 	elseif cy > centery and cx > centerx then  --SE
 		if gradient2 > 0 then
-			love.graphics.line(cx, cy, x2,y2)
+			--love.graphics.line(cx, cy, x2,y2)
 			love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
 		else
-			love.graphics.line(cx, cy, x4,y4)
+			--love.graphics.line(cx, cy, x4,y4)
 			love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
 		end
 	elseif cy > centery and cx < centerx then  --SW
 		if y1 * gradient1 > y3 * gradient3 then
-			love.graphics.line(cx, cy, x3,y3)
+			--love.graphics.line(cx, cy, x3,y3)
 			love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
 		else
-			love.graphics.line(cx, cy, x1,y1)
+			--love.graphics.line(cx, cy, x1,y1)
 			love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
 		end
 	end
@@ -127,34 +133,34 @@ function player:draw_rays(t)
 	--BOTTOM HALF
 	if cy < centery and cx < centerx then      --NW
 		if x1 * gradient1 > x3 * gradient3 then
-			love.graphics.line(cx, cy, x1,y1)
+			--love.graphics.line(cx, cy, x1,y1)
 			love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
 		else
-			love.graphics.line(cx, cy, x3,y3)
+			--love.graphics.line(cx, cy, x3,y3)
 			love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
 		end
 	elseif cy < centery and cx > centerx then  --NE
 		if x2 * gradient2 < x4 * gradient4 then
-			love.graphics.line(cx, cy, x2,y2)
+			--love.graphics.line(cx, cy, x2,y2)
 			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
 		else
-			love.graphics.line(cx, cy, x4,y4)
+			--love.graphics.line(cx, cy, x4,y4)
 			love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
 		end
 	elseif cy > centery and cx > centerx then  --SE
 		if gradient3 > 0 then
-			love.graphics.line(cx, cy, x3,y3)
+			--love.graphics.line(cx, cy, x3,y3)
 			love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
 		else
-			love.graphics.line(cx, cy, x4,y4)
+			--love.graphics.line(cx, cy, x4,y4)
 			love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
 		end
 	elseif cy > centery and cx < centerx then  --SW
 		if gradient4 > 0 then
-			love.graphics.line(cx, cy, x3,y3)
+			--love.graphics.line(cx, cy, x3,y3)
 			love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
 		else
-			love.graphics.line(cx, cy, x4,y4)
+			--love.graphics.line(cx, cy, x4,y4)
 			love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
 		end
 	end

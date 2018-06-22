@@ -1,4 +1,5 @@
-local shader_code = [[
+--black and white
+local shader1 = love.graphics.newShader [[
 extern vec2 screen;
 vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 	vec4 pixel = Texel(image, uvs);
@@ -8,7 +9,8 @@ vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 
 ]]
 
-local shader_dark = [[
+--darkness
+local shader2 = love.graphics.newShader [[
 extern int darkness;
 vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 	return vec4(color[0]/darkness, color[1]/darkness, color[2]/darkness, 1);
@@ -16,7 +18,8 @@ vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 
 ]]
 
-local blacknwhite = [[
+--colour gradients
+local shader3 = love.graphics.newShader [[
 vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 	float av = (color[0], color[1], color[2]) / 3;
 	return vec4(av, av, av, color[3]);
@@ -24,12 +27,23 @@ vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 
 ]]
 
+--film grain
+local shader4 = love.graphics.newShader [[
+	extern number opacity;
+    extern number size;
+    extern vec2 noise;
+    extern Image noisetex;
+    extern vec2 tex_ratio;
+    float rand(vec2 co) {
+    	return Texel(noisetex, mod(co * tex_ratio / vec2(size), vec2(1.0))).r;
+    }
+    vec4 effect(vec4 color, Image texture, vec2 tc, vec2 _) {
+		return color * Texel(texture, tc) * mix(1.0, rand(tc+vec2(noise)), opacity);
+	}
+]]
 
 function love.load() 
 	square_size = 300
-	shader1 = love.graphics.newShader(shader_code)
-	shader2 = love.graphics.newShader(shader_dark)
-	shader3 = love.graphics.newShader(blacknwhite)
 end
 
 function love.update(dt)
@@ -53,6 +67,21 @@ function love.draw()
 	shader1:send("screen", {10+square_size, 320+square_size})
 	love.graphics.rectangle("fill", 10, 320, square_size, square_size)
 	love.graphics.setShader()
+
+	love.graphics.setShader(shader4)
+	local noisetex = love.image.newImageData(256,256)
+	noisetex:mapPixel(function()
+		local l = love.math.random() * 255
+		return l,l,l,l
+	end)
+	noisetex = love.graphics.newImage(noisetex)
+	shader4:send("opacity", .3)
+	shader4:send("size", 1)
+	shader4:send("noise", {love.math.random(), love.math.random()})
+	shader4:send("noisetex", noisetex)
+	shader4:send("tex_ratio", {love.graphics.getWidth() / noisetex:getWidth(),love.graphics.getHeight() / noisetex:getHeight()})
 	love.graphics.rectangle("fill", 320,320, square_size, square_size)
+	love.graphics.setShader()
+
 	love.graphics.rectangle("fill", 630,320, square_size, square_size)
 end
