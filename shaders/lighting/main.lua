@@ -30,6 +30,8 @@ function love.load()
 	p = player:create(50,50,25,50, .3,.3,.3)
 	s1 = scenary:create(500,400)
 	s2 = scenary:create(300,500)
+	image_size = 100
+	image = p:radialGradient(image_size)
 end
 
 function love.update(dt)
@@ -40,22 +42,16 @@ function love.update(dt)
 end
 
 function love.draw()
-	love.graphics.setColor(.6, .3, .1, 1)
-	love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(), love.graphics.getHeight())
+	-- love.graphics.setColor(.6, .3, .1, 1)
+	-- love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(), love.graphics.getHeight())
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.setShader(godsray)
+	
 	p:draw()
-	godsray:send("exposure",0.25)
-	godsray:send("decay",0.95)
-	godsray:send("density",0.15)
-	godsray:send("weight",0.5)
-	godsray:send("light_position", p:get_xy())
-	godsray:send("samples", 70)
+	love.graphics.draw(image,p.centerx-image_size, p.centery-image_size )
 	p:draw_rays(s1)
 	p:draw_rays(s2)
 	s1:draw()
 	s2:draw()
-	love.graphics.setShader()
 	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-55, 0)
 end
 

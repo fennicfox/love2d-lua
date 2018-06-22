@@ -46,6 +46,24 @@ function player:get_xy()
 	return {self.x, self.y}
 end
 
+local function scale(x, min1, max1, min2, max2)
+	return min2 + ((x - min1) / (max1 - min1)) * (max2 - min2)
+end
+  
+local function distance(x1, y1, x2, y2)
+	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+end
+  
+function player:radialGradient(radius)
+	local data = love.image.newImageData(radius * 2, radius * 2)
+	data:mapPixel(function(x, y)
+		local dist = distance(radius, radius, x, y)
+		return 1,0.84,0.47, (dist <= radius and scale(dist, 0, radius, 3, 0) or 0)
+	end)
+	return love.graphics.newImage(data)
+end
+
+
 function player:draw_rays(t)
 	local w = love.graphics.getWidth()
 	local x1 = t.x
@@ -93,7 +111,6 @@ function player:draw_rays(t)
 
 	-- 8.3333333 = 10-(0.166666667*10)
 	-- x = (0.166666667*10)+8.3333333
-
 	love.graphics.setLineWidth(0.01)
 	--TOP HALF
 	if cy < centery and cx < centerx then      --NW
