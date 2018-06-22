@@ -1,3 +1,4 @@
+local moonshine = require 'More shaders.moonshine'
 --black and white
 local shader1 = love.graphics.newShader [[
 extern vec2 screen;
@@ -44,6 +45,7 @@ local shader4 = love.graphics.newShader [[
 
 function love.load() 
 	square_size = 300
+	effect = moonshine(moonshine.effects.glow)
 end
 
 function love.update(dt)
@@ -83,5 +85,8 @@ function love.draw()
 	love.graphics.rectangle("fill", 320,320, square_size, square_size)
 	love.graphics.setShader()
 
-	love.graphics.rectangle("fill", 630,320, square_size, square_size)
+	effect(function()
+		love.graphics.rectangle("fill", 630,320, square_size, square_size)
+	end)
+	love.graphics.setShader()
 end
