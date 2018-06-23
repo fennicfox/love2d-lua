@@ -58,7 +58,7 @@ function player:radialGradient(radius)
 	local data = love.image.newImageData(radius * 2, radius * 2)
 	data:mapPixel(function(x, y)
 		local dist = distance(radius, radius, x, y)
-		return 1,0.84,0.47, (dist <= radius and scale(dist, 0, radius, 3, 0) or 0)
+		return 1,0.84,0.47, (dist <= radius and scale(dist, 0, radius, 1, 0) or 0)
 	end)
 	return love.graphics.newImage(data)
 end

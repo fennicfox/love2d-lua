@@ -30,7 +30,7 @@ function love.load()
 	p = player:create(50,50,25,50, .3,.3,.3)
 	s1 = scenary:create(500,400)
 	s2 = scenary:create(300,500)
-	image_size = 100
+	image_size = 400
 	image = p:radialGradient(image_size)
 end
 
