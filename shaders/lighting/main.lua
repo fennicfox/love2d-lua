@@ -1,7 +1,8 @@
 require "entities.scenary"
 require "entities.player"
+require "entities.light"
 
-local godyray_code = [[
+local light_code = [[
 	extern number exposure;
     extern number decay;
     extern number density;
@@ -26,12 +27,14 @@ local godyray_code = [[
 
 
 function love.load()
-	godsray = love.graphics.newShader(godyray_code)
 	p = player:create(50,50,25,50, .3,.3,.3)
 	s1 = scenary:create(500,400)
 	s2 = scenary:create(300,500)
 	image_size = 400
-	image = p:radialGradient(image_size)
+	image = radialGradient(image_size)
+	light = love.graphics.newShader(light_code)
+	--background = love.graphics.newImage('images/background_example.png')
+	background = love.graphics.newImage('images/cover.png')
 end
 
 function love.update(dt)
@@ -42,11 +45,15 @@ function love.update(dt)
 end
 
 function love.draw()
-	-- love.graphics.setColor(.6, .3, .1, 1)
-	-- love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(), love.graphics.getHeight())
-	love.graphics.setColor(1, 1, 1, 1)
-	
+	love.graphics.push()
+	--love.graphics.scale(.6,.7)
+	love.graphics.scale(1.32,2)
+	love.graphics.draw(background)
+	love.graphics.pop()
+	--love.graphics.setColor(.6, .3, .1, 1)
+	--love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(), love.graphics.getHeight())
 	p:draw()
+	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.draw(image,p.centerx-image_size, p.centery-image_size )
 	p:draw_rays(s1)
 	p:draw_rays(s2)
