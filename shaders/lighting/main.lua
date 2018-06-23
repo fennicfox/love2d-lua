@@ -2,28 +2,15 @@ require "entities.scenary"
 require "entities.player"
 require "entities.light"
 
-local light_code = [[
-	extern number exposure;
-    extern number decay;
-    extern number density;
-    extern number weight;
-    extern vec2 light_position;
-	extern number samples;
-	
-    vec4 effect(vec4 color, Image tex, vec2 uv, vec2 px) {
-		color = Texel(tex, uv);
-   		vec2 offset = (uv - light_position) * density / samples;
-    	number illumination = decay;
-		vec4 c = vec4(.5, .0, .2, 1.0);
-	  
-    	for (int i = 0; i < int(samples); ++i) {
-        	uv -= offset;
-        	c += Texel(tex, uv) * illumination * weight;
-			illumination *= decay;
-		}
-	return vec4(c.rgb * exposure + color.rgb, color.a);
+local light_code = love.graphics.newShader([[
+	extern int radius;
+	float r = 0.62;
+	float g = 0.6;
+	float b = 0.1;
+	vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
+		return r,g,b,(.9 + (pow((pow((screen_coords[0] - radius),2) + pow((screen_coords[1] - radius),2)) - 0,0.5) / (radius - 0)) * (0 - .9));
 	}
-]]
+]])
 
 
 function love.load()
@@ -32,7 +19,6 @@ function love.load()
 	s2 = scenary:create(300,500)
 	image_size = 400
 	image = radialGradient(image_size)
-	light = love.graphics.newShader(light_code)
 	--background = love.graphics.newImage('images/background_example.png')
 	background = love.graphics.newImage('images/cover.png')
 end
