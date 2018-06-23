@@ -8,7 +8,9 @@ local light_code = love.graphics.newShader([[
 	float g = 0.6;
 	float b = 0.1;
 	vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
-		return r,g,b,(.9 + (pow((pow((screen_coords[0] - radius),2) + pow((screen_coords[1] - radius),2)) - 0,0.5) / (radius - 0)) * (0 - .9));
+		float distance = pow( (pow((screen_coords.x - radius),2) + pow((screen_coords.y - radius),2)),0.5);
+		float scale = .9 + ((distance - 0) / (radius - 0)) * (0 - .9);
+		return vec4(r,g,b, scale);
 	}
 ]])
 
@@ -18,7 +20,6 @@ function love.load()
 	s1 = scenary:create(500,400)
 	s2 = scenary:create(300,500)
 	image_size = 400
-	image = radialGradient(image_size)
 	--background = love.graphics.newImage('images/background_example.png')
 	background = love.graphics.newImage('images/cover.png')
 end
@@ -31,6 +32,7 @@ function love.update(dt)
 end
 
 function love.draw()
+
 	love.graphics.push()
 	--love.graphics.scale(.6,.7)
 	love.graphics.scale(1.32,2)
@@ -38,9 +40,12 @@ function love.draw()
 	love.graphics.pop()
 	--love.graphics.setColor(.6, .3, .1, 1)
 	--love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(), love.graphics.getHeight())
+	love.graphics.setShader(light_code)
+	light_code:send("radius",100)
 	p:draw()
+	love.graphics.setShader()
 	love.graphics.setColor(1, 1, 1, 1)
-	love.graphics.draw(image,p.centerx-image_size, p.centery-image_size )
+	--love.graphics.draw(image,p.centerx-image_size, p.centery-image_size )
 	p:draw_rays(s1)
 	p:draw_rays(s2)
 	s1:draw()
