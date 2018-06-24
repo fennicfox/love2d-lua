@@ -1,8 +1,19 @@
 button = {}
 
-function button.spawn(x, y, text)
-	table.insert(button, {x = x, y = y, text = text})
+function button.spawn(type, text)
+	table.insert(button, {x = 0, y = 0, text = text})
+end
 
+function button.update(dt)
+	local font = love.graphics.setNewFont("Android.ttf", 100)
+	for i, v in ipairs(button) do
+		if v.type == "center" then
+			local font_width = font:getWidth(v.text) --gets the width of the argument in pixels for this font
+			local font_height = font:getHeight(v.text) --gets the height of the argument in pixels for this font
+			v.x = love.graphics.getWidth()/2-font_width/2
+			v.y = (love.graphics.getHeight()/(table.getn(button)))+((i-1)*font_height)
+		end
+	end
 end
 
 function button.draw()

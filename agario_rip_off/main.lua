@@ -12,6 +12,12 @@ function love.load() 							-- Loads all the stuff commands that only need to be
 	player.load()								-- Loads the player properties!
 	gamestate = "paused"
 
+	w = love.graphics.getWidth()
+	h = love.graphics.getHeight()
+	button.spawn("center", "Start")
+	button.spawn("center", "Settings")
+	button.spawn("center", "Quit")
+
 	for i = 1,500 do
 		food:load(math.random((player.x-2000),
 			(player.x+2000)),
@@ -24,19 +30,20 @@ function love.load() 							-- Loads all the stuff commands that only need to be
 end
 
 function love.update(dt)
-	windowHeight = love.graphics.getHeight( )  -- Gets the window height
-	windowWidth = love.graphics.getWidth( )    -- Gets the window width
+	h = love.graphics.getHeight( )  -- Gets the window height
+	w = love.graphics.getWidth( )    -- Gets the window width
 	if gamestate == "playing" then
 		if love.keyboard.isDown('tab') then
 			camera:setPosition(50, 50)
 		else
-			camera:setPosition(player.x - (windowWidth/2), player.y - (windowHeight/2))
+			camera:setPosition(player.x - (w/2), player.y - (h/2))
 		end
 		UPDATE_PLAYER( dt )
 		UPDATE_FOOD( dt )
 		UPDATE_SPIKE( dt )
 	end
 	if gamestate == "paused" then
+		button.update(dt)
 		if love.keyboard.isDown('return') then
 			gamestate = "playing"
 		end
@@ -48,7 +55,7 @@ function love.draw(dt)
 	if gamestate=="playing" then
 		love.graphics.setColor(1,1,1)
 		local font = love.graphics.setNewFont(12)
-		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))).."\n\nYou:\nx: "..math.floor(tostring(player.x)).."\ny: "..math.floor(tostring(player.y)), (windowWidth-175), 5)	--x and y of player and food
+		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))).."\n\nYou:\nx: "..math.floor(tostring(player.x)).."\ny: "..math.floor(tostring(player.y)), (w-175), 5)	--x and y of player and food
 		camera:set()
 		draw_player(dt)
 		draw_food(dt)
@@ -56,14 +63,7 @@ function love.draw(dt)
 		camera:unset()
 	end
 	if gamestate == "paused" then
-		local font = love.graphics.setNewFont("Android.ttf", 100)
 		button.draw()
-		local width = font:getWidth("Start") --gets the width of the argument in pixels for this font
-		button.spawn(windowWidth/2-width/2, windowHeight/4, "Start")
-		local width = font:getWidth("Settings") --gets the width of the argument in pixels for this font
-		button.spawn(windowWidth/2-width/2, windowHeight/2, "Settings")
-		local width = font:getWidth("Quit") --gets the width of the argument in pixels for this font
-		button.spawn(windowWidth/2-width/2, windowHeight/4+windowHeight/2, "Quit")
 	end
 end
 
