@@ -2,7 +2,7 @@ player = {}
 
 function player:create(x, y, w, h)
 	self.__index = self
-	player.friction = 6
+	player.friction = 5
 	player.gravity = 2500
 	return setmetatable({
 		x=x or  0,
@@ -41,9 +41,6 @@ function player:physics(dt)
 	if self.xvel < 0.01 and self.xvel > -0.01 then
 		self.xvel = 0
 	end
-
-	print("x = "..self.xvel)
-	print("y = "..self.yvel)
 end
 
 function player:draw()
