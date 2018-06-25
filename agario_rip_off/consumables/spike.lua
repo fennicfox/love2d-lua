@@ -2,9 +2,9 @@ spike = {}
 
 function spike:load()
 	local object = {
-			x=math.random(1000),
-			y=math.random(1000),
-			size = 75,
+			x=math.random(-1000,1000),
+			y=math.random(-1000,1000),
+			size = 50,
 			fedcapactiy = 0
 	}
 	table.insert(spike, object)
@@ -24,12 +24,13 @@ function spike:draw( )
 	for i, v in ipairs(spike) do
 		-- love.graphics.polygon( "fill", v.x-v.size/2, v.y, v.x, v.y+v.size/2, v.x+v.size/2, v.y, v.x, v.y-v.size/2 )
 		-- love.graphics.polygon( "fill", v.x-v.size/3, v.y-v.size/3, v.x+v.size/3, v.y-v.size/3, v.x+v.size/3, v.y+v.size/3, v.x-v.size/3, v.y+v.size/3)
-		for i = 0, 45 do
-			love.graphics.rotate(i)
-			love.graphics.rectangle("fill",v.x,v.y,v.size,v.size)
-			love.graphics.translate(-v.size, -v.size)
+		love.graphics.translate(v.x,v.y)
+		for i = 0, 45, math.pi/40 do
+		 	love.graphics.rotate(i)
+		 	love.graphics.rectangle("fill",0,0,v.size,v.size)
 		end
 		love.graphics.rotate(0)
+		love.graphics.translate(0,0)
 
 	end
 	love.graphics.setColor(1, 1, 1, 1)

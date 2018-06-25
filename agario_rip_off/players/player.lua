@@ -3,8 +3,8 @@ require("camera")
 player = {}
 
 function player.load()
-	player.x        = 50
-	player.y        = 50
+	player.x        = 0
+	player.y        = 0
 	player.xvel     = 0
 	player.yvel     = 0
 	player.friction = 5

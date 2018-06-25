@@ -8,24 +8,25 @@ require("gamestate.menu")
 
 function love.load() 							-- Loads all the stuff commands that only need to be loaded once. This function does not repeat (update).
 	love.graphics.setBackgroundColor( 0, 0, 0 ) -- Sets background colour
-	spike:load()								-- Loads the spike properties!
 	player.load()								-- Loads the player properties!
 	gamestate = "paused"
-
 	w = love.graphics.getWidth()
 	h = love.graphics.getHeight()
 	button.spawn("center", "Start")
 	button.spawn("center", "Settings")
 	button.spawn("center", "Quit")
 
+	for i = 0, 10 do
+		spike:load() -- Loads the spike properties!
+	end
 	for i = 1,500 do
-		food:load(math.random((player.x-2000),
-			(player.x+2000)),
-			math.random((player.x-2000),
-			(player.x+2000)),
-			math.random(0.2,1),
-			math.random(0.2,1),
-			math.random(0.2,1))
+		food:load   (math.random((player.x-2000),
+					(player.x+2000)),
+					math.random((player.x-2000),
+					(player.x+2000)),
+					math.random(0.2,1),
+					math.random(0.2,1),
+					math.random(0.2,1))
 	end
 end
 
