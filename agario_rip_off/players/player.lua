@@ -17,7 +17,7 @@ function player.load()
 end
 
 function player.draw(dt)
-love.graphics.setColor(player.red, player.green, player.blue, 1)
+	love.graphics.setColor(player.red, player.green, player.blue, 1)
 	love.graphics.circle("fill",player.x,player.y,player.r,player.s)
 end
 

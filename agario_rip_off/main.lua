@@ -20,10 +20,8 @@ function love.load() 							-- Loads all the stuff commands that only need to be
 		spike:load() -- Loads the spike properties!
 	end
 	for i = 1,500 do
-		food:load   (math.random((player.x-2000),
-					(player.x+2000)),
-					math.random((player.x-2000),
-					(player.x+2000)),
+		food:load   (math.random((player.x-2000),(player.x+2000)),
+					math.random((player.x-2000),(player.x+2000)),
 					math.random(0.2,1),
 					math.random(0.2,1),
 					math.random(0.2,1))
