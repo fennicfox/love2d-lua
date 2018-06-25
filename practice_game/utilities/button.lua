@@ -15,7 +15,7 @@ function button:create(x, y, colour, newColour, font, fontSize, text, command)
 			sfx1 		= 	love.audio.newSource('sfx/hover.ogg', 'static'),
 			sfx2 		= 	love.audio.newSource('sfx/click.ogg', 'static'),
 			hoverSound 	= 	false,
-			command 	=   command,
+			command 	=   command
 	}, self)
 	return metatable
 end

@@ -12,7 +12,6 @@ function love.load()
 	graphFont 		 = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
 	quit_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
 	gamestate        = "main_menu"
-	message          = false
 	main_menu_load()
 end
 
@@ -39,7 +38,6 @@ function love.update(dt)
 	elseif  gamestate == "paused"       	 then  paused_update(dt)
 	elseif  gamestate == "level_editor" 	 then  level_editor_update(dt)
 	end
-	--print("running")
 end
 
 function love.draw()
@@ -51,10 +49,7 @@ function love.draw()
 	elseif  gamestate == "paused"     	 	 then  paused_draw() 
 	elseif  gamestate == "level_editor"  	 then  level_editor_draw() end
 	love.graphics.setFont(graphFont, 12) 
-	love.graphics.print(coroutine.status(infomessage), 0,0)
-	if message then 
-		coroutine.resume(infomessage)
-	end
+	love.graphics.setColor(1,1,1,1)
     mpressed   = false
     kpressed   = false
     mwheeldown = false
@@ -66,11 +61,7 @@ function love.mousepressed( x, y )
 end
 
 function love.keypressed( key )
-	if      key == "escape" then  quit_sfx:play() end
-	if      key == "space"  then
-		message = true
-		coroutine.resume(infomessage, 1, "hey")
-	end
+	if key == "escape" then quit_sfx:play() end
 end
 
 function love.resize( w, h )
@@ -81,5 +72,5 @@ function love.resize( w, h )
 end
 
 function round( n, p )
-	return math.floor((n/p))*p
+	return math.floor(n/p)*p
 end
