@@ -5,7 +5,7 @@ function food:load(x, y, r, g, b)
     x = x,
     y = y,
     r = r,
-    g = g,n
+    g = g,
     b = b,
     radius = 3,
     segments = 40
