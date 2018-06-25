@@ -1,6 +1,5 @@
 require "entities.scenary"
 require "entities.player"
-require "entities.light"
 
 local light_code = love.graphics.newShader([[
 	extern int radius;

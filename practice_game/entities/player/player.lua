@@ -22,8 +22,6 @@ function player:update(dt)
 	if self.y+self.h >= love.graphics.getHeight() then
 		self.yvel = 0
 		self.y = love.graphics.getHeight()-self.h 
-	end
-	if self.y+self.h == love.graphics.getHeight() then 
 		if love.keyboard.isDown('w') then 
 			self.yvel = self.yvel - self.jumpspeed
 		end
@@ -33,12 +31,12 @@ function player:update(dt)
 end
 
 function player:physics(dt)
-	self.x = self.x + self.xvel * dt
-	self.y = self.y + self.yvel * dt
-	self.xvel = self.xvel * (1 - math.min(dt*player.friction, 1))
-	self.yvel = self.yvel * (1 - math.min(dt*player.friction, 1))
+	self.x = self.x + self.xvel * dt                              --moves the player if the velocity is not 0
+	self.y = self.y + self.yvel * dt                              --moves the player if the velocity is not 0
+	self.xvel = self.xvel * (1 - math.min(dt*player.friction, 1)) --slows the player down if they're moving
+	self.yvel = self.yvel * (1 - math.min(dt*player.friction, 1)) --slows the player down if they're moving
 
-	if self.xvel < 0.01 and self.xvel > -0.01 then
+	if self.xvel < 0.01 and self.xvel > -0.01 then                --hotfix for player not completely stopping when idle.
 		self.xvel = 0
 	end
 end
