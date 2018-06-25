@@ -33,7 +33,7 @@ end
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
 		if mpressed then 
-			editor_graphics:createRectangle(round(mousex-(tonumber(editor_graphics.w)/2), tonumber(grid_lock_size)), round(mousey-tonumber((editor_graphics.h)/2), grid_lock_size), tonumber(editor_graphics.w), tonumber(editor_graphics.h), 255, 255, 255)
+			editor_graphics:createRectangle(round(mousex-(tonumber(editor_graphics.w)/2), tonumber(grid_lock_size)), round(mousey-tonumber((editor_graphics.h)/2), grid_lock_size), tonumber(editor_graphics.w), tonumber(editor_graphics.h), 1, 1, 1)
 		end
 	
 		if mwheelup then
@@ -92,16 +92,16 @@ end
 
 function level_editor_draw()
 	if editor_state == "main" then
-		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.setFont(graphFont)
 		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))), (love.graphics.getWidth()-130), 5)	--x and y of player and food
 		love.graphics.print("Grid Spacing: "..tostring(grid_spacing), 5, 5)
 		love.graphics.print("Width: "..tostring(editor_graphics.w), 5, 20)
 		love.graphics.print("Height: "..tostring(editor_graphics.h), 5, 35)
 		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 50)
-		love.graphics.setColor(50, 50, 50, 120)
+		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
 		love.graphics.rectangle('fill', round(mousex-(tonumber(editor_graphics.w)/2), tonumber(grid_lock_size)), round(mousey-tonumber((editor_graphics.h)/2), grid_lock_size), tonumber(editor_graphics.w), tonumber(editor_graphics.h))
-		love.graphics.setColor(100,100,100,120)
+		love.graphics.setColor(0.4,0.4,0.4,0.47)
 		love.graphics.setLineWidth( 1 )
 		if grid then -- if the grid bool is true then draw the grid!
 			for i=0, love.graphics.getWidth()/10 do

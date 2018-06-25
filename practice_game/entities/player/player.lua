@@ -12,7 +12,7 @@ function player:create(x, y, w, h)
 		speed = 1500,
 		xvel = 0,
 		yvel = 0,
-		jumpspeed = 100000
+		jumpspeed = 100
 	}, self)
 end
 

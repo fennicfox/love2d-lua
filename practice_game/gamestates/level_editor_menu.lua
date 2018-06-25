@@ -3,8 +3,8 @@ local elapsed_time = 0
 local saved = false
 
 function level_editor_menu_load(  )
-	local colour 		= { 255, 255, 255 }
-	local newColour 	= { 100,100,100 }
+	local colour 		= { 1, 1, 1 }
+	local newColour 	= { 0.4,0.4,0.4 }
 	local windowWidth 	= love.graphics.getWidth()   /2
 	local windowHeight  = love.graphics.getHeight() /2
 	button_resume 		= button:create(windowWidth, windowHeight-120, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "resume",       function() editor_state = "main" end)
@@ -33,7 +33,7 @@ function level_editor_menu_draw(  )
 		button_export:show()
 		button_quit:show()
 		if saving then
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			love.graphics.setFont(graphFont, 12)
 			love.graphics.print("saved", 10, love.graphics.getHeight()-20)
 			local elapsed_time = os.time() - start_time

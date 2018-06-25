@@ -1,8 +1,8 @@
 function main_menu_load()
 	local windowHeight 	= love.graphics.getHeight( ) /2  -- Gets the window height
 	local windowWidth  	= love.graphics.getWidth( )  /2  -- Gets the window width
-	local colour 	= {255, 255, 255}
-	local newColour = {100,100,100}
+	local colour 	= {1, 1, 1}
+	local newColour = {0.4,0.4,0.4}
 	button_start 	= button:create(windowWidth, windowHeight-60, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "start",        to_game)
 	button_editor   = button:create(windowWidth, windowHeight-20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "level editor", to_level_editor)
 	button_settings = button:create(windowWidth, windowHeight+20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     to_settings)

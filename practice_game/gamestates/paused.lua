@@ -1,8 +1,8 @@
 function paused_load()
 	windowHeight 	= love.graphics.getHeight( )/2  -- Gets the window height
 	windowWidth  	= love.graphics.getWidth( ) /2    -- Gets the window width
-	local colour 	= {255, 255, 255}
-	local newColour = {100,100,100}
+	local colour 	= {1, 1, 1}
+	local newColour = {0.4,0.4,0.4}
 	button_resume 	= button:create(windowWidth, windowHeight-40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "resume", to_game)
 	button_settings = button:create(windowWidth, windowHeight, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings", to_main_menu)
 	button_quit 	= button:create(windowWidth, windowHeight+40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit", to_main_menu)
