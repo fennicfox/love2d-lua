@@ -20,11 +20,18 @@ end
 
 
 function spike:draw( )
+	love.graphics.setColor(1, 0, 0, 1)
 	for i, v in ipairs(spike) do
-		love.graphics.setColor(1, 0, 0, 1)
-		love.graphics.polygon( "fill", v.x-v.size/2, v.y, v.x, v.y+v.size/2, v.x+v.size/2, v.y, v.x, v.y-v.size/2 )
-		love.graphics.polygon( "fill", v.x-v.size/3, v.y-v.size/3, v.x+v.size/3, v.y-v.size/3, v.x+v.size/3, v.y+v.size/3, v.x-v.size/3, v.y+v.size/3)
+		-- love.graphics.polygon( "fill", v.x-v.size/2, v.y, v.x, v.y+v.size/2, v.x+v.size/2, v.y, v.x, v.y-v.size/2 )
+		-- love.graphics.polygon( "fill", v.x-v.size/3, v.y-v.size/3, v.x+v.size/3, v.y-v.size/3, v.x+v.size/3, v.y+v.size/3, v.x-v.size/3, v.y+v.size/3)
+		for i = 0, 45 do
+			love.graphics.rotate(i)
+			love.graphics.rectangle("fill",v.x,v.y,v.size,v.size)
+			love.graphics.translate(math.pi/i,math.pi/i)
+		end
+
 	end
+	love.graphics.setColor(1, 1, 1, 1)
 end
 
 function spike:respawn()

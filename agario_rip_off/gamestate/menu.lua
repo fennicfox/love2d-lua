@@ -1,7 +1,7 @@
 button = {}
 
 function button.spawn(type, text)
-	table.insert(button, {x = 0, y = 0, text = text})
+	table.insert(button, {x = 0, y = 0, text = text, type = type})
 end
 
 function button.update(dt)
@@ -18,7 +18,7 @@ end
 
 function button.draw()
 	for i, v in ipairs(button) do
-		love.graphics.setColor(255,255,255)
+		love.graphics.setColor(1,1,1)
 		love.graphics.print(v.text, v.x, v.y)
 	end
 end
