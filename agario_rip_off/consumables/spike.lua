@@ -27,8 +27,9 @@ function spike:draw( )
 		for i = 0, 45 do
 			love.graphics.rotate(i)
 			love.graphics.rectangle("fill",v.x,v.y,v.size,v.size)
-			love.graphics.translate(math.pi/i,math.pi/i)
+			love.graphics.translate(-v.size, -v.size)
 		end
+		love.graphics.rotate(0)
 
 	end
 	love.graphics.setColor(1, 1, 1, 1)
