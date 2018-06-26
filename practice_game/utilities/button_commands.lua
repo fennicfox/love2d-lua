@@ -69,6 +69,14 @@ function to_open(override)
 												tonumber(temp_table[5]),
 												tonumber(temp_table[6]),
 												tonumber(temp_table[7]))
+			elseif temp_table[0] == "player" then
+				editor_graphics:createPlayer(tonumber(temp_table[1]),
+												tonumber(temp_table[2]),
+												tonumber(temp_table[3]),
+												tonumber(temp_table[4]),
+												tonumber(temp_table[5]),
+												tonumber(temp_table[6]),
+												tonumber(temp_table[7]))
 			end
 		end
 		file:close()

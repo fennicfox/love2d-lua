@@ -1,3 +1,27 @@
+--[[
+	=========================
+	  How to use the editor
+	=========================
+|
+|  '[' decreases the grid spacing
+|  ']' increases the grid spacing
+|
+|  '-' decreases next placed square size
+|  '+' increases next placed square size
+|	
+|  'g' enables/disables grid
+|  'b' enables/disables grid lock
+|  'x' removes placements
+|  
+|  'escape' pauses the game
+|  
+|  'lmb' places scenary
+|  'rmb' places player spawns
+| 
+|  'mwheelup' / 'mwheeldown' switches between different shapes (not implemented yet)
+]]--
+
+
 editor_graphics = {}
 editor_graphics.w = 50
 editor_graphics.h = 50
@@ -10,8 +34,14 @@ local grid = true
 local grid_lock = true
 local grid_lock_size = 5
 
+--for player spawn
+local flashing_speed = 1 --lower is faster
+local cooldown = false
+local alpha = 0
+
 table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
+table.insert(shapes, "player")
 
 
 function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
@@ -25,15 +55,41 @@ function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
 	g = g,
 	b = b
 }
+
+table.insert(editor_graphics, object)
+setmetatable(object, {__index = self})
+return object
+end
+
+function editor_graphics:createPlayer(x, y, w, h, r, g, b)
+	local object = {
+		s = "player",
+		x = x,
+		y = y,
+		w = w,
+		h = h,
+		r = r,
+		g = g,
+		b = b
+	}
+	
 	table.insert(editor_graphics, object)
 	setmetatable(object, {__index = self})
-  	return object
+	return object
 end
 
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
-		if mpressed then 
-			editor_graphics:createRectangle(round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
+		print(pressedm)
+		if mpressed then
+			if pressedm == 1 then
+				if shape_selected == 1 then
+					editor_graphics:createRectangle(round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
+				elseif shape_selected == 3 then
+					editor_graphics:createPlayer(round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), 30, 50, 1, 1, 1)
+				end
+			end
+
 		end
 	
 		if mwheelup then
@@ -74,17 +130,23 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				if grid_spacing ~= 12.5   then grid_spacing = grid_spacing - 12.5												   								  end
 			elseif pressedk == ']' then
 				if grid_spacing ~= 100    then grid_spacing = grid_spacing + 12.5												   								  end
-			elseif pressedk == "." then
-				local file = io.open("practice_game/level.oli", "a")
-				for i, v in ipairs(editor_graphics) do
-					print(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b))
-					file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b))
-				end
-				file:close()
 			end
 		end
 	elseif editor_state == "menu" then
 		level_editor_menu_update( dt )
+	end
+
+	--flashing effect for player (ignore and don't change)
+	if alpha < 1 and not cooldown then
+		alpha = (alpha + (dt/flashing_speed))
+		if alpha > 1 then
+			cooldown = true
+		end
+	else
+		alpha = (alpha - (dt/flashing_speed))
+		if alpha < 0 then
+			cooldown = false
+		end
 	end
 end
 
@@ -99,10 +161,14 @@ function level_editor_draw()
 		love.graphics.print("Height: "..tostring(editor_graphics.h), 5, 35)
 		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 50)
 		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
-		love.graphics.rectangle('fill', round(mousex-(tonumber(editor_graphics.w)/2), tonumber(grid_lock_size)), round(mousey-tonumber((editor_graphics.h)/2), grid_lock_size), tonumber(editor_graphics.w), tonumber(editor_graphics.h))
+		if shape_selected == 3 then --if player is selected
+			love.graphics.rectangle('line', round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), 30, 50)
+		else
+			love.graphics.rectangle('fill', round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), editor_graphics.w, editor_graphics.h)
+		end
 		love.graphics.setColor(0.4,0.4,0.4,0.47)
 		love.graphics.setLineWidth( 1 )
-		if grid then -- if the grid bool is true then draw the grid!
+		if grid then -- if the grid is true then draw the grid!
 			for i=0, love.graphics.getWidth()/10 do
 				love.graphics.line(i*grid_spacing, 0, grid_spacing*i, love.graphics.getHeight()) -- vertical lines
 			end
@@ -113,7 +179,12 @@ function level_editor_draw()
 		if #editor_graphics > 0 then
 			for i, v in ipairs(editor_graphics) do
 				love.graphics.setColor(v.r, v.g, v.b)
-				love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
+				if v.s == "rectangle" then
+					love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
+				elseif v.s == "player" then
+					love.graphics.setColor(v.r, v.g, v.b, alpha)
+					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+				end
 			end
 		end
 	elseif editor_state == "menu" then

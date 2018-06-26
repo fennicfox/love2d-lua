@@ -7,8 +7,8 @@ function player:create(x, y, w, h)
 	return setmetatable({
 		x=x or  0,
 		y=y or  0,
-		w=w or 20,
-		h=h or 60,
+		w=w or 30,
+		h=h or 50,
 		speed = 1500,
 		xvel = 0,
 		yvel = 0,

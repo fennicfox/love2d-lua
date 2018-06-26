@@ -15,8 +15,9 @@ function love.load()
 	main_menu_load()
 end
 
-function love.mousereleased( )
+function love.mousereleased( x, y, button )
 	mpressed = true
+	pressedm = button
 end
 
 function love.keyreleased( key )
