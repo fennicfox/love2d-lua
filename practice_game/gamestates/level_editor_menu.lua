@@ -9,17 +9,8 @@ function level_editor_menu_load(  )
 	local windowHeight  = love.graphics.getHeight() /2
 	button_resume 		= button:create(windowWidth, windowHeight-120, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "resume",       function() editor_state = "main" end)
 	button_settings 	= button:create(windowWidth, windowHeight-80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     to_settings)
-	button_open 		= button:create(windowWidth, windowHeight-40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "open",     	 function() editor_state = "open" end)
-	button_save 		= button:create(windowWidth, windowHeight   , colour, newColour, "font/SourceSansPro-Light.ttf", 32, "save",         function()  
-					start_time = os.time() 
-					local file = io.open("file-name", "a") 
-					for i, v in ipairs(editor_graphics) do
-						print(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b))
-						file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b)) 
-					end
-					saved = true
-					return saved
-					end)
+	button_open 		= button:create(windowWidth, windowHeight-40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "open",     	 to_open)
+	button_save 		= button:create(windowWidth, windowHeight   , colour, newColour, "font/SourceSansPro-Light.ttf", 32, "save",         to_saving)
 	button_export 		= button:create(windowWidth, windowHeight+40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "export",       to_export)
 	button_quit 		= button:create(windowWidth, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit",         function() gamestate=("main_menu") end)
 end
@@ -42,8 +33,6 @@ function level_editor_menu_draw(  )
 		end
 	elseif level_editor_menu_state == "exporting" then
 		
-	elseif level_editor_menu_state == "open" then
-
 	end
 end
 

@@ -75,14 +75,13 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			elseif pressedk == ']' then
 				if grid_spacing ~= 100    then grid_spacing = grid_spacing + 12.5												   								  end
 			elseif pressedk == "." then
-				local file = io.open("file-name", "a")
+				local file = io.open("practice_game/level.oli", "a")
 				for i, v in ipairs(editor_graphics) do
 					print(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b))
 					file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b))
 				end
 				file:close()
 			end
-	
 		end
 	elseif editor_state == "menu" then
 		level_editor_menu_update( dt )
