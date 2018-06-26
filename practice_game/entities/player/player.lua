@@ -1,6 +1,6 @@
 player = {}
 
-function player:create(x, y, w, h)
+function player:create(x, y, w, h, r, g, b)
 	self.__index = self
 	player.friction = 5
 	player.gravity = 2000
@@ -9,6 +9,9 @@ function player:create(x, y, w, h)
 		y=y or  0,
 		w=w or 30,
 		h=h or 50,
+		r=r or 1,
+		g=g or 1,
+		b=b or 1,
 		speed = 1500,
 		xvel = 0,
 		yvel = 0,
@@ -17,6 +20,7 @@ function player:create(x, y, w, h)
 end
 
 function player:update(dt)
+	local on_ground = false
 	if love.keyboard.isDown('a') then self.xvel = self.xvel - (self.speed * dt) end
 	if love.keyboard.isDown('d') then self.xvel = self.xvel + (self.speed * dt) end
 	if self.y+self.h >= love.graphics.getHeight() then
@@ -28,6 +32,19 @@ function player:update(dt)
 	else
 		self.yvel = self.yvel + (player.gravity * dt)
 	end
+
+	for i, v in ipairs(scenary) do
+		if (self.y+self.h >= v.y and self.y <= v.y + v.h) and ((self.x >= v.x and self.x <= v.x+v.w) or (self.x <= v.x and self.x+self.w >= v.x)) then
+			self.yvel = 0
+			on_ground = true
+			self.y = v.y-self.h 
+		end
+	end
+	if on_ground and love.keyboard.isDown('w') then 
+		self.yvel = self.yvel - self.jumpspeed
+	elseif not on_ground then
+		self.yvel = self.yvel + (player.gravity * dt)
+	end 
 end
 
 function player:physics(dt)

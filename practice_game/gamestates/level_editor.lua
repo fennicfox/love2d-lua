@@ -55,10 +55,9 @@ function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
 	g = g,
 	b = b
 }
-
-table.insert(editor_graphics, object)
-setmetatable(object, {__index = self})
-return object
+	table.insert(editor_graphics, object)
+	setmetatable(object, {__index = self})
+	return object
 end
 
 function editor_graphics:createPlayer(x, y, w, h, r, g, b)
@@ -80,7 +79,6 @@ end
 
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
-		print(pressedm)
 		if mpressed then
 			if pressedm == 1 then
 				if shape_selected == 1 then
