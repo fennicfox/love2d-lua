@@ -3,8 +3,8 @@ editor_graphics.w = 50
 editor_graphics.h = 50
 editor_state = "main"
 
-local shapes = {}
-local shape_selected = 1
+local shapes = {}          --future plans for different shapes.
+local shape_selected = 1   --shape index
 local grid_spacing = 50
 local grid = true
 local grid_lock = true
@@ -26,14 +26,14 @@ function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
 	b = b
 }
 	table.insert(editor_graphics, object)
-  	setmetatable(object, {__index = self})
+	setmetatable(object, {__index = self})
   	return object
 end
 
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
 		if mpressed then 
-			editor_graphics:createRectangle(round(mousex-(tonumber(editor_graphics.w)/2), tonumber(grid_lock_size)), round(mousey-tonumber((editor_graphics.h)/2), grid_lock_size), tonumber(editor_graphics.w), tonumber(editor_graphics.h), 1, 1, 1)
+			editor_graphics:createRectangle(round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
 		end
 	
 		if mwheelup then

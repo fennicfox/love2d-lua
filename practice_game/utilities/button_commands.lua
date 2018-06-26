@@ -50,19 +50,27 @@ function to_saving()
 	file:close()
 end
 
-function to_open()
-	local file = io.open("practice_game/level.oli", "r")
-	local string = ""
-	local done = false
-	local ctr = 0
-	for i in io.lines 'practice_game/level.oli' do
-  		ctr = ctr + 1
-		print(i)
-		print(shape(i))
-		local string = file:read()
-		local object = {
-		}
-		table.insert(editor_graphics, object)
+function to_open(override)
+	if #editor_graphics > 0 and not override then
+		level_editor_menu_state = "save"
+		return
+	else
+		local file = io.open("practice_game/level.oli", "r")
+		for i in io.lines 'practice_game/level.oli' do
+			local string = ""
+			local object = {}
+			local str = file:read()
+			local temp_table = get_level_details(str)
+			if temp_table[0] == "rectangle" then
+				editor_graphics:createRectangle(tonumber(temp_table[1]),
+												tonumber(temp_table[2]),
+												tonumber(temp_table[3]),
+												tonumber(temp_table[4]),
+												tonumber(temp_table[5]),
+												tonumber(temp_table[6]),
+												tonumber(temp_table[7]))
+			end
+		end
+		file:close()
 	end
-	file:close()
 end
