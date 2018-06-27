@@ -15,14 +15,21 @@ function player:create(x, y, w, h, r, g, b)
 		speed = 1500,
 		xvel = 0,
 		yvel = 0,
-		jumpspeed = 900
+		jumpspeed = 900,
+		on_ground = false,
+		walltouch_left = false,
+		walltouch_right= false,
 	}, self)
 end
 
 function player:update(dt)
-	local on_ground = false
-	if love.keyboard.isDown('a') then self.xvel = self.xvel - (self.speed * dt) end
-	if love.keyboard.isDown('d') then self.xvel = self.xvel + (self.speed * dt) end
+	self.on_ground = false
+	if love.keyboard.isDown('a') and not self.walltouch_left then 
+		self.xvel = self.xvel - (self.speed * dt) 
+	end
+	if love.keyboard.isDown('d') and not self.walltouch_right then 
+		self.xvel = self.xvel + (self.speed * dt) 
+	end
 	if self.y+self.h >= love.graphics.getHeight() then
 		self.yvel = 0
 		self.y = love.graphics.getHeight()-self.h 
@@ -34,17 +41,49 @@ function player:update(dt)
 	end
 
 	for i, v in ipairs(scenary) do
-		if (self.y+self.h >= v.y and self.y <= v.y + v.h) and ((self.x >= v.x and self.x <= v.x+v.w) or (self.x <= v.x and self.x+self.w >= v.x)) then
+		if (self.y+self.h >= v.y and self.y <= v.y + v.h) and (self.x+self.w > v.x and self.x < v.x+v.w) then
 			self.yvel = 0
-			on_ground = true
+			self.on_ground = true
 			self.y = v.y-self.h 
 		end
 	end
-	if on_ground and love.keyboard.isDown('w') then 
+	if self.on_ground and love.keyboard.isDown('w') then 
 		self.yvel = self.yvel - self.jumpspeed
-	elseif not on_ground then
+	elseif not self.on_ground then
 		self.yvel = self.yvel + (player.gravity * dt)
 	end 
+end
+
+function player:box_to_left(dt)
+	for i, v in ipairs(scenary) do
+		if ((self.x > v.x+v.w) and ((self:apply_next_step(true, dt) <= v.x+v.w) or (self.x-1 <= v.x+v.w) )) and (self.y+self.h > v.y and self.y < v.y+v.h) then
+			self.x=v.x+v.w
+			self.xvel=0
+			self.walltouch_left = true
+			return true
+		end
+	end
+	self.walltouch_left = false
+	return false
+end
+
+function player:box_to_right(dt)
+	for i, v in ipairs(scenary) do
+		if (self.x+self.w < v.x and self.xvel+self.w > v.x) and (self.y+self.h > v.y and self.y < v.y+v.h) then
+			-- self.walltouch_right = true
+			return false
+		end
+	end
+	self.walltouch_right = false
+	return false
+end
+
+function player:apply_next_step(left, dt)
+	if left then
+		return self.x + (self.xvel - (self.speed * dt)) * dt 
+	else
+		return self.x + (self.xvel + (self.speed * dt)) * dt 
+	end
 end
 
 function player:physics(dt)
@@ -59,4 +98,7 @@ end
 
 function player:draw()
 	love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
+	love.graphics.print("On ground:          "..tostring(self.on_ground))
+	love.graphics.print("Wall touch left:   "..tostring(self.walltouch_left),0,20)
+	love.graphics.print("Wall touch right: "..tostring(self.walltouch_right),0,40)
 end
