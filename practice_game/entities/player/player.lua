@@ -8,7 +8,7 @@ function player:create(x, y, w, h, r, g, b)
 		x=x or  0,
 		y=y or  0,
 		w=w or 30,
-		h=h or 50,
+		h=h or 49,
 		r=r or 1,
 		g=g or 1,
 		b=b or 1,
@@ -24,9 +24,10 @@ end
 
 function player:update(dt)
 	self.on_ground = false
-	if love.keyboard.isDown('a') and not self.walltouch_left then 
+	if love.keyboard.isDown('a') and not self:box_to_left(dt) then 
 		self.xvel = self.xvel - (self.speed * dt) 
 	end
+	self:box_to_left(dt)
 	if love.keyboard.isDown('d') and not self.walltouch_right then 
 		self.xvel = self.xvel + (self.speed * dt) 
 	end
@@ -44,6 +45,9 @@ function player:update(dt)
 		if (self.y+self.h >= v.y and self.y <= v.y + v.h) and (self.x+self.w > v.x and self.x < v.x+v.w) then
 			self.yvel = 0
 			self.on_ground = true
+			if self.y < 501 then
+				print(self.x,self.y)
+			end
 			self.y = v.y-self.h 
 		end
 	end
@@ -56,7 +60,7 @@ end
 
 function player:box_to_left(dt)
 	for i, v in ipairs(scenary) do
-		if ((self.x > v.x+v.w) and ((self:apply_next_step(true, dt) <= v.x+v.w) or (self.x-1 <= v.x+v.w) )) and (self.y+self.h > v.y and self.y < v.y+v.h) then
+		if ((self.x >= v.x+v.w) and ((self:whats_next_xstep(true, dt) <= v.x+v.w))) and (self.y+self.h > v.y and self.y < v.y+v.h) then
 			self.x=v.x+v.w
 			self.xvel=0
 			self.walltouch_left = true
@@ -78,11 +82,19 @@ function player:box_to_right(dt)
 	return false
 end
 
-function player:apply_next_step(left, dt)
+function player:whats_next_xstep(left, dt)
 	if left then
-		return self.x + (self.xvel - (self.speed * dt)) * dt 
+		return self.x + self.xvel * dt
 	else
-		return self.x + (self.xvel + (self.speed * dt)) * dt 
+		return self.x - self.xvel * dt
+	end
+end
+
+function player:whats_next_ystep(left, dt)
+	if left then
+		return self.x + self.xvel * dt
+	else
+		return self.x - self.xvel * dt
 	end
 end
 
