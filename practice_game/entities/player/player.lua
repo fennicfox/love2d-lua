@@ -28,7 +28,7 @@ function player:update(dt)
 		self.xvel = self.xvel - (self.speed * dt) 
 	end
 	self:box_to_left(dt)
-	if love.keyboard.isDown('d') and not self.walltouch_right then 
+	if love.keyboard.isDown('d') and not self:box_to_right(dt) then 
 		self.xvel = self.xvel + (self.speed * dt) 
 	end
 	if self.y+self.h >= love.graphics.getHeight() then
@@ -45,9 +45,6 @@ function player:update(dt)
 		if (self.y+self.h >= v.y and self.y <= v.y + v.h) and (self.x+self.w > v.x and self.x < v.x+v.w) then
 			self.yvel = 0
 			self.on_ground = true
-			if self.y < 501 then
-				print(self.x,self.y)
-			end
 			self.y = v.y-self.h 
 		end
 	end
@@ -60,42 +57,32 @@ end
 
 function player:box_to_left(dt)
 	for i, v in ipairs(scenary) do
-		if ((self.x >= v.x+v.w) and ((self:whats_next_xstep(true, dt) <= v.x+v.w))) and (self.y+self.h > v.y and self.y < v.y+v.h) then
+		if ((self.x >= v.x+v.w) and (self:whats_next_xstep(dt) <= v.x+v.w)) and (self.y+self.h > v.y and self.y < v.y+v.h) then
 			self.x=v.x+v.w
 			self.xvel=0
-			self.walltouch_left = true
 			return true
 		end
 	end
-	self.walltouch_left = false
 	return false
 end
 
 function player:box_to_right(dt)
 	for i, v in ipairs(scenary) do
-		if (self.x+self.w < v.x and self.xvel+self.w > v.x) and (self.y+self.h > v.y and self.y < v.y+v.h) then
-			-- self.walltouch_right = true
-			return false
+		if ((self.x+self.w <= v.x) and (self:whats_next_xstep(dt)+self.w >= v.x)) and (self.y+self.h > v.y and self.y < v.y+v.h) then
+			self.x=v.x-self.w
+			self.xvel=0
+			return true
 		end
 	end
-	self.walltouch_right = false
 	return false
 end
 
-function player:whats_next_xstep(left, dt)
-	if left then
-		return self.x + self.xvel * dt
-	else
-		return self.x - self.xvel * dt
-	end
+function player:whats_next_xstep(dt)
+	return self.x + self.xvel * dt
 end
 
-function player:whats_next_ystep(left, dt)
-	if left then
-		return self.x + self.xvel * dt
-	else
-		return self.x - self.xvel * dt
-	end
+function player:whats_next_ystep(dt)
+	return self.y + self.yvel * dt
 end
 
 function player:physics(dt)

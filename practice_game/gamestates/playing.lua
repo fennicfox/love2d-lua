@@ -29,8 +29,8 @@ function playing_load()
 end
 
 function playing_update(dt)
-	p:physics(dt)
 	p:update(dt)
+	p:physics(dt)
 	scenary_update(dt)
 	if kpressed then
 		if pressedk == "escape" then
