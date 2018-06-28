@@ -25,6 +25,8 @@ function player:create(x, y, w, h, r, g, b)
 		jumpspeed = 900,
 		on_ground = false,
 		wall_is_above = false,
+		spawnx = x,
+		spawny = y
 	}, self)
 end
 
@@ -38,7 +40,7 @@ function player:update(dt)
 		self.xvel = self.xvel + (self.speed * dt) 
 	end
 	self:box_to_right(dt)
-
+	
 	self:box_below(dt)
 	self:box_above(dt)
 	if self.on_ground and love.keyboard.isDown(keybound.jump) and not self.wall_is_above then 
@@ -46,7 +48,7 @@ function player:update(dt)
 	elseif not self.on_ground then
 		self.yvel = self.yvel + (player.gravity * dt)
 	end
-	
+	self:otherbuttons()
 end
 
 function player:box_to_left(dt)
@@ -116,4 +118,17 @@ function player:draw()
 	love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
 	love.graphics.print("On ground:          "..tostring(self.on_ground))
 	love.graphics.print("Wall touch ceiling:   "..tostring(self.wall_is_above),0,20)
+end
+
+function player:otherbuttons()
+	if love.keyboard.isDown(keybound.restart) then
+		self:goToSpawn()
+	end
+end
+
+function player:goToSpawn()
+	self.xvel = 0
+	self.yvel = 0
+	self.x = self.spawnx
+	self.y = self.spawny
 end
