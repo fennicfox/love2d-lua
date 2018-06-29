@@ -16,7 +16,7 @@ function player.load()
 	player.blue     = math.random(0.1,1)
 end
 
-function player.draw(dt)
+function player.draw()
 	love.graphics.setColor(player.red, player.green, player.blue, 1)
 	love.graphics.circle("fill",player.x,player.y,player.r,player.s)
 end

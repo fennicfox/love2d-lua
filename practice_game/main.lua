@@ -1,4 +1,5 @@
 require 'utilities.coroutines'
+require 'utilities.camera'
 require 'utilities.button'
 require 'utilities.button_commands'
 require 'entities.player.player'

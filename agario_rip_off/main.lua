@@ -56,9 +56,9 @@ function love.draw(dt)
 		local font = love.graphics.setNewFont(12)
 		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))).."\n\nYou:\nx: "..math.floor(tostring(player.x)).."\ny: "..math.floor(tostring(player.y)), (w-175), 5)	--x and y of player and food
 		camera:set()
-		draw_player(dt)
-		draw_food(dt)
-		spike:draw(dt)
+		draw_player()
+		draw_food()
+		spike:draw()
 		camera:unset()
 	end
 	if gamestate == "paused" then
