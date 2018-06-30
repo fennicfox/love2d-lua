@@ -40,10 +40,10 @@ function playing_update(dt)
 	
 	local w = love.graphics.getWidth()
 	local h = love.graphics.getHeight()
-	local camera_x_min = ((p.x-w/2)-w/7)
-	local camera_x_max = ((p.x-w/2)+w/7)
-	local camera_y_min = ((p.y-h/2)-h/7)
-	local camera_y_max = ((p.y-h/2)+h/7)
+	local camera_x_min = ((p.x-w/2)-w/8)
+	local camera_x_max = ((p.x-w/2)+w/8)
+	local camera_y_min = ((p.y-h/2)-h/8)
+	local camera_y_max = ((p.y-h/2)+h/8)
 	local camera_speed = 750
 	local camera_xv = 0
 	local camera_yv = 0

@@ -3,7 +3,7 @@ camera.x 		= 0
 camera.y 		= 0
 camera.scaleX   = 1
 camera.scaleY   = 1
-camera.friction = 2
+camera.friction = 4
 camera.xvel     = 0
 camera.yvel     = 0
 
@@ -19,8 +19,6 @@ function camera:unset()
 end
 
 function camera:move(xv,yv, dt)
-	print(xv)
-	print(yv)
 	local xv2 = math.abs(xv)
 	local yv2 = math.abs(yv)
 	if xv < 0 then
