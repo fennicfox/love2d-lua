@@ -23,8 +23,8 @@
 
 
 editor_graphics = {}
-editor_graphics.w = 50
-editor_graphics.h = 50
+editor_graphics.w = 50 --the width  of the things being put down
+editor_graphics.h = 50 --the height of the things being put down
 editor_state = "main"
 
 local shapes = {}          --future plans for different shapes.
@@ -38,6 +38,9 @@ local grid_lock_size = 5
 local flashing_speed = 1 --lower is faster
 local cooldown = false
 local alpha = 0
+local scrolling_x = 0
+local scrolling_y = 0
+local scrolling_has_got = false
 
 table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
@@ -79,23 +82,38 @@ end
 
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
+		if love.mouse.isDown(2) then
+			if not scrolling_has_got then
+				scrolling_has_got = true
+				scrolling_x = mousex
+				scrolling_y = mousey
+			else
+				camera.x = camera.x - (mousex - scrolling_x)
+				camera.y = camera.y - (mousey - scrolling_y)
+				scrolling_x = mousex
+				scrolling_y = mousey
+			end
+		else
+			scrolling_has_got = false
+		end
 		if mpressed then
 			if pressedm == 1 then
 				if shape_selected == 1 then
-					editor_graphics:createRectangle(round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
+					editor_graphics:createRectangle(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
 				elseif shape_selected == 3 then
-					editor_graphics:createPlayer(round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), 30, 50, 1, 1, 1)
+					editor_graphics:createPlayer(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50, 1, 1, 1)
 				end
 			end
-
 		end
 	
 		if mwheelup then
-			if shape_selected == #shapes then shape_selected = 1
-			else shape_selected = shape_selected + 1 end
+			camera:scale(0.8,0.8)
+			camera.x = camera.x + (mousex/10)
+			camera.y = camera.y + (mousey/10)
 		elseif mwheeldown then
-			if shape_selected == 1 then shape_selected = #shapes
-			else shape_selected = shape_selected - 1 end
+			camera:scale(1.2,1.2)
+			camera.x = camera.x - (mousex/10)
+			camera.y = camera.y - (mousey/10)
 		end
 	
 		if kpressed then
@@ -113,7 +131,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				end 
 			elseif pressedk == 'x' then
 				for i, v in ipairs(editor_graphics) do
-					if mousex > v.x and mousex < v.x+v.w and mousey > v.y and mousey < v.y + v.h then
+					if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
 						table.remove(editor_graphics, i)
 					end
 				end
@@ -121,20 +139,27 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				editor_state = "menu"
 				level_editor_menu_load( )
 			elseif pressedk == '-' then
-				if editor_graphics.w ~= 6.25 and editor_graphics.h ~= 6.25 then editor_graphics.w = editor_graphics.w - 6.25 editor_graphics.h = editor_graphics.h - 6.25     end
+				if editor_graphics.w ~= 6.25 and editor_graphics.h ~= 6.25 then editor_graphics.w = editor_graphics.w - 6.25 editor_graphics.h = editor_graphics.h - 6.25 end
 			elseif pressedk == '=' then
 				if editor_graphics.w ~= 100 and editor_graphics.h ~= 100 then editor_graphics.w = editor_graphics.w + 6.25 editor_graphics.h = editor_graphics.h + 6.25 end
 			elseif pressedk == '[' then
-				if grid_spacing ~= 12.5   then grid_spacing = grid_spacing - 12.5												   								  end
+				if grid_spacing ~= 12.5 then grid_spacing = grid_spacing - 12.5 end
 			elseif pressedk == ']' then
-				if grid_spacing ~= 100    then grid_spacing = grid_spacing + 12.5												   								  end
+				if grid_spacing ~= 100 then grid_spacing = grid_spacing + 12.5 end
+			elseif pressedk == '.' then 
+				shape_selected = ((shape_selected + 1) % #shapes+1)
+			elseif pressedk == ',' then
+				shape_selected = ((shape_selected - 1 )% #shapes+1)
+			end
+			if shape_selected == 0 then
+				shape_selected = shape_selected + 1
 			end
 		end
 	elseif editor_state == "menu" then
 		level_editor_menu_update( dt )
 	end
 
-	--flashing effect for player (ignore and don't change)
+	--flashing effect for player (ignore and don't change) I might put this into a function later.
 	if alpha < 1 and not cooldown then
 		alpha = (alpha + (dt/flashing_speed))
 		if alpha > 1 then
@@ -158,21 +183,21 @@ function level_editor_draw()
 		love.graphics.print("Width: "..tostring(editor_graphics.w), 5, 20)
 		love.graphics.print("Height: "..tostring(editor_graphics.h), 5, 35)
 		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 50)
-		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
-		if shape_selected == 3 then --if player is selected
-			love.graphics.rectangle('line', round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), 30, 50)
-		else
-			love.graphics.rectangle('fill', round(mousex-(editor_graphics.w)/2, grid_lock_size), round(mousey-(editor_graphics.h)/2, grid_lock_size), editor_graphics.w, editor_graphics.h)
-		end
 		love.graphics.setColor(0.4,0.4,0.4,0.47)
-		love.graphics.setLineWidth( 1 )
+		camera:set()
 		if grid then -- if the grid is true then draw the grid!
-			for i=0, love.graphics.getWidth()/10 do
+			for i=0, 16 do
 				love.graphics.line(i*grid_spacing, 0, grid_spacing*i, love.graphics.getHeight()) -- vertical lines
 			end
-			for i=0, love.graphics.getHeight()/10 do
+			for i=0, 12 do
 				love.graphics.line(0, i*grid_spacing, love.graphics.getWidth(), grid_spacing*i) -- horizontal lines
 			end
+		end
+		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
+		if shape_selected == 3 then --if player is selected
+			love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50)
+		else
+			love.graphics.rectangle('fill', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 		end
 		if #editor_graphics > 0 then
 			for i, v in ipairs(editor_graphics) do
@@ -185,7 +210,16 @@ function level_editor_draw()
 				end
 			end
 		end
+		camera:unset()
 	elseif editor_state == "menu" then
 		level_editor_menu_draw()
 	end
+end
+
+function level_editor_mousex()
+	return camera.x+(mousex*camera.scaleX)
+end
+
+function level_editor_mousey()
+	return camera.y+(mousey*camera.scaleY)
 end

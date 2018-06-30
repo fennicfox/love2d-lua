@@ -8,7 +8,7 @@ camera.xvel     = 0
 camera.yvel     = 0
 
 
-function camera:set(dt)
+function camera:set()
 	love.graphics.push()
 	love.graphics.scale(1 / self.scaleX, 1 / self.scaleY)
 	love.graphics.translate(-self.x, -self.y)

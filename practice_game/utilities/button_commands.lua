@@ -13,6 +13,8 @@ function to_game()
 	for i, v in ipairs(button) do button.remove(i) end
 	gamestate = "playing"
 	if not game_loaded then
+		camera.x = 0
+		camera.y = 0
 		game_loaded = true 
 		playing_load() 
 	end
@@ -32,6 +34,8 @@ end
 function to_level_editor()
 	for i, v in ipairs(button) do button.remove(i) end
 	gamestate = "level_editor"
+	camera.x = 0
+	camera.y = 0
 end
 
 function to_export()
