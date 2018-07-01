@@ -1,4 +1,3 @@
-
 function playing_load()
 	local file = io.open("practice_game/level.oli", "r")
 	p = player:create()

@@ -1,5 +1,6 @@
 player = {}
-
+local jump_sfx = love.audio.newSource('sfx/jump.ogg',"static")
+jump_sfx:setVolume(0.05) -- 20% volume
 local keybound = {
 	left = 'a',
 	right = 'd',
@@ -43,7 +44,8 @@ function player:update(dt)
 	
 	self:box_below(dt)
 	self:box_above(dt)
-	if self.on_ground and love.keyboard.isDown(keybound.jump) and not self.wall_is_above then 
+	if self.on_ground and love.keyboard.isDown(keybound.jump) and not self.wall_is_above then
+		jump_sfx:play()
 		self.yvel = self.yvel - self.jumpspeed
 	elseif not self.on_ground then
 		self.yvel = self.yvel + (player.gravity * dt)

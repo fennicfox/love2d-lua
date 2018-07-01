@@ -12,7 +12,7 @@ require 'gamestates.level_editor_menu'
 
 function love.load()
 	graphFont 		 = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
-	quit_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
+	click_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
 	gamestate        = "main_menu"
 	main_menu_load()
 end
@@ -64,7 +64,7 @@ function love.mousepressed( x, y )
 end
 
 function love.keypressed( key )
-	if key == "escape" then quit_sfx:play() end
+	if key == "escape" then click_sfx:play() end
 end
 
 function love.resize( w, h )

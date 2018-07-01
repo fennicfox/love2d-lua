@@ -4,7 +4,7 @@ game_loaded = false
 
 function to_main_menu()
 	for i, v in ipairs(button) do button.remove(i) end
-	for i, v in ipairs(button) do print(button.i) end
+	for i, v in ipairs(player) do player.remove(i) end
 	gamestate = "main_menu"
 	game_loaded = false
 	main_menu_load()
