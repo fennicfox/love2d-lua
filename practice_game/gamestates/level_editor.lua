@@ -97,6 +97,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			scrolling_has_got = false
 		end
 		if mpressed then
+			print(level_editor_mousex())
 			if pressedm == 1 then
 				if shape_selected == 1 then
 					editor_graphics:createRectangle(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
@@ -107,13 +108,13 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		end
 	
 		if mwheelup then
-			camera:scale(0.8,0.8)
-			camera.x = camera.x + (mousex/10)
-			camera.y = camera.y + (mousey/10)
+			camera:scale(0.666666666666666666,0.666666666666666666) --don't change
+			camera.x = camera.x + (mousex/6)
+			camera.y = camera.y + (mousey/6)
 		elseif mwheeldown then
-			camera:scale(1.2,1.2)
-			camera.x = camera.x - (mousex/10)
-			camera.y = camera.y - (mousey/10)
+			camera:scale(1.5,1.5) --don't change
+			camera.x = camera.x - (mousex/6)
+			camera.y = camera.y - (mousey/6)
 		end
 	
 		if kpressed then
@@ -175,22 +176,30 @@ end
 
 
 function level_editor_draw()
+	local winWidth  = love.graphics.getWidth()
+	local winHeight = love.graphics.getHeight()
 	if editor_state == "main" then
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.setFont(graphFont)
 		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))), (love.graphics.getWidth()-130), 5)	--x and y of player and food
 		love.graphics.print("Grid Spacing: "..tostring(grid_spacing), 5, 5)
-		love.graphics.print("Width: "..tostring(editor_graphics.w), 5, 20)
-		love.graphics.print("Height: "..tostring(editor_graphics.h), 5, 35)
-		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 50)
+		love.graphics.print("Camera X: "..tostring(camera.x), 5, 20)
+		love.graphics.print("Camera Y: "..tostring(camera.y), 5, 35)
+		love.graphics.print("Camera SX: "..tostring(camera.scaleX), 5, 50)
+		love.graphics.print("Camera SY: "..tostring(camera.scaleY), 5, 65)
+		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 80)
 		love.graphics.setColor(0.4,0.4,0.4,0.47)
 		camera:set()
-		if grid then -- if the grid is true then draw the grid!
-			for i=0, 16 do
-				love.graphics.line(i*grid_spacing, 0, grid_spacing*i, love.graphics.getHeight()) -- vertical lines
+		if grid then -- if the grid is true then draw the grid
+			local xongrid = camera.x - (camera.x % grid_spacing)
+			local yongrid = camera.y - (camera.y % grid_spacing)
+			--lines going down
+			for i = xongrid, (xongrid + (winWidth* camera.scaleX)), grid_spacing do 
+				love.graphics.line(i, yongrid, i, yongrid+(winHeight*camera.scaleY)+grid_spacing) -- vertical lines
 			end
-			for i=0, 12 do
-				love.graphics.line(0, i*grid_spacing, love.graphics.getWidth(), grid_spacing*i) -- horizontal lines
+			--lines going across
+			for i = yongrid, (yongrid + (winHeight * camera.scaleY)), grid_spacing do	
+				love.graphics.line(xongrid, i, xongrid+(winWidth*camera.scaleX)+grid_spacing, i) -- horizontal lines
 			end
 		end
 		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)

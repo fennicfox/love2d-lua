@@ -12,9 +12,10 @@ end
 function to_game()
 	for i, v in ipairs(button) do button.remove(i) end
 	gamestate = "playing"
+	camera.x = 0
+	camera.y = 0
+	camera:setScale(1,1)
 	if not game_loaded then
-		camera.x = 0
-		camera.y = 0
 		game_loaded = true 
 		playing_load() 
 	end
