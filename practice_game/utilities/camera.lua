@@ -3,7 +3,7 @@ camera.x 		= 0
 camera.y 		= 0
 camera.scaleX   = 1
 camera.scaleY   = 1
-camera.friction = 4
+camera.friction = 5
 camera.xvel     = 0
 camera.yvel     = 0
 
@@ -48,17 +48,17 @@ function camera:move(xv,yv, dt)
 end
 
 function camera:scale(sx, sy)
-sx = sx or 1
-self.scaleX = self.scaleX * sx
-self.scaleY = self.scaleY * (sy or sx)
+	sx = sx or 1
+	self.scaleX = self.scaleX * sx
+	self.scaleY = self.scaleY * (sy or sx)
 end
 
 function camera:setPosition(x, y)
-self.x = x or self.x
-self.y = y or self.y
+	self.x = x or self.x
+	self.y = y or self.y
 end
 
 function camera:setScale(sx, sy)
-self.scaleX = sx or self.scaleX
-self.scaleY = sy or self.scaleY
+	self.scaleX = sx or self.scaleX
+	self.scaleY = sy or self.scaleY
 end

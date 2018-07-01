@@ -25,8 +25,8 @@ function player:create(x, y, w, h, r, g, b)
 		jumpspeed = 900,
 		on_ground = false,
 		wall_is_above = false,
-		spawnx = x,
-		spawny = y
+		spawnx = x or 0,
+		spawny = y or 0
 	}, self)
 end
 
@@ -131,4 +131,5 @@ function player:goToSpawn()
 	self.yvel = 0
 	self.x = self.spawnx
 	self.y = self.spawny
+	camera:setPosition(self.x-(love.graphics.getWidth()/2),self.y-(love.graphics.getHeight()/2))
 end

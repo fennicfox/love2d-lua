@@ -25,6 +25,7 @@ function playing_load()
 											tonumber(temp_table[7]))
 		end
 	end
+	camera:setPosition(p.x-(love.graphics.getWidth()/2),p.y-(love.graphics.getHeight()/2))
 	file:close()
 end
 
@@ -44,7 +45,7 @@ function playing_update(dt)
 	local camera_x_max = ((p.x-w/2)+w/8)
 	local camera_y_min = ((p.y-h/2)-h/8)
 	local camera_y_max = ((p.y-h/2)+h/8)
-	local camera_speed = 750
+	local camera_speed = 2000
 	local camera_xv = 0
 	local camera_yv = 0
 

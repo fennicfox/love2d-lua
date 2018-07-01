@@ -107,16 +107,19 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			end
 		end
 	
-		if mwheelup then
-			camera:scale(0.666666666666666666,0.666666666666666666) --don't change
-			camera.x = camera.x + (mousex/6)
-			camera.y = camera.y + (mousey/6)
-		elseif mwheeldown then
-			camera:scale(1.5,1.5) --don't change
-			camera.x = camera.x - (mousex/6)
-			camera.y = camera.y - (mousey/6)
+		if mwheelup and (camera.scaleX > 0.2 and camera.scaleY > 0.2) then
+			camera:scale(0.8,0.8) --don't change
+		elseif mwheeldown and (camera.scaleX < 10 and camera.scaleY < 10) then
+			camera:scale(1.25,1.25) --don't change
 		end
 	
+		if love.keyboard.isDown('x') then
+			for i, v in ipairs(editor_graphics) do
+				if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
+					table.remove(editor_graphics, i)
+				end
+			end
+		end
 		if kpressed then
 			if pressedk == 'g' then
 				if grid then 
@@ -130,12 +133,6 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				else 
 					grid_lock = true 
 				end 
-			elseif pressedk == 'x' then
-				for i, v in ipairs(editor_graphics) do
-					if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
-						table.remove(editor_graphics, i)
-					end
-				end
 			elseif pressedk == 'escape' then 
 				editor_state = "menu"
 				level_editor_menu_load( )
