@@ -85,19 +85,18 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		if love.mouse.isDown(2) then
 			if not scrolling_has_got then
 				scrolling_has_got = true
-				scrolling_x = mousex
-				scrolling_y = mousey
+				scrolling_x = level_editor_mousex()
+				scrolling_y = level_editor_mousey()
 			else
-				camera.x = camera.x - (mousex - scrolling_x)
-				camera.y = camera.y - (mousey - scrolling_y)
-				scrolling_x = mousex
-				scrolling_y = mousey
+				camera.x = camera.x - (level_editor_mousex() - scrolling_x)
+				camera.y = camera.y - (level_editor_mousey() - scrolling_y)
+				scrolling_x = level_editor_mousex()
+				scrolling_y = level_editor_mousey()
 			end
 		else
 			scrolling_has_got = false
 		end
 		if mpressed then
-			print(level_editor_mousex())
 			if pressedm == 1 then
 				if shape_selected == 1 then
 					editor_graphics:createRectangle(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
