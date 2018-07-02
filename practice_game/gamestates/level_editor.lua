@@ -9,16 +9,21 @@
 |  '-' decreases next placed square size
 |  '+' increases next placed square size
 |	
+|  '.' next shape
+|  ',' previous shape
+|
 |  'g' enables/disables grid
 |  'b' enables/disables grid lock
 |  'x' removes placements
 |  
 |  'escape' pauses the game
 |  
-|  'lmb' places scenary
-|  'rmb' places player spawns
+|  'lmb' places entity
+|  'rmb' scrolls around universe
 | 
-|  'mwheelup' / 'mwheeldown' switches between different shapes (not implemented yet)
+|  'mwheelup' / 'mwheeldown' zooms in and out
+|  
+
 ]]--
 
 
@@ -27,17 +32,19 @@ editor_graphics.w = 50 --the width  of the things being put down
 editor_graphics.h = 50 --the height of the things being put down
 editor_state = "main"
 
-local shapes = {}          --future plans for different shapes.
+local shapes = {}
 local shape_selected = 1   --shape index
 local grid_spacing = 50
 local grid = true
 local grid_lock = true
 local grid_lock_size = editor_graphics.w / 2
 
---for player spawn
+--for player and death zone fading
 local flashing_speed = 1 --lower is faster
 local cooldown = false
 local alpha = 0
+
+--for scrolling around the universe (not to confuse with zooming)
 local scrolling_x = 0
 local scrolling_y = 0
 local scrolling_has_got = false
@@ -117,6 +124,8 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					editor_graphics:createRectangle(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
 				elseif shape_selected == 3 then
 					editor_graphics:createPlayer(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50, 1, 1, 1)
+				elseif shape_selected == 4 then
+					editor_graphics:death_zone(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 				end
 			end
 		end
@@ -167,12 +176,15 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			elseif pressedk == ']' then
 				if grid_spacing ~= 100 then grid_spacing = grid_spacing + 12.5 end
 			elseif pressedk == '.' then 
-				shape_selected = ((shape_selected + 1) % #shapes+1)
+				shape_selected = ((shape_selected + 1) % (#shapes+1)) print(shape_selected, #shapes)
+				if shape_selected == 0 then
+					shape_selected = 1
+				end
 			elseif pressedk == ',' then
-				shape_selected = ((shape_selected - 1 )% #shapes+1)
-			end
-			if shape_selected == 0 then
-				shape_selected = shape_selected + 1
+				shape_selected = ((shape_selected - 1 )% (#shapes)) print(shape_selected, #shapes)
+				if shape_selected == 0 then
+					shape_selected = #shapes
+				end
 			end
 		end
 	elseif editor_state == "menu" then
