@@ -40,13 +40,6 @@ function to_level_editor()
 	camera.y = 0
 end
 
-function to_export()
-	for i, v in ipairs(button) do button.remove(i) end
-	level_editor_menu_state = "exporting"
-	local file = io.open("practice_game/level.oli", "w")
-	file:close()
-end
-
 function to_saving()
 	local file = io.open("practice_game/level.oli", "w")
 	for i, v in ipairs(editor_graphics) do

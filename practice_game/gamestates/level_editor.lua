@@ -32,7 +32,7 @@ local shape_selected = 1   --shape index
 local grid_spacing = 50
 local grid = true
 local grid_lock = true
-local grid_lock_size = 5
+local grid_lock_size = editor_graphics.w / 2
 
 --for player spawn
 local flashing_speed = 1 --lower is faster
@@ -45,6 +45,7 @@ local scrolling_has_got = false
 table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
 table.insert(shapes, "player")
+table.insert(shapes, "death_zone")
 
 
 function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
@@ -73,6 +74,20 @@ function editor_graphics:createPlayer(x, y, w, h, r, g, b)
 		r = r,
 		g = g,
 		b = b
+	}
+	
+	table.insert(editor_graphics, object)
+	setmetatable(object, {__index = self})
+	return object
+end
+
+function editor_graphics:death_zone(x, y, w, h)
+	local object = {
+		s = "player",
+		x = x,
+		y = y,
+		w = w,
+		h = h
 	}
 	
 	table.insert(editor_graphics, object)
@@ -136,9 +151,17 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				editor_state = "menu"
 				level_editor_menu_load( )
 			elseif pressedk == '-' then
-				if editor_graphics.w ~= 6.25 and editor_graphics.h ~= 6.25 then editor_graphics.w = editor_graphics.w - 6.25 editor_graphics.h = editor_graphics.h - 6.25 end
+				if editor_graphics.w >= 6.25 and editor_graphics.h >= 6.25 then 
+					editor_graphics.w = editor_graphics.w/2 
+					editor_graphics.h = editor_graphics.h/2 
+					grid_lock_size = editor_graphics.w / 2
+				end
 			elseif pressedk == '=' then
-				if editor_graphics.w ~= 100 and editor_graphics.h ~= 100 then editor_graphics.w = editor_graphics.w + 6.25 editor_graphics.h = editor_graphics.h + 6.25 end
+				if editor_graphics.w <= 100 and editor_graphics.h <= 100 then 
+					editor_graphics.w = editor_graphics.w*2 
+					editor_graphics.h = editor_graphics.h*2 
+					grid_lock_size = editor_graphics.w / 2
+				end
 			elseif pressedk == '[' then
 				if grid_spacing ~= 12.5 then grid_spacing = grid_spacing - 12.5 end
 			elseif pressedk == ']' then
@@ -211,6 +234,9 @@ function level_editor_draw()
 					love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
 				elseif v.s == "player" then
 					love.graphics.setColor(v.r, v.g, v.b, alpha)
+					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+				elseif v.s == "death_zone" then
+					love.graphics.setColor(1,0.2,0.2,0.4)
 					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 				end
 			end

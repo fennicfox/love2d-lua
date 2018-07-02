@@ -13,10 +13,6 @@ function deathzone:create(x, y, w, h)
 	return object
 end
 
-function deathzone:update(dt)
-
-end
-
 function deathzone:collided(x,y,w,h)
     if (((x+w > self.x) and (x+w) < (self.x+self.w)) or 
         ((x > self.x) and (x < self.x+self.w))) and
@@ -26,8 +22,6 @@ function deathzone:collided(x,y,w,h)
     end
     return false
 end
-
-
 
 function deathzone:draw()
     for i, v in ipairs(scenary) do
