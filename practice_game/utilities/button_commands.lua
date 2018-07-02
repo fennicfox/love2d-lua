@@ -1,7 +1,5 @@
 require ("utilities.loading_saves")
 
-game_loaded = false
-
 function to_main_menu()
 	for i, v in ipairs(button) do button.remove(i) end
 	for i, v in ipairs(player) do player.remove(i) end
@@ -16,15 +14,11 @@ function to_game()
 	camera.x = 0
 	camera.y = 0
 	camera:setScale(1,1)
-	if not game_loaded then
-		game_loaded = true 
-		playing_load() 
-	end
+	playing_load() 
 end
 
 function to_settings()
 	for i, v in ipairs(button) do button.remove(i) end
-	game_loaded = false
 end
 
 function to_paused()
@@ -43,8 +37,11 @@ end
 function to_saving()
 	local file = io.open("practice_game/level.oli", "w")
 	for i, v in ipairs(editor_graphics) do
-		print(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b))
-		file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b).."\n")
+		if v.s == "death_zone" or v.s == "win_zone" then
+			file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h).."\n")
+		else
+			file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h)..":"..tostring(v.r)..":"..tostring(v.g)..":"..tostring(v.b).."\n")
+		end
 	end
 	file:close()
 end
@@ -76,6 +73,16 @@ function to_open(override)
 												tonumber(temp_table[5]),
 												tonumber(temp_table[6]),
 												tonumber(temp_table[7]))
+			elseif temp_table[0] == "death_zone" then
+				editor_graphics:death_zone(tonumber(temp_table[1]),
+												tonumber(temp_table[2]),
+												tonumber(temp_table[3]),
+												tonumber(temp_table[4]))
+			elseif temp_table[0] == "win_zone" then
+				editor_graphics:win_zone(tonumber(temp_table[1]),
+												tonumber(temp_table[2]),
+												tonumber(temp_table[3]),
+												tonumber(temp_table[4]))
 			end
 		end
 		file:close()

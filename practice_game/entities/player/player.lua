@@ -26,6 +26,7 @@ function player:create(x, y, w, h, r, g, b)
 		jumpspeed = 900,
 		on_ground = false,
 		wall_is_above = false,
+		deathcount = 0,
 		spawnx = x or 0,
 		spawny = y or 0
 	}, self)

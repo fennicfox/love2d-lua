@@ -1,11 +1,9 @@
 function paused_load()
-	windowHeight 	= love.graphics.getHeight( )/2  -- Gets the window height
-	windowWidth  	= love.graphics.getWidth( ) /2    -- Gets the window width
-	local colour 	= {1, 1, 1}
-	local newColour = {0.4,0.4,0.4}
-	ps_button_resume   = button:create(windowWidth, windowHeight-40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "resume", to_game)
-	ps_button_settings = button:create(windowWidth, windowHeight, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings", function() print("I need to implement this") end)
-	ps_button_quit 	  = button:create(windowWidth, windowHeight+40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit", to_main_menu)
+	local windowHeight 	= love.graphics.getHeight( )/2  -- Gets the window height
+	local windowWidth  	= love.graphics.getWidth( ) /2    -- Gets the window width
+	ps_button_resume    = button:create(windowWidth, windowHeight-40, {1, 1, 1}, {0.4,0.4,0.4}, "font/SourceSansPro-Light.ttf", 32, "resume", to_game)
+	ps_button_settings  = button:create(windowWidth, windowHeight, {1, 1, 1}, {0.4,0.4,0.4}, "font/SourceSansPro-Light.ttf", 32, "settings", function() print("I need to implement this") end)
+	ps_button_quit 	    = button:create(windowWidth, windowHeight+40, {1, 1, 1}, {0.4,0.4,0.4}, "font/SourceSansPro-Light.ttf", 32, "quit", to_main_menu)
 end
 
 function paused_draw()

@@ -90,7 +90,7 @@ end
 
 function editor_graphics:death_zone(x, y, w, h)
 	local object = {
-		s = "player",
+		s = "death_zone",
 		x = x,
 		y = y,
 		w = w,
@@ -236,19 +236,21 @@ function level_editor_draw()
 		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
 		if shape_selected == 3 then --if player is selected
 			love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50)
+		elseif shape_selected == 4 then
+			love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 		else
 			love.graphics.rectangle('fill', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 		end
 		if #editor_graphics > 0 then
 			for i, v in ipairs(editor_graphics) do
-				love.graphics.setColor(v.r, v.g, v.b)
 				if v.s == "rectangle" then
+					love.graphics.setColor(v.r, v.g, v.b, 1)
 					love.graphics.rectangle('fill', v.x, v.y, v.w, v.h)
 				elseif v.s == "player" then
 					love.graphics.setColor(v.r, v.g, v.b, alpha)
 					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 				elseif v.s == "death_zone" then
-					love.graphics.setColor(1,0.2,0.2,0.4)
+					love.graphics.setColor(1,0.2,0.2,alpha)
 					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 				end
 			end

@@ -1,3 +1,9 @@
+
+local deathFont = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 24)
+local graphFont = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
+local camera_speed = 2000
+
+
 function playing_load()
 	local file = io.open("practice_game/level.oli", "r")
 	p = player:create()
@@ -22,6 +28,11 @@ function playing_load()
 											tonumber(temp_table[5]),
 											tonumber(temp_table[6]),
 											tonumber(temp_table[7]))
+		elseif temp_table[0] == "death_zone" then
+			deathzone:create(tonumber(temp_table[1]),
+											tonumber(temp_table[2]),
+											tonumber(temp_table[3]),
+											tonumber(temp_table[4]))
 		end
 	end
 	camera:setPosition(p.x-(love.graphics.getWidth()/2),p.y-(love.graphics.getHeight()/2))
@@ -32,6 +43,12 @@ function playing_update(dt)
 	p:update(dt)
 	p:physics(dt)
 	scenary_update(dt)
+	if deathzone[1] ~= nil then
+		if deathzone_collided(p) then
+			p:goToSpawn()
+			p.deathcount = p.deathcount + 1
+		end
+	end
 	if kpressed then
 		if pressedk == "escape" then
 			to_paused()
@@ -44,7 +61,6 @@ function playing_update(dt)
 	local camera_x_max = ((p.x-w/2)+w/8)
 	local camera_y_min = ((p.y-h/2)-h/8)
 	local camera_y_max = ((p.y-h/2)+h/8)
-	local camera_speed = 2000
 	local camera_xv = 0
 	local camera_yv = 0
 
@@ -66,7 +82,6 @@ function playing_draw(dt)
 	p:draw()
 	scenary_draw()
 	camera:unset()
-	local graphFont = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
 	love.graphics.setColor(0.2,0.2,0.2,0.5)
 	love.graphics.rectangle("fill", love.graphics.getWidth()-130, 0, 130,110)
 	love.graphics.setColor(1,1,1,1)
@@ -79,5 +94,7 @@ function playing_draw(dt)
 						(love.graphics.getWidth()-130),
 						5
 	)
+	love.graphics.setFont(graphFont)
+	love.graphics.print("Death Count: "..tostring(p.deathcount), 0,0)
 	
 end
