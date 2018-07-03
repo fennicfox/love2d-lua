@@ -20,6 +20,6 @@ function winzone.collided(entity)
             ((entity.y > v.y) and (entity.y < v.y+v.h))) then 
             return true
         end
-        return false
     end
+    return false
 end
