@@ -1,6 +1,10 @@
 player = {}
+
+--creates the jump sfx of the player.
 local jump_sfx = love.audio.newSource('sfx/jump.ogg',"static")
 jump_sfx:setVolume(0.05) -- 20% volume
+
+--keybindings settings will change this later on.
 local keybound = {
 	left = 'a',
 	right = 'd',
@@ -34,6 +38,7 @@ end
 
 
 function player:update(dt)
+	--movement and collision
 	if love.keyboard.isDown(keybound.left) and not self:box_to_left(dt) then 
 		self.xvel = self.xvel - (self.speed * dt) 
 	end
@@ -54,6 +59,7 @@ function player:update(dt)
 	self:otherbuttons()
 end
 
+--checks if there is collision to the left
 function player:box_to_left(dt)
 	for i, v in ipairs(scenary) do
 		if ((self.x >= v.x+v.w) and (self:whats_next_xstep(dt) <= v.x+v.w)) and (self.y+self.h > v.y and self.y < v.y+v.h) then
@@ -65,6 +71,7 @@ function player:box_to_left(dt)
 	return false
 end
 
+--checks if there is collision to the right
 function player:box_to_right(dt)
 	for i, v in ipairs(scenary) do
 		if ((self.x+self.w <= v.x) and (self:whats_next_xstep(dt)+self.w >= v.x)) and (self.y+self.h > v.y and self.y < v.y+v.h) then
@@ -76,6 +83,7 @@ function player:box_to_right(dt)
 	return false
 end
 
+--checks if there is collision above
 function player:box_above(dt)
 	for i, v in ipairs(scenary) do
 		if (((self.y >= v.y+v.h) and (self:whats_next_ystep(dt) <= v.y+v.h)) or (self.y - 1 <= v.y+v.h) and self.y >= v.y) and (self.x+self.w > v.x and self.x < v.x+v.w) and (self.yvel <= 0) then
@@ -87,6 +95,7 @@ function player:box_above(dt)
 	self.wall_is_above = false
 end
 
+--checks if there is collision below
 function player:box_below(dt)
 	for i, v in ipairs(scenary) do
 		if (self.y+self.h <= v.y and self:whats_next_ystep(dt)+self.h >= v.y ) and (self.x+self.w > v.x and self.x < v.x+v.w) then
@@ -99,36 +108,41 @@ function player:box_below(dt)
 	self.on_ground = false
 end
 
+--sees where the player will be in the x axis on the next step
 function player:whats_next_xstep(dt)
 	return self.x + self.xvel * dt
 end
 
+--sees where the player will be in the y axis on the next step
 function player:whats_next_ystep(dt)
 	return self.y + ( self.yvel + (player.gravity * dt)) * dt
 end
 
+--applies physics to the player.
 function player:physics(dt)
 	self.x = self.x + self.xvel * dt                              --moves the player if the velocity is not 0
 	self.y = self.y + self.yvel * dt                              --moves the player if the velocity is not 0
 	self.xvel = self.xvel * (1 - math.min(dt*player.friction, 1)) --slows the player down if they're moving
 	self.yvel = self.yvel * (1 - math.min(dt*player.friction, 1)) --slows the player down if they're moving
-	if self.xvel < 0.1 and self.xvel > -0.1 then                --hotfix for player not completely stopping when idle.
+	if self.xvel < 0.1 and self.xvel > -0.1 then                  --for the player not completely stopping when idle.
 		self.xvel = 0
 	end
 end
 
+--draws the player
 function player:draw()
 	love.graphics.rectangle('line', self.x, self.y, self.w, self.h)
-	love.graphics.print("On ground:          "..tostring(self.on_ground))
-	love.graphics.print("Wall touch ceiling:   "..tostring(self.wall_is_above),0,20)
 end
 
+--more buttons
 function player:otherbuttons()
+	--if the players presses r, then restart. This is useful if you fall off the map for testing.
 	if love.keyboard.isDown(keybound.restart) then
 		self:goToSpawn()
 	end
 end
 
+--this function is to send the player back to spawn
 function player:goToSpawn()
 	self.xvel = 0
 	self.yvel = 0

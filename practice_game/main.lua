@@ -61,10 +61,6 @@ function love.draw()
     mwheelup   = false
 end
 
-function love.mousepressed( x, y )
-	--print('==========\nx = '..x..'\ny = '..y) 
-end
-
 function love.keypressed( key )
 	if key == "escape" then click_sfx:play() end
 end

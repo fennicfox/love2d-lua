@@ -1,3 +1,4 @@
+--this is used if you're calling the coroutine between the camera:set() and camera:unset() functions
 infomessageCAM = coroutine.create(
 	function (time, text)
 		running = false
@@ -19,6 +20,7 @@ infomessageCAM = coroutine.create(
 	end
 )
 
+--This is used if you're calling the coroutine without and camera.
 infomessage = coroutine.create(
 	function (time, text)
 		running = false
@@ -40,7 +42,7 @@ infomessage = coroutine.create(
 	end
 )
 
-
+--This is used for 2 messages
 infomessage2 = coroutine.create(
 	function (time, text1, text2)
 		running = false
