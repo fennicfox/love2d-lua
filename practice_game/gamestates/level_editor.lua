@@ -53,6 +53,7 @@ table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
 table.insert(shapes, "player")
 table.insert(shapes, "death_zone")
+table.insert(shapes, "win_zone")
 
 
 function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
@@ -102,6 +103,20 @@ function editor_graphics:death_zone(x, y, w, h)
 	return object
 end
 
+function editor_graphics:win_zone(x, y, w, h)
+	local object = {
+		s = "win_zone",
+		x = x,
+		y = y,
+		w = w,
+		h = h
+	}
+	
+	table.insert(editor_graphics, object)
+	setmetatable(object, {__index = self})
+	return object
+end
+
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
 		if love.mouse.isDown(2) then
@@ -126,6 +141,8 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					editor_graphics:createPlayer(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50, 1, 1, 1)
 				elseif shape_selected == 4 then
 					editor_graphics:death_zone(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
+				elseif shape_selected == 5 then
+					editor_graphics:win_zone(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 				end
 			end
 		end
@@ -251,6 +268,9 @@ function level_editor_draw()
 					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 				elseif v.s == "death_zone" then
 					love.graphics.setColor(1,0.2,0.2,alpha)
+					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
+				elseif v.s == "win_zone" then
+					love.graphics.setColor(0.2,255,0.2,alpha)
 					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 				end
 			end

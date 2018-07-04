@@ -12,7 +12,7 @@ function winzone:create(x, y, w, h)
 	return object
 end
 
-function winzone.collided(entity)
+function winzone_collided(entity)
     for i, v in ipairs(winzone) do
         if (((entity.x+entity.w > v.x) and (entity.x+entity.w) < (v.x+v.w)) or 
             ((entity.x > v.x) and (entity.x < v.x+v.w))) and

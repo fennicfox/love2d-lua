@@ -332,3 +332,4 @@ death_zone:650:525:25:25
 death_zone:625:525:25:25
 death_zone:600:525:25:25
 death_zone:700:500:50:50
+win_zone:1050:450:100:100
