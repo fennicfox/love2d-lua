@@ -109,8 +109,8 @@ function playing_draw(dt)
 			(love.graphics.getWidth()-130),
 			5
 			)
-	love.graphics.setFont(graphFont)
-	love.graphics.print("Death Count: "..tostring(p.deathcount), 0,0)
+	love.graphics.setFont(deathFont)
+	love.graphics.print("Death Count: "..tostring(p.deathcount), 10,0)
 	if frozen then
 		love.graphics.setColor(0.2,0.2,0.2,0.5)
 		love.graphics.rectangle("fill",0, 0, love.graphics.getWidth(),love.graphics.getHeight())

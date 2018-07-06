@@ -4,6 +4,15 @@ function to_main_menu()
 	for i, v in ipairs(button)  do button[i]  = nil end
 	for i, v in ipairs(player)  do player[i]  = nil end
 	for i, v in ipairs(scenary) do scenary[i] = nil end
+	if death_zone ~= nil then
+		for i, v in ipairs(death_zone) do death_zone[i] = nil end
+		for i, v in ipairs(win_zone) do win_zone[i] = nil end
+	end
+	if deathzone ~= nil then
+		for i, v in ipairs(deathzone) do deathzone[i] = nil end
+		for i, v in ipairs(winzone) do winzone[i] = nil end
+	end
+
 	gamestate = "main_menu"
 	game_loaded = false
 	main_menu_load()
