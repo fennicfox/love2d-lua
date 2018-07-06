@@ -1,15 +1,16 @@
 require ("utilities.loading_saves")
 
 function to_main_menu()
-	for i, v in ipairs(button) do button.remove(i) end
-	for i, v in ipairs(player) do player.remove(i) end
+	for i, v in ipairs(button)  do button[i]  = nil end
+	for i, v in ipairs(player)  do player[i]  = nil end
+	for i, v in ipairs(scenary) do scenary[i] = nil end
 	gamestate = "main_menu"
 	game_loaded = false
 	main_menu_load()
 end
 
 function to_game()
-	for i, v in ipairs(button) do button.remove(i) end
+	for i, v in ipairs(button) do button[i] = nil end
 	gamestate = "playing"
 	camera.x = 0
 	camera.y = 0
@@ -18,17 +19,17 @@ function to_game()
 end
 
 function to_settings()
-	for i, v in ipairs(button) do button.remove(i) end
+	for i, v in ipairs(button) do button[i] = nil end
 end
 
 function to_paused()
-	for i, v in ipairs(button) do button.remove(i) end
+	for i, v in ipairs(button) do button[i] = nil end
 	gamestate = "paused"
 	paused_load()
 end
 
 function to_level_editor()
-	for i, v in ipairs(button) do button.remove(i) end
+	for i, v in ipairs(button) do button[i] = nil end
 	gamestate = "level_editor"
 	camera.x = 0
 	camera.y = 0
