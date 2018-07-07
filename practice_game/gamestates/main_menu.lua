@@ -1,3 +1,5 @@
+local menustate = "main"
+
 function main_menu_load()
 	local windowHeight 	= love.graphics.getHeight( ) /2  -- Gets the window height
 	local windowWidth  	= love.graphics.getWidth( )  /2  -- Gets the window width
@@ -5,28 +7,41 @@ function main_menu_load()
 	local newColour = {0.4,0.4,0.4}
 	button_start 	= button:create(windowWidth, windowHeight-60, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "start",        to_game)
 	button_editor   = button:create(windowWidth, windowHeight-20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "level editor", to_level_editor)
-	button_settings = button:create(windowWidth, windowHeight+20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     to_settings)
+	button_settings = button:create(windowWidth, windowHeight+20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     function() menustate = "settings" end)
 	button_quit 	= button:create(windowWidth, windowHeight+60, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit",         love.event.quit)
+	findAllLevels()
 end
 
 function main_menu_draw()
-	button_start:show()
-	button_editor:show()
-	button_settings:show()
-	button_quit:show()
+	if menustate == "main" then
+		button_start:show()
+		button_editor:show()
+		button_settings:show()
+		button_quit:show()
+	elseif menustate == "settings" then
+	end
 end
 
 function main_menu_update(dt)
-	if kpressed then
+	if menustate == "main" then
+		if kpressed then
+			if pressedk == "escape" then
+				love.event.quit()
+			end
+		end
+	elseif menustate == "settings" then
 		if pressedk == "escape" then
-			love.event.quit()
+			menustate = "main"
 		end
 	end
 end
 
 function main_menu_resize(w, h)
-	button_start:changePos(    w/2, h/2-60)
-	button_editor:changePos(   w/2, h/2-20)
-	button_settings:changePos( w/2, h/2+20)
-	button_quit:changePos(     w/2, h/2+60)
+	if menustate == "main" then
+		button_start:changePos(    w/2, h/2-60)
+		button_editor:changePos(   w/2, h/2-20)
+		button_settings:changePos( w/2, h/2+20)
+		button_quit:changePos(     w/2, h/2+60)
+	elseif menustate == "settings" then
+	end
 end

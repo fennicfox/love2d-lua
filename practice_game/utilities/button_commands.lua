@@ -28,7 +28,7 @@ function to_game()
 end
 
 function to_settings()
-	for i, v in ipairs(button) do button[i] = nil end
+	
 end
 
 function to_paused()
