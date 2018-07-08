@@ -52,10 +52,5 @@ function getMaxTextWidth()
 end
 
 function findAllLevels()
-    local f = io.popen("dir \"practice_game\"")
-    if f then
-        print(f:read("*a"))
-    else
-        print("failed to read")
-    end
+
 end
