@@ -12,17 +12,6 @@ function main_menu_load()
 	findAllLevels()
 end
 
-function main_menu_draw()
-	if menustate == "main" then
-		button_start:show()
-		button_editor:show()
-		button_settings:show()
-		button_quit:show()
-	elseif menustate == "settings" then
-		fsystem_draw()
-	end
-end
-
 function main_menu_update(dt)
 	if menustate == "main" then
 		if kpressed then
@@ -31,10 +20,23 @@ function main_menu_update(dt)
 			end
 		end
 	elseif menustate == "settings" then
-		if pressedk == "escape" then
-			menustate = "main"
+		if kpressed then
+			if pressedk == "escape" then
+				menustate = "main"
+			end
 		end
 		fsystem_update(dt)
+	end
+end
+
+function main_menu_draw()
+	if menustate == "main" then
+		button_start:show()
+		button_editor:show()
+		button_settings:show()
+		button_quit:show()
+	elseif menustate == "settings" then
+		fsystem_draw()
 	end
 end
 
