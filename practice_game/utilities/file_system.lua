@@ -18,9 +18,8 @@ local scroll_speed = 100000
 function fsystem.create(text)
     --truncating the text
     local trunc_text = text:sub(-text:len(),-5)
-    trunc_text = trunc_text:sub(-255,20)
-    if trunc_text:len() > 20 then
-        trunc_text = trunc_text:sub(-255,20).."..."
+    if trunc_text:len() >= 60 then
+        trunc_text = trunc_text:sub(-255,60).."..."
     end
     
     --adding the object to the table
@@ -37,6 +36,7 @@ function fsystem.create(text)
 end
 
 function fsystem_update(dt)
+    camera:setScale(1, 1)
     local x = 0
     local y = 0
     for i, v in ipairs(fsystem) do
@@ -45,8 +45,13 @@ function fsystem_update(dt)
         y = y + 50
         v.y = y
 
-        if (mousex > (10) and mousey > (v.y)) and (mousex < (love.graphics.getWidth()-20) and mousey < v.y+42) then
+        if (camera.x+mousex > (10) and camera.y+mousey > (v.y)) and (camera.x+mousex < (love.graphics.getWidth()-20) and camera.y+mousey < v.y+42) then
             v.boxcolour = boxHcolour
+            if mpressed and pressedm == 1 then
+                print(v.full_text.. " is selected.")
+                selected_level = 'practice_game/levels/'..v.full_text
+                menustate = "main"
+            end
         else
             v.boxcolour = boxcolour
         end
@@ -57,9 +62,6 @@ end
 
 function fsystem_draw()
     love.graphics.setFont(fsystemFONT)
-    love.graphics.setColor(1,1,1,1)
-    love.graphics.line(0,44,love.graphics.getWidth(),44)
-    love.graphics.print(title, ((love.graphics.getWidth()/2) - (fsystemFONT:getWidth(title)/2)), 2)
     camera:set()
     for i, v in ipairs(fsystem) do
         --box
@@ -71,6 +73,11 @@ function fsystem_draw()
         love.graphics.print(v.text, v.x, v.y)
     end
     camera:unset()
+    love.graphics.setColor(0,0,0,1)
+    love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(),44)
+    love.graphics.setColor(1,1,1,1)
+    love.graphics.line(0,44,love.graphics.getWidth(),44)
+    love.graphics.print(title, ((love.graphics.getWidth()/2) - (fsystemFONT:getWidth(title)/2)), 2)
 end
 
 function getMaxTextWidth()
@@ -84,39 +91,25 @@ function getMaxTextWidth()
 end
 
 function findAllLevels() 
-    print("files: ")
     for file in io.popen([[dir "practice_game\levels\" /b]]):lines() do
-        print(file)
         fsystem.create(file)
     end
-    print()
 end
-
-
-
-
-
 
 --scrolling functions
 function scroll_update(dt)
-    --print(scroll_y)
-    print("camera")
-    print(camera.x, camera.y, camera.xvel, camera.yvel)
-    print("scroll")
-    print(scroll_y, scroll_speed, scroll_maxDepth)
     local scroll_y = 0
-    camera.friction = 10
     if mwheelup and camera.y > 0 then
         scroll_y = -scroll_speed
     elseif mwheeldown and camera.y < scroll_maxDepth then 
         scroll_y = scroll_speed
     end
     camera:move(0, scroll_y, dt)
-
-
-    if camera.y < 0 then
-        camera.y = 0
-    elseif camera.y > scroll_maxDepth then
-        camera.y = scroll_maxDepth 
+    if scroll_maxDepth > 0 then
+        if camera.y < 0 then
+            camera.y = 0
+        elseif camera.y > scroll_maxDepth then
+            camera.y = scroll_maxDepth 
+        end
     end
 end

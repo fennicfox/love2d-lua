@@ -17,6 +17,7 @@ function love.load()
 	graphFont 		 = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
 	click_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
 	gamestate        = "main_menu"
+	selected_level   = "practice_game/default.oli"
 	main_menu_load()
 end
 

@@ -1,4 +1,4 @@
-local menustate = "main"
+menustate = "main"
 
 function main_menu_load()
 	local windowHeight 	= love.graphics.getHeight( ) /2  -- Gets the window height
@@ -7,12 +7,23 @@ function main_menu_load()
 	local newColour = {0.4,0.4,0.4}
 	button_start 	= button:create(windowWidth, windowHeight-60, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "start",        to_game)
 	button_editor   = button:create(windowWidth, windowHeight-20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "level editor", to_level_editor)
-	button_settings = button:create(windowWidth, windowHeight+20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     function() menustate = "settings" end)
+
+	--this messy line below is temporary :)
+	button_settings = button:create(windowWidth, windowHeight+20, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     function() 
+		for i, v in ipairs(fsystem) do
+			print(v.text)
+			fsystem[i] = nil
+		end
+		menustate = "settings" 
+		findAllLevels()
+	end)
+
 	button_quit 	= button:create(windowWidth, windowHeight+60, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit",         love.event.quit)
-	findAllLevels()
 end
 
 function main_menu_update(dt)
+	camera.x = 0
+	camera.y = 0
 	if menustate == "main" then
 		if kpressed then
 			if pressedk == "escape" then
