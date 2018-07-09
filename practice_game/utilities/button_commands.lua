@@ -45,7 +45,7 @@ function to_level_editor()
 end
 
 function to_saving()
-	local file = io.open("practice_game/level.oli", "w")
+	local file = io.open("practice_game/levels/level.oli", "w")
 	for i, v in ipairs(editor_graphics) do
 		if v.s == "death_zone" or v.s == "win_zone" then
 			file:write(v.s..":"..tostring(v.x)..":"..tostring(v.y)..":"..tostring(v.w)..":"..tostring(v.h).."\n")
@@ -61,8 +61,8 @@ function to_open(override)
 		level_editor_menu_state = "save"
 		return
 	else
-		local file = io.open("practice_game/level.oli", "r")
-		for i in io.lines 'practice_game/level.oli' do
+		local file = io.open("practice_game/levels/level.oli", "r")
+		for i in io.lines 'practice_game/levels/level.oli' do
 			local string = ""
 			local object = {}
 			local str = file:read()

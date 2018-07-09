@@ -19,6 +19,7 @@ function main_menu_draw()
 		button_settings:show()
 		button_quit:show()
 	elseif menustate == "settings" then
+		fsystem_draw()
 	end
 end
 
@@ -33,6 +34,7 @@ function main_menu_update(dt)
 		if pressedk == "escape" then
 			menustate = "main"
 		end
+		fsystem_update(dt)
 	end
 end
 

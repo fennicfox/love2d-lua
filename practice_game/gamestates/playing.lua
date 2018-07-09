@@ -5,9 +5,9 @@ local camera_speed = 2000
 local frozen = false
 
 function playing_load()
-	local file = io.open("practice_game/level.oli", "r")
+	local file = io.open("practice_game/levels/level.oli", "r")
 	p = player:create()
-	for i in io.lines 'practice_game/level.oli' do
+	for i in io.lines 'practice_game/levels/level.oli' do
 		local string = ""
 		local object = {}
 		local str = file:read()
