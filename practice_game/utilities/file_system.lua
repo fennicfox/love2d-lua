@@ -45,6 +45,7 @@ function fsystem_update(dt)
         y = y + 50
         v.y = y
 
+        --if the mouse hovers over the button
         if (camera.x+mousex > (10) and camera.y+mousey > (v.y)) and (camera.x+mousex < (love.graphics.getWidth()-20) and camera.y+mousey < v.y+42) then
             v.boxcolour = boxHcolour
             if mpressed and pressedm == 1 then
@@ -73,6 +74,8 @@ function fsystem_draw()
         love.graphics.print(v.text, v.x, v.y)
     end
     camera:unset()
+
+    --the header
     love.graphics.setColor(0,0,0,1)
     love.graphics.rectangle("fill", 0,0,love.graphics.getWidth(),44)
     love.graphics.setColor(1,1,1,1)
@@ -80,6 +83,7 @@ function fsystem_draw()
     love.graphics.print(title, ((love.graphics.getWidth()/2) - (fsystemFONT:getWidth(title)/2)), 2)
 end
 
+--gets the highest font width of all the text
 function getMaxTextWidth()
     local mw = 0
     for i, v in ipairs(fsystem) do
@@ -90,13 +94,14 @@ function getMaxTextWidth()
     return mw
 end
 
+--finds all of the levels
 function findAllLevels() 
     for file in io.popen([[dir "practice_game\levels\" /b]]):lines() do
         fsystem.create(file)
     end
 end
 
---scrolling functions
+--scrolling update
 function scroll_update(dt)
     local scroll_y = 0
     if mwheelup and camera.y > 0 then
