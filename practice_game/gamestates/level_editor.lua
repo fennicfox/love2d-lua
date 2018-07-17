@@ -148,7 +148,10 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		end
 	
 		if mwheelup and (camera.scaleX > 0.2 and camera.scaleY > 0.2) then
+			local cw = camera.x + (love.graphics.getWidth() * camera.scaleX)
+			local ch = camera.h + (love.graphics.getHeight() * camera.scaleY)
 			camera:scale(0.8,0.8) --don't change
+			
 		elseif mwheeldown and (camera.scaleX < 10 and camera.scaleY < 10) then
 			camera:scale(1.25,1.25) --don't change
 		end
