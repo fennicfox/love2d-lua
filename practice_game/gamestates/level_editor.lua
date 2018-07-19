@@ -218,6 +218,9 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		if love.keyboard.isDown('x') then
 			for i, v in ipairs(editor_graphics) do
 				if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
+					if selected == editor_graphics[i] then
+						selected = nil
+					end
 					table.remove(editor_graphics, i)
 				end
 			end
@@ -292,6 +295,12 @@ function level_editor_draw()
 					love.graphics.rectangle('line', v.x, v.y, v.w, v.h)
 				end
 			end
+		end
+		if selected ~= nil then
+			love.graphics.setColor(0.945, 0.345, 0, 1) -- default selected object in blender colour
+			love.graphics.rectangle('line', selected.x-2, selected.y-2, selected.w+3, selected.h+3)
+			love.graphics.rectangle('line', selected.x-1, selected.y-1, selected.w+2, selected.h+2)
+			love.graphics.rectangle('line', selected.x, selected.y, selected.w, selected.h)
 		end
 		camera:unset()
 	elseif editor_state == "menu" then
