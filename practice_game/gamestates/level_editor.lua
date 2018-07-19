@@ -34,6 +34,7 @@ editor_state = "main"
 
 local shapes = {}
 local shape_selected = 1   --shape index
+local selected = nil
 local grid_spacing = 50
 local grid = true
 local grid_lock = true
@@ -145,6 +146,14 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					editor_graphics:win_zone(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 				end
 			end
+			if pressedm == 2 then
+				for i, v in ipairs(editor_graphics) do
+					if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
+						selected = editor_graphics[i]
+						print(selected)
+					end
+				end
+			end
 		end
 	
 		if mwheelup and (camera.scaleX > 0.2 and camera.scaleY > 0.2) then
@@ -161,14 +170,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			camera.x = mx - (mousex * camera.scaleX)
 			camera.y = my - (mousey * camera.scaleY)
 		end
-	
-		if love.keyboard.isDown('x') then
-			for i, v in ipairs(editor_graphics) do
-				if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
-					table.remove(editor_graphics, i)
-				end
-			end
-		end
+		
 		if kpressed then
 			if pressedk == 'g' then
 				if grid then 
@@ -213,12 +215,19 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				end
 			end
 		end
+		if love.keyboard.isDown('x') then
+			for i, v in ipairs(editor_graphics) do
+				if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
+					table.remove(editor_graphics, i)
+				end
+			end
+		end
 	elseif editor_state == "menu" then
 		level_editor_menu_update( dt )
 	end
-
+	
 	--flashing effect for player (ignore and don't change) I might put this into a function later.
-	if alpha < 1 and not cooldown then
+		if alpha < 1 and not cooldown then
 		alpha = (alpha + (dt/flashing_speed))
 		if alpha > 1 then
 			cooldown = true
