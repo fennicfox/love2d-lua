@@ -1,4 +1,4 @@
-local moonshine = require 'More shaders.moonshine'
+local moonshine = require 'more_shaders.moonshine'
 --black and white
 local shader1 = love.graphics.newShader [[
 extern vec2 screen;
