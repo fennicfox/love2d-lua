@@ -7,11 +7,14 @@ I'm practicing developing mock games like this one I have created here. In this 
 ### Level Editor:
 ![Alt Text](https://media.giphy.com/media/5nvUszACUc4SVw4dMT/giphy.gif)
 
+### Picking Level:
+![Alt Text](https://media.giphy.com/media/55kujmAtxV1H08io1y/giphy.gif)
+
 ### Playing State:
 ![Alt Text](https://media.giphy.com/media/euCvFMpcEvAq3Bys7x/giphy.gif)
 
 ## Agario rip off
-Based on the game Agario. Procedurally generated word with endless food. Not online, no other players, I'm just interested in learning this language.
+This little mock creation was based on the game [agar.io](http://agar.io/). Procedurally generated word with endless food. Not online, no other players, I'm just interested in learning this language.
 
 ![Alt Text](https://media.giphy.com/media/QLRHAHDiy9634sCYiH/giphy.gif)
 
