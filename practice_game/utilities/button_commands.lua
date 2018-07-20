@@ -95,6 +95,7 @@ function to_open(override)
 												tonumber(temp_table[4]))
 			end
 		end
+		editor_graphics.selected = nil
 		file:close()
 	end
 end

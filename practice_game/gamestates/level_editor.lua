@@ -33,11 +33,11 @@
 editor_graphics = {}
 editor_graphics.w = 50 --the width  of the things being put down
 editor_graphics.h = 50 --the height of the things being put down
+editor_graphics.selected = nil
 editor_state = "main"
 
 local shapes = {}
 local shape_selected = 1   --shape index
-local selected = nil
 local grid_spacing = 50
 local grid = true
 local grid_lock = true
@@ -57,6 +57,21 @@ local rmb_y = mousey
 
 --for resizing objects
 local cs = 3 --corner size
+local corner_hit = false
+local corner_hit_nw = false
+local corner_hit_ne = false
+local corner_hit_sw = false
+local corner_hit_se = false
+local corner_nw_x = 0
+local corner_nw_y = 0
+local corner_ne_x = 0
+local corner_ne_y = 0
+local corner_sw_x = 0
+local corner_sw_y = 0
+local corner_se_x = 0
+local corner_se_y = 0
+local presspointx = 0
+local presspointy = 0
 
 table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
@@ -128,6 +143,13 @@ end
 
 function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 	if editor_state == "main" then
+		if love.mouse.isDown(1) and not presspointgot then
+			presspointx = level_editor_mousex()
+			presspointy = level_editor_mousey()
+			presspointgot = true
+		elseif not love.mouse.isDown(1) then
+			presspointgot = false
+		end
 		if love.mouse.isDown(2) then
 			if not scrolling_has_got then
 				scrolling_has_got = true
@@ -162,7 +184,15 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				if mousex == rmb_x and mousey == rmb_y then
 					for i, v in ipairs(editor_graphics) do
 						if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
-							selected = editor_graphics[i]
+							editor_graphics.selected = editor_graphics[i]
+							corner_nw_x = editor_graphics.selected.x
+							corner_nw_y = editor_graphics.selected.y
+							corner_ne_x = editor_graphics.selected.x + editor_graphics.selected.w
+							corner_ne_y = editor_graphics.selected.x 
+							corner_sw_x = editor_graphics.selected.x
+							corner_sw_y = editor_graphics.selected.y + editor_graphics.selected.h
+							corner_se_x = editor_graphics.selected.x + editor_graphics.selected.w
+							corner_se_y = editor_graphics.selected.y + editor_graphics.selected.h
 						end
 					end
 				end
@@ -235,12 +265,29 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		if love.keyboard.isDown('x') then
 			for i, v in ipairs(editor_graphics) do
 				if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
-					if selected == editor_graphics[i] then
-						selected = nil
+					if editor_graphics.selected == editor_graphics[i] then
+						editor_graphics.selected = nil
 					end
 					table.remove(editor_graphics, i)
 				end
 			end
+		end
+		if love.keyboard.isDown('lctrl') then
+			if love.mouse.isDown(1) then
+				shape_corner_manipulation(dt)
+			else
+				corner_hit = false
+				corner_hit_ne = false
+				corner_hit_nw = false
+				corner_hit_se = false
+				corner_hit_sw = false
+			end
+		else
+			corner_hit = false
+			corner_hit_ne = false
+			corner_hit_nw = false
+			corner_hit_se = false
+			corner_hit_sw = false
 		end
 	elseif editor_state == "menu" then
 		level_editor_menu_update( dt )
@@ -308,17 +355,16 @@ function level_editor_draw()
 				end
 			end
 		end
-		if selected ~= nil then
+		if editor_graphics.selected ~= nil then
 			love.graphics.setColor(1, 0.627, 0, alpha) -- default selected object in blender colour
-			love.graphics.rectangle('line', selected.x, selected.y, selected.w, selected.h)
-			love.graphics.rectangle('line', selected.x-1, selected.y-1, selected.w+2, selected.h+2)
-			love.graphics.rectangle('line', selected.x-2, selected.y-2, selected.w+4, selected.h+4)
+			love.graphics.rectangle('line', editor_graphics.selected.x, editor_graphics.selected.y, editor_graphics.selected.w, editor_graphics.selected.h)
+			love.graphics.rectangle('line', editor_graphics.selected.x-1, editor_graphics.selected.y-1, editor_graphics.selected.w+2, editor_graphics.selected.h+2)
 			if love.keyboard.isDown('lctrl') then
 				love.graphics.setColor(1, 0, 1, alpha) -- default selected object in blender colour
-				love.graphics.rectangle('fill', selected.x-cs, selected.y-cs, cs*2, cs*2)   --top left
-				love.graphics.rectangle('fill', (selected.x-cs)+selected.w, selected.y-cs, cs*2, cs*2) --top right
-				love.graphics.rectangle('fill', selected.x-cs, (selected.y-cs)+selected.h, cs*2, cs*2) --bottom left
-				love.graphics.rectangle('fill', (selected.x-cs)+selected.w, (selected.y-cs)+selected.h, cs*2, cs*2) --buttom right
+				love.graphics.rectangle('fill', editor_graphics.selected.x-cs, editor_graphics.selected.y-cs, cs*2, cs*2)   --top left
+				love.graphics.rectangle('fill', (editor_graphics.selected.x-cs)+editor_graphics.selected.w, editor_graphics.selected.y-cs, cs*2, cs*2) --top right
+				love.graphics.rectangle('fill', editor_graphics.selected.x-cs, (editor_graphics.selected.y-cs)+editor_graphics.selected.h, cs*2, cs*2) --bottom left
+				love.graphics.rectangle('fill', (editor_graphics.selected.x-cs)+editor_graphics.selected.w, (editor_graphics.selected.y-cs)+editor_graphics.selected.h, cs*2, cs*2) --buttom right
 			end
 		end
 		camera:unset()
@@ -346,4 +392,62 @@ end
 
 function level_editor_mousey()
 	return camera.y+(mousey*camera.scaleY)
+end
+
+function shape_corner_manipulation(dt)
+	corner_hit = true
+	if (level_editor_mousex() >= editor_graphics.selected.x-cs and								 --top left
+	level_editor_mousey() >=  editor_graphics.selected.y-cs and
+	level_editor_mousex() <= editor_graphics.selected.x+cs and
+	level_editor_mousey() <= editor_graphics.selected.y+cs) or
+	corner_hit_nw and not corner_hit_ne and not corner_hit_se and not corner_hit_sw then
+		corner_hit_nw = true
+		corner_hit_ne = false
+		corner_hit_sw = false
+		corner_hit_se = false
+		editor_graphics.selected.x =  round(math.min(level_editor_mousex(),corner_ne_x-2), grid_lock_size)
+		editor_graphics.selected.w = corner_ne_x - editor_graphics.selected.x
+		editor_graphics.selected.y =  round(math.min(level_editor_mousey(),corner_sw_y-2), grid_lock_size)
+		editor_graphics.selected.h = corner_sw_y - editor_graphics.selected.y
+	elseif (level_editor_mousex() >= (editor_graphics.selected.x-cs)+editor_graphics.selected.w and --top right
+	level_editor_mousey()    >= editor_graphics.selected.y-cs and
+	level_editor_mousex()    <= (editor_graphics.selected.x+cs)+editor_graphics.selected.w and
+	level_editor_mousey()    <= editor_graphics.selected.y+cs) or
+	corner_hit_ne and not corner_hit_nw and not corner_hit_sw and not corner_hit_se then
+		corner_hit_nw = false
+		corner_hit_ne = true
+		corner_hit_sw = false
+		corner_hit_se = false
+		editor_graphics.selected.w = math.max(round(level_editor_mousex()-editor_graphics.selected.x, grid_lock_size), 1)
+		editor_graphics.selected.y =  round(math.min(level_editor_mousey(),corner_se_y-2), grid_lock_size)
+		editor_graphics.selected.h = corner_se_y - editor_graphics.selected.y
+	elseif (level_editor_mousex() >= editor_graphics.selected.x-cs and								--bottom left
+	level_editor_mousey()    >= (editor_graphics.selected.y-cs)+editor_graphics.selected.h and
+	level_editor_mousex()    <= editor_graphics.selected.x+cs and
+	level_editor_mousey()    <= (editor_graphics.selected.y+cs)+editor_graphics.selected.h) or
+	corner_hit_sw and not corner_hit_ne and not corner_hit_nw and not corner_hit_se  then
+		corner_hit_nw = false
+		corner_hit_ne = false
+		corner_hit_sw = true
+		corner_hit_se = false
+		editor_graphics.selected.h = math.max(round(level_editor_mousey()-editor_graphics.selected.y, grid_lock_size), 1)
+		editor_graphics.selected.x =  round(math.min(level_editor_mousex(),corner_se_x-2), grid_lock_size)
+		editor_graphics.selected.w = corner_se_x - editor_graphics.selected.x
+	elseif (level_editor_mousex() >= (editor_graphics.selected.x-cs)+editor_graphics.selected.w and --bottom right
+	level_editor_mousey()    >= (editor_graphics.selected.y-cs)+editor_graphics.selected.h and
+	level_editor_mousex()    <= (editor_graphics.selected.x+cs)+editor_graphics.selected.w and
+	level_editor_mousey()    <= (editor_graphics.selected.y+cs)+editor_graphics.selected.h) or
+	corner_hit_se and not corner_hit_nw and not corner_hit_ne and not corner_hit_sw then
+		corner_hit_nw = false
+		corner_hit_ne = false
+		corner_hit_sw = false
+		corner_hit_se = true
+		editor_graphics.selected.w = math.max(round(level_editor_mousex()-editor_graphics.selected.x, grid_lock_size), 1)
+		editor_graphics.selected.h = math.max(round(level_editor_mousey()-editor_graphics.selected.y, grid_lock_size), 1)
+	else
+		corner_hit_nw = false
+		corner_hit_ne = false
+		corner_hit_sw = false
+		corner_hit_se = false
+	end
 end
