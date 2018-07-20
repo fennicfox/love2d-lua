@@ -1,6 +1,6 @@
 require("camera")
 player = {}
-
+local font_scaling_size = 200
 function player.load()
 	player.x        = 0
 	player.y        = 0
@@ -13,7 +13,7 @@ function player.load()
 	player.red      = math.random(0.2,0.3)
 	player.green    = math.random(0.2,0.3)
 	player.blue     = math.random(0.2,0.3)
-	player.font     = love.graphics.setNewFont("SourceSansPro-Light.ttf", player.r)
+	player.font     = love.graphics.setNewFont("SourceSansPro-Light.ttf", 500 )
 end
 
 function player.draw()
@@ -21,8 +21,19 @@ function player.draw()
 	love.graphics.circle("fill", player.x, player.y, player.r, player.s)
 	love.graphics.setColor(1, 1, 1, 1)
 	love.graphics.setFont(player.font)
-	love.graphics.print(math.floor(player.r),player.x - player.font:getWidth(math.floor(player.r))/2, player.y - player.font:getHeight(math.floor(player.r))/2)
-	--love.graphics.print(math.floor(player.r),player.x, player.y)
+	love.graphics.push()
+	love.graphics.scale((player.r/2)/font_scaling_size, (player.r/2)/font_scaling_size) 
+	--starting scale = 0.1
+	--scale increments by 0.0025
+	--e.g. 0.1, 0.1025, 0.1050 etc..
+	--need to decrement scaler every time font gets bigger
+	--e.g. 10, 9.75609756098, 9.52380952381
+	--1 / 0.1025
+	love.graphics.print(math.floor(player.r),
+				player.x*(1/((player.r/2)/font_scaling_size))-(player.font:getWidth(math.floor(player.r))/2),
+				player.y*(1/((player.r/2)/font_scaling_size))-(player.font:getHeight(math.floor(player.r))/2)
+	)
+	love.graphics.pop()
 end
 
 
