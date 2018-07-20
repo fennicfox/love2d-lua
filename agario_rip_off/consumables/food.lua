@@ -42,6 +42,7 @@ function food:update( dt )
         if (v.x-player.x)^2 + (player.y-v.y)^2 <= (player.r+v.radius)^2 then --if player hits food
             v:respawn()
             player.r=player.r+0.5 --increase the player's mass
+            player.font = love.graphics.setNewFont("SourceSansPro-Light.ttf", player.r)
         end
     end
 end

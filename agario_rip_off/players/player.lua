@@ -1,5 +1,4 @@
 require("camera")
-
 player = {}
 
 function player.load()
@@ -11,14 +10,19 @@ function player.load()
 	player.speed    = 2250
 	player.r        = 20
 	player.s        = 512
-	player.red      = math.random(0.1,1)
-	player.green    = math.random(0.1,1)
-	player.blue     = math.random(0.1,1)
+	player.red      = math.random(0.2,0.3)
+	player.green    = math.random(0.2,0.3)
+	player.blue     = math.random(0.2,0.3)
+	player.font     = love.graphics.setNewFont("SourceSansPro-Light.ttf", player.r)
 end
 
 function player.draw()
 	love.graphics.setColor(player.red, player.green, player.blue, 1)
-	love.graphics.circle("fill",player.x,player.y,player.r,player.s)
+	love.graphics.circle("fill", player.x, player.y, player.r, player.s)
+	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.setFont(player.font)
+	love.graphics.print(math.floor(player.r),player.x - player.font:getWidth(math.floor(player.r))/2, player.y - player.font:getHeight(math.floor(player.r))/2)
+	--love.graphics.print(math.floor(player.r),player.x, player.y)
 end
 
 
