@@ -1,9 +1,9 @@
 # LÖVE 2D / LUA Workshop
 
-I use this respository for some concepts I mess around with in the LÖVE 2D 11.0
+I use this respository for future reference of useful code I have created. The idea of this is to generally learn and mess around in the LÖVE 2D 11.0 engine as well. 
 
 ## Practice Game
-I'm practicing developing mock games like this one I have created here. In this game, I have a level editor, where I can create a level and play it. The levels also save to a file so whenever I close the game, it isn't lost. I plan to create the level editor quite complex as I'm learning quite a lot from it. I am learning how to create simple, fluid interaction with the application and trying to implement a lot of utility. On top of this, I'm learning a lot about 2D vectors and learning how to scale UI to different window sizes. It's quite satisfying to get simple level editor view navigation working like zooming, panning, grid locks and the actual visualised grids itself.
+I'm practicing developing mock games like this one here. In this game, I have a level editor where I can create a level and save it to a file. The levels can then be played in the actual game itself. I plan to make the level editor quite complex and put in as much utility as possible as I'm learning quite a lot from it. I am learning how to create simple and fluid interaction with the application so it's easy to use. I'm learning also learning a lot about 2D vectors and the typical problems you will face with them. For example, you have to consider scaling the UI to different window sizes / resolution. It's quite satisfying to get level editor view interaction working. I've learnt how to zoom, pan and even scroll.
 ### Level Editor:
 ![Alt Text](https://media.giphy.com/media/5nvUszACUc4SVw4dMT/giphy.gif)
 
