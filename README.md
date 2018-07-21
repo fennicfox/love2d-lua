@@ -14,17 +14,17 @@ I'm practicing developing mock games like this one here. In this game, I have a 
 ![Alt Text](https://media.giphy.com/media/euCvFMpcEvAq3Bys7x/giphy.gif)
 
 ## Agario rip off
-This little mock creation was based on the game [agar.io](http://agar.io/). Procedurally generated word with endless food. Not online, no other players, I'm just interested in learning this language.
+This little mock creation was based on the game [agar.io](http://agar.io/). Unlike Agar.io, it has a procedurally generated world with endless food. This doesn't have online,  or other players, I'm just interested in learning how to create this type of game for experience.
 
 ![Alt Text](https://media.giphy.com/media/QLRHAHDiy9634sCYiH/giphy.gif)
 
 ## Fading text
-Cool fading text effect which transitions to different colours. This could be useful for different games. Again, I'm just learning the language, so I'm just sticking to small ideas.
+A cool fading text effect which transitions to different colours. This could be useful for different games. Again, I'm just learning the language, so I'm just sticking to small ideas.
 
 ![Alt Text](https://media.giphy.com/media/1xOyI9xMWaNr7g2z5J/giphy.gif)
 
 ## Shaders
-Shaders are strange and I'm struggling how to use them. LÖVE 2D are written in GLSL which is the (OpenGL Shading Language).
+Shaders are strange and I'm struggling how to use them. LÖVE 2D shadres are written in GLSL which is the (OpenGL Shading Language).
 
 ### Lighting
 I'm struggling creating lighting in LÖVE 2D but I produced this work relatively quickly. I need to research this more.
@@ -38,4 +38,4 @@ These are purple drawn squares, however, every single square (apart from the top
 
 ![Alt Text](https://i.gyazo.com/a4ec582719272d3ea388eb04a63fbbf6.png)
 
-The middle bottom shaders has a film grain shader applied to it but you can't tell the difference because it's a .png not a .gif
+The bottom-middle shaders has a film grain shader applied to it but you can't tell the difference because the picture shown above is a .png, not a .gif.
