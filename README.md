@@ -19,9 +19,9 @@ This little mock creation was based on the game [agar.io](http://agar.io/). Proc
 ![Alt Text](https://media.giphy.com/media/QLRHAHDiy9634sCYiH/giphy.gif)
 
 ## Fading text
-Cool fading text effect which transitions to different colours. This could be useful for different games. Again, I'm just learning the language.
+Cool fading text effect which transitions to different colours. This could be useful for different games. Again, I'm just learning the language, so I'm just sticking to small ideas.
 
-![Alt Text](https://media.giphy.com/media/3kxa2lBohzEZ1WTgYi/giphy.gif)
+![Alt Text](https://media.giphy.com/media/1xOyI9xMWaNr7g2z5J/giphy.gif)
 
 ## Shaders
 Shaders are strange and I'm struggling how to use them. LÖVE 2D are written in GLSL which is the (OpenGL Shading Language).
