@@ -42,6 +42,8 @@ local grid_spacing = 50
 local grid = true
 local grid_lock = true
 local grid_lock_size = editor_graphics.w / 2
+local drawing_start_x = 0
+local drawing_start_y = 0
 
 --for player, selected objects and death zone fading
 local flashing_speed = 1 --lower is faster
@@ -198,6 +200,13 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				end
 				
 			end
+		elseif love.mouse.isDown(1) and not drawing_start_got then
+				drawing_start_got = true
+				drawing_start_x = level_editor_mousex()
+				drawing_start_y = level_editor_mousey()
+			end
+		elseif drawing_start_got then
+			drawing_start_got = true
 		end
 	
 		if mwheelup and (camera.scaleX > 0.2 and camera.scaleY > 0.2) then
