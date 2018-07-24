@@ -11,7 +11,7 @@ function discord_load()
         state = "Testing",
         details = "Fixing errors",
         startTimestamp = now,
-        deaths = deathsInSession
+        details = "Died "..deathsInSession.." times",
     }
 
     nextPresenceUpdate = 0
@@ -19,6 +19,7 @@ end
 
 function discord_update()
     if nextPresenceUpdate < love.timer.getTime() then
+        presence.details = "Died "..deathsInSession.." times"
         discordRPC.updatePresence(presence)
         nextPresenceUpdate = love.timer.getTime() + seconds_for_update
     end
