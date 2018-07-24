@@ -3,7 +3,7 @@
 I use this respository for future reference of useful code I have created. The idea of this is to generally learn and mess around in the LÖVE 2D 11.0 engine as well. 
 
 ## Practice Game
-I'm practicing developing mock games like this one here. In this game, I have a level editor where I can create a level and save it to a file. The levels can then be played in the actual game itself. I plan to make the level editor quite complex and put in as much utility as possible as I'm learning quite a lot from it. I am learning how to create simple and fluid interaction with the application so it's easy to use. I'm learning also learning a lot about 2D vectors and the typical problems you will face with them. For example, you have to consider scaling the UI to different window sizes / resolution. It's quite satisfying to get level editor view interaction working. I've learnt how to zoom, pan and even scroll.
+I'm practicing developing mock games like this one here. In this game, I have a level editor where I can create a level and save it to a file. The levels can then be played in the actual game itself. I plan to make the level editor quite complex and put in as much utility as possible as I'm learning quite a lot from it. I am learning how to create simple and fluid interaction with the application so it's easy to use. I'm learning also learning a lot about 2D vectors and the typical problems you will face with them. For example, you have to consider scaling the UI to different window sizes / resolution. It's quite satisfying to get level editor view interaction working. I've learnt how to zoom, pan and even scroll. I also implemented discord rich presence. Every 2 seconds, my game alerts discord how many deaths I have and displays it to my friends. A lot can be done with this API like quickly joining, spectating or viewing the state that a player is in. 
 ### Level Editor:
 ![Alt Text](https://media.giphy.com/media/5nvUszACUc4SVw4dMT/giphy.gif)
 
@@ -12,6 +12,9 @@ I'm practicing developing mock games like this one here. In this game, I have a 
 
 ### Playing State:
 ![Alt Text](https://media.giphy.com/media/euCvFMpcEvAq3Bys7x/giphy.gif)
+
+### Discord RPC
+![Alt Text](https://i.gyazo.com/23270601dfd5bde618faa1f3314fa338.png)
 
 ## Agario rip off
 This little mock creation was based on the game [agar.io](http://agar.io/). Unlike Agar.io, it has a procedurally generated world with endless food. This doesn't have online,  or other players, I'm just interested in learning how to create this type of game for experience.
