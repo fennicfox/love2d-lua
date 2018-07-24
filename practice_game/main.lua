@@ -12,8 +12,10 @@ require 'gamestates.main_menu'
 require 'gamestates.paused'
 require 'gamestates.level_editor'
 require 'gamestates.level_editor_menu'
+require 'discord.discord'
 
 function love.load()
+	discord_load()
 	graphFont 		 = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
 	click_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
 	gamestate        = "main_menu"
@@ -40,6 +42,7 @@ function love.wheelmoved( x, y )
 end
 
 function love.update(dt)
+	discord_update()
 	mousex = love.mouse.getX()
 	mousey = love.mouse.getY()
 	if      gamestate == "main_menu"    	 then  main_menu_update(dt)
@@ -75,6 +78,10 @@ function love.resize( w, h )
 	elseif  gamestate == "level_editor_menu" then level_editor_menu_resize(w, h) 
 	end
 end
+
+function love.quit()
+	discord_quit()
+end 
 
 function round( n, p )
 	return math.floor(n/p)*p

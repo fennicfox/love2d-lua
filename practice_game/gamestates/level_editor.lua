@@ -198,13 +198,11 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 						end
 					end
 				end
-				
 			end
 		elseif love.mouse.isDown(1) and not drawing_start_got then
 				drawing_start_got = true
 				drawing_start_x = level_editor_mousex()
 				drawing_start_y = level_editor_mousey()
-			end
 		elseif drawing_start_got then
 			drawing_start_got = true
 		end

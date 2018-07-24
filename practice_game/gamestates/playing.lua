@@ -53,6 +53,7 @@ function playing_update(dt)
 			if deathzone_collided(p) then
 				p:goToSpawn()
 				p.deathcount = p.deathcount + 1
+				deathsInSession = deathsInSession + 1
 			end
 		end
 		if winzone[1] ~= nil then
