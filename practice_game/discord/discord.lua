@@ -19,7 +19,15 @@ end
 
 function discord_update()
     if nextPresenceUpdate < love.timer.getTime() then
-        presence.details = "Died "..deathsInSession.." times"
+        if deathsInSession == 0 then
+            presence.details = "I've not died this whole session 😎"
+        elseif deathsInSession == 1 then
+            presence.details = "I've died only one time this session 👍"
+        elseif deathsInSession >= 100 then
+            presence.details = "I suck. I've died "..deathsInSession.." times! 😂"
+        else
+            presence.details = "Died "..deathsInSession.." times in this session 💀"
+        end
         discordRPC.updatePresence(presence)
         nextPresenceUpdate = love.timer.getTime() + seconds_for_update
     end
