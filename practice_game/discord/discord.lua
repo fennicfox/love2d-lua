@@ -12,6 +12,10 @@ function discord_load()
         details = "Fixing errors",
         startTimestamp = now,
         details = "Died "..deathsInSession.." times",
+        smallImageKey = "dominant_male_512x512_jpg",
+        smallImageText = "monkey",
+        largeImageKey = "dominant_male_1024x1024_jpg",
+        largeImageText = "monkey"
     }
 
     nextPresenceUpdate = 0
@@ -20,13 +24,13 @@ end
 function discord_update()
     if nextPresenceUpdate < love.timer.getTime() then
         if deathsInSession == 0 then
-            presence.details = "I've not died this whole session 😎"
-        elseif deathsInSession == 1 then
-            presence.details = "I've died only one time this session 👍"
+            presence.details = "Deaths = 0 😎"
+        elseif deathsInSession == 1 or deathsInSession == 2 then
+            presence.details = "Deaths = "..deathsInSession.." 👍"
         elseif deathsInSession >= 100 then
-            presence.details = "I suck. I've died "..deathsInSession.." times! 😂"
+            presence.details = "I suck. "..deathsInSession.." deaths! 😂"
         else
-            presence.details = "Died "..deathsInSession.." times in this session 💀"
+            presence.details = "Deaths = "..deathsInSession.." 💀"
         end
         discordRPC.updatePresence(presence)
         nextPresenceUpdate = love.timer.getTime() + seconds_for_update
