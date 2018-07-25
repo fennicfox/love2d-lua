@@ -13,14 +13,14 @@ function to_main_menu()
 		for i, v in ipairs(winzone) do winzone[i] = nil end
 	end
 
-	gamestate = "main_menu"
+	gamestate = "Main menu"
 	game_loaded = false
 	main_menu_load()
 end
 
 function to_game()
 	for i, v in ipairs(button) do button[i] = nil end
-	gamestate = "playing"
+	gamestate = "Playing"
 	camera.x = 0
 	camera.y = 0
 	camera:setScale(1,1)
@@ -33,13 +33,13 @@ end
 
 function to_paused()
 	for i, v in ipairs(button) do button[i] = nil end
-	gamestate = "paused"
+	gamestate = "Paused"
 	paused_load()
 end
 
 function to_level_editor()
 	for i, v in ipairs(button) do button[i] = nil end
-	gamestate = "level_editor"
+	gamestate = "Level editor"
 	camera.x = 0
 	camera.y = 0
 end

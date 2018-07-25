@@ -18,7 +18,7 @@ function love.load()
 	discord_load()
 	graphFont 		 = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
 	click_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
-	gamestate        = "main_menu"
+	gamestate        = "Main menu"
 	selected_level   = "practice_game/default.oli"
 	main_menu_load()
 end
@@ -45,10 +45,10 @@ function love.update(dt)
 	discord_update()
 	mousex = love.mouse.getX()
 	mousey = love.mouse.getY()
-	if      gamestate == "main_menu"    	 then  main_menu_update(dt)
-	elseif  gamestate == "playing"      	 then  playing_update(dt)
-	elseif  gamestate == "paused"       	 then  paused_update(dt)
-	elseif  gamestate == "level_editor" 	 then  level_editor_update(dt)
+	if      gamestate == "Main menu"    	 then  main_menu_update(dt)
+	elseif  gamestate == "Playing"      	 then  playing_update(dt)
+	elseif  gamestate == "Paused"       	 then  paused_update(dt)
+	elseif  gamestate == "Level editor" 	 then  level_editor_update(dt)
 	end
 end
 
@@ -56,10 +56,10 @@ function love.draw()
 	love.graphics.setFont(graphFont, 12)
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.print(gamestate, love.graphics.getWidth()-80, love.graphics.getHeight()-20)
-	if      gamestate == "main_menu"  	 	 then  main_menu_draw()
-	elseif  gamestate == "playing"    	 	 then  playing_draw()
-	elseif  gamestate == "paused"     	 	 then  paused_draw() 
-	elseif  gamestate == "level_editor"  	 then  level_editor_draw() end
+	if      gamestate == "Main menu"  	 	 then  main_menu_draw()
+	elseif  gamestate == "Playing"    	 	 then  playing_draw()
+	elseif  gamestate == "Paused"     	 	 then  paused_draw() 
+	elseif  gamestate == "Level editor"  	 then  level_editor_draw() end
 	love.graphics.setFont(graphFont, 12) 
 	love.graphics.setColor(1,1,1,1)
     mpressed   = false
@@ -73,9 +73,9 @@ function love.keypressed( key )
 end
 
 function love.resize( w, h )
-	if 	    gamestate == "main_menu" 		 then main_menu_resize(w, h)
-	elseif  gamestate == "paused"    		 then paused_resize(w, h)
-	elseif  gamestate == "level_editor_menu" then level_editor_menu_resize(w, h) 
+	if 	    gamestate == "Main menu" 		 then main_menu_resize(w, h)
+	elseif  gamestate == "Paused"    		 then paused_resize(w, h)
+	elseif  gamestate == "Level editor menu" then level_editor_menu_resize(w, h) 
 	end
 end
 
