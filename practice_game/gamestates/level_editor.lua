@@ -44,6 +44,8 @@ local grid_lock = true
 local grid_lock_size = editor_graphics.w / 2
 local drawing_start_x = 0
 local drawing_start_y = 0
+local drawing_w = editor_graphics.w
+local drawing_h = editor_graphics.h
 
 --for player, selected objects and death zone fading
 local flashing_speed = 1 --lower is faster
@@ -170,17 +172,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		end
 		if mpressed then
 			if pressedm == 1 then
-				if not love.keyboard.isDown('lctrl') then
-					if shape_selected == 1 then
-						editor_graphics:createRectangle(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h, 1, 1, 1)
-					elseif shape_selected == 3 then
-						editor_graphics:createPlayer(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50, 1, 1, 1)
-					elseif shape_selected == 4 then
-						editor_graphics:death_zone(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
-					elseif shape_selected == 5 then
-						editor_graphics:win_zone(round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
-					end
-				end
+
 			end
 			if pressedm == 2 then
 				if mousex == rmb_x and mousey == rmb_y then
@@ -199,12 +191,25 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					end
 				end
 			end
-		elseif love.mouse.isDown(1) and not drawing_start_got then
+		elseif love.mouse.isDown(1) and not drawing_start_got and not love.keyboard.isDown('lctrl') then
 				drawing_start_got = true
-				drawing_start_x = level_editor_mousex()
-				drawing_start_y = level_editor_mousey()
-		elseif drawing_start_got then
-			drawing_start_got = true
+				drawing_start_x = round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size)
+				drawing_start_y = round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size)
+				drawing_w = editor_graphics.w
+		elseif love.mouse.isDown(1) and not love.keyboard.isDown('lctrl') then
+			drawing_w = math.max(round(level_editor_mousex()-drawing_start_x, grid_lock_size), editor_graphics.w)
+			drawing_h = math.max(round(level_editor_mousey()-drawing_start_y, grid_lock_size), editor_graphics.h)
+		elseif drawing_start_got and not love.keyboard.isDown('lctrl') then
+			drawing_start_got = false
+			if shape_selected == 1 then
+				editor_graphics:createRectangle(drawing_start_x, drawing_start_y, drawing_w, drawing_h, 1, 1, 1)
+			elseif shape_selected == 3 then
+				editor_graphics:createPlayer(round((level_editor_mousex())-(drawing_w/2), grid_lock_size), round((level_editor_mousey())-(drawing_h/2), grid_lock_size), 30, 50, 1, 1, 1)
+			elseif shape_selected == 4 then
+				editor_graphics:death_zone(drawing_start_x, drawing_start_y, drawing_w, drawing_h)
+			elseif shape_selected == 5 then
+				editor_graphics:win_zone(drawing_start_x, drawing_start_y, drawing_w, drawing_h)
+			end
 		end
 	
 		if mwheelup and (camera.scaleX > 0.2 and camera.scaleY > 0.2) then
@@ -373,6 +378,10 @@ function level_editor_draw()
 				love.graphics.rectangle('fill', editor_graphics.selected.x-cs, (editor_graphics.selected.y-cs)+editor_graphics.selected.h, cs*2, cs*2) --bottom left
 				love.graphics.rectangle('fill', (editor_graphics.selected.x-cs)+editor_graphics.selected.w, (editor_graphics.selected.y-cs)+editor_graphics.selected.h, cs*2, cs*2) --buttom right
 			end
+		end
+		if drawing_start_got then
+			love.graphics.setColor(1,1,1,1)
+			love.graphics.rectangle('fill',drawing_start_x,drawing_start_y,drawing_w,drawing_h)
 		end
 		camera:unset()
 		love.graphics.setColor(0, 0, 0, 0.5)
