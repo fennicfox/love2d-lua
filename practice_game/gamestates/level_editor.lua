@@ -46,6 +46,8 @@ local drawing_start_x = 0
 local drawing_start_y = 0
 local drawing_w = editor_graphics.w
 local drawing_h = editor_graphics.h
+local drawing_x = 0
+local drawing_y = 0
 
 --for player, selected objects and death zone fading
 local flashing_speed = 1 --lower is faster
@@ -195,20 +197,33 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				drawing_start_got = true
 				drawing_start_x = round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size)
 				drawing_start_y = round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size)
-				drawing_w = editor_graphics.w
+				drawing_x = drawing_start_x
+				drawing_y = drawing_start_y
 		elseif love.mouse.isDown(1) and not love.keyboard.isDown('lctrl') then
 			drawing_w = math.max(round(level_editor_mousex()-drawing_start_x, grid_lock_size), editor_graphics.w)
 			drawing_h = math.max(round(level_editor_mousey()-drawing_start_y, grid_lock_size), editor_graphics.h)
+			if level_editor_mousex() < drawing_start_x then
+				drawing_x = math.max(round(level_editor_mousex(), grid_lock_size), editor_graphics.w)
+				drawing_w = (drawing_start_x-drawing_x) + editor_graphics.w
+			else
+				drawing_x = drawing_start_x
+			end
+			if level_editor_mousey() < drawing_start_y then
+				drawing_y = math.max(round(level_editor_mousey(), grid_lock_size), editor_graphics.h) 
+				drawing_h = (drawing_start_y - drawing_y) + editor_graphics.h
+			else
+				drawing_y = drawing_start_y
+			end
 		elseif drawing_start_got and not love.keyboard.isDown('lctrl') then
 			drawing_start_got = false
 			if shape_selected == 1 then
-				editor_graphics:createRectangle(drawing_start_x, drawing_start_y, drawing_w, drawing_h, 1, 1, 1)
+				editor_graphics:createRectangle(drawing_x, drawing_y, drawing_w, drawing_h, 1, 1, 1)
 			elseif shape_selected == 3 then
 				editor_graphics:createPlayer(round((level_editor_mousex())-(drawing_w/2), grid_lock_size), round((level_editor_mousey())-(drawing_h/2), grid_lock_size), 30, 50, 1, 1, 1)
 			elseif shape_selected == 4 then
-				editor_graphics:death_zone(drawing_start_x, drawing_start_y, drawing_w, drawing_h)
+				editor_graphics:death_zone(drawing_x, drawing_y, drawing_w, drawing_h)
 			elseif shape_selected == 5 then
-				editor_graphics:win_zone(drawing_start_x, drawing_start_y, drawing_w, drawing_h)
+				editor_graphics:win_zone(drawing_x, drawing_y, drawing_w, drawing_h)
 			end
 		end
 	
@@ -381,7 +396,7 @@ function level_editor_draw()
 		end
 		if drawing_start_got then
 			love.graphics.setColor(1,1,1,1)
-			love.graphics.rectangle('fill',drawing_start_x,drawing_start_y,drawing_w,drawing_h)
+			love.graphics.rectangle('fill',drawing_x,drawing_y,drawing_w,drawing_h)
 		end
 		camera:unset()
 		love.graphics.setColor(0, 0, 0, 0.5)
