@@ -200,25 +200,25 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				drawing_x = drawing_start_x
 				drawing_y = drawing_start_y
 		elseif love.mouse.isDown(1) and not love.keyboard.isDown('lctrl') then
-			drawing_w = math.max(round(level_editor_mousex()-drawing_start_x, grid_lock_size), editor_graphics.w)
-			drawing_h = math.max(round(level_editor_mousey()-drawing_start_y, grid_lock_size), editor_graphics.h)
 			if level_editor_mousex() < drawing_start_x then
-				drawing_x = math.max(round(level_editor_mousex(), grid_lock_size), editor_graphics.w)
+				drawing_x = math.min(round(level_editor_mousex(), grid_lock_size), drawing_start_x-editor_graphics.w)
 				drawing_w = (drawing_start_x-drawing_x) + editor_graphics.w
 			else
 				drawing_x = drawing_start_x
+				drawing_w = math.max(round(level_editor_mousex()-drawing_start_x, grid_lock_size), editor_graphics.w)
 			end
 			if level_editor_mousey() < drawing_start_y then
-				drawing_y = math.max(round(level_editor_mousey(), grid_lock_size), editor_graphics.h) 
+				drawing_y = math.min(round(level_editor_mousey(), grid_lock_size), drawing_start_y-editor_graphics.h) 
 				drawing_h = (drawing_start_y - drawing_y) + editor_graphics.h
 			else
 				drawing_y = drawing_start_y
+				drawing_h = math.max(round(level_editor_mousey()-drawing_start_y, grid_lock_size), editor_graphics.h)
 			end
 		elseif drawing_start_got and not love.keyboard.isDown('lctrl') then
 			drawing_start_got = false
 			if shape_selected == 1 then
 				editor_graphics:createRectangle(drawing_x, drawing_y, drawing_w, drawing_h, 1, 1, 1)
-			elseif shape_selected == 3 then
+			elseif shape_selected == 3 then --player
 				editor_graphics:createPlayer(round((level_editor_mousex())-(drawing_w/2), grid_lock_size), round((level_editor_mousey())-(drawing_h/2), grid_lock_size), 30, 50, 1, 1, 1)
 			elseif shape_selected == 4 then
 				editor_graphics:death_zone(drawing_x, drawing_y, drawing_w, drawing_h)
@@ -354,7 +354,7 @@ function level_editor_draw()
 			end
 		end
 		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
-		if not love.keyboard.isDown('lctrl') then
+		if not love.keyboard.isDown('lctrl') and not love.mouse.isDown(1) then
 			if shape_selected == 3 then --if player is selected
 				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50)
 			elseif shape_selected == 4 then
