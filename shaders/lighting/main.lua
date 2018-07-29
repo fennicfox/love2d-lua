@@ -3,19 +3,20 @@ require "entities.player"
 
 local light_code = love.graphics.newShader([[
 	extern int radius;
+	extern int player_x;
+	extern int player_y;
 	float r = 0.62;
 	float g = 0.6;
 	float b = 0.1;
-	vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
+	vec4 effect (vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords){
 		float distance = pow( (pow((screen_coords.x - radius),2) + pow((screen_coords.y - radius),2)),0.5);
-		float scale = .9 + ((distance - 0) / (radius - 0)) * (0 - .9);
+		float scale = .9 + ((distance - 0) / (radius - 0)) * (0 - .9) ;
 		return vec4(r,g,b, scale);
 	}
 ]])
 
-
 function love.load()
-	p = player:create(50,50,25,50, .3,.3,.3)
+	p = player:create(50,50,50,100, .3,.3,.3)
 	s1 = scenary:create(500,400)
 	s2 = scenary:create(300,500)
 	image_size = 400
@@ -37,14 +38,16 @@ function love.draw()
 	love.graphics.draw(background)
 	love.graphics.pop()
 	love.graphics.setShader(light_code)
-	light_code:send("radius",100)
+	light_code:send("radius",120)
+	--light_code:send("player_x", p.x)
+	--light_code:send("player_y", p.y)
 	p:draw()
-	love.graphics.setShader()
 	love.graphics.setColor(1, 1, 1, 1)
 	p:draw_rays(s1)
 	p:draw_rays(s2)
 	s1:draw()
 	s2:draw()
+	love.graphics.setShader()
 	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-55, 0)
 end
 

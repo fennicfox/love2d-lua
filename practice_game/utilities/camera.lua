@@ -34,8 +34,8 @@ function camera:move(xv,yv, dt)
 		self.yvel = self.yvel + (yv2*dt)
 	end
 
-	self.x = self.x + self.xvel * dt                              --moves the player if the velocity is not 0
-	self.y = self.y + self.yvel * dt                              --moves the player if the velocity is not 0
+	self.x = self.x + self.xvel * dt                              --moves the camera if the velocity is not 0
+	self.y = self.y + self.yvel * dt                              --moves the camera if the velocity is not 0
 	self.xvel = self.xvel * (1 - math.min(dt*self.friction, 1)) 
 	self.yvel = self.yvel * (1 - math.min(dt*self.friction, 1))
 

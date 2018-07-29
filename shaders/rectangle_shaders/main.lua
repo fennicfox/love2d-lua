@@ -43,6 +43,29 @@ local shader4 = love.graphics.newShader [[
 	}
 ]]
 
+local pixelcode = [[
+	varying vec4 vpos;
+ 
+	vec4 effect( vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords )
+	{
+		texture_coords += vec2(cos(vpos.x), sin(vpos.y));
+		vec4 texcolor = Texel(texture, texture_coords);
+		return texcolor * color;
+	}
+]]
+ 
+local vertexcode = [[
+	varying vec4 vpos;
+ 
+	vec4 position( mat4 transform_projection, vec4 vertex_position )
+	{
+		vpos = vertex_position;
+		return transform_projection * vertex_position;
+	}
+]]
+
+shader5 = love.graphics.newShader(pixelcode)
+
 function love.load() 
 	square_size = 300
 	effect = moonshine(moonshine.effects.glow)
@@ -54,6 +77,8 @@ end
 
 function love.draw()
 	love.graphics.setColor(.5,.2,.7)
+
+	love.graphics.setShader(shader5)
 	love.graphics.rectangle("fill", 10, 10, square_size, square_size)
 
 	love.graphics.setShader(shader2)
