@@ -38,10 +38,13 @@ editor_state = "main"
 
 local shapes = {}
 local shape_selected = 1   --shape index
+
+--offsets
 local grid_spacing = 50
 local grid = true
 local grid_lock = true
 local grid_lock_size = editor_graphics.w / 2
+
 local drawing_start_x = 0
 local drawing_start_y = 0
 local drawing_w = editor_graphics.w
@@ -78,6 +81,9 @@ local corner_se_x = 0
 local corner_se_y = 0
 local presspointx = 0
 local presspointy = 0
+
+--selected navigation panel
+navigation_panel_open = false
 
 table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
