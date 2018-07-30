@@ -10,8 +10,8 @@ require 'entities.zones.winzone'
 require 'gamestates.playing'
 require 'gamestates.main_menu'
 require 'gamestates.paused'
-require 'gamestates.level_editor'
-require 'gamestates.level_editor_menu'
+require 'gamestates.level_editor.level_editor'
+require 'gamestates.level_editor.level_editor_menu'
 require 'discord.discord'
 
 function love.load()

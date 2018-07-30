@@ -29,6 +29,7 @@
 
 ]]--
 
+require 'gamestates.level_editor.level_editor_navigation_panel'
 
 editor_graphics = {}
 editor_graphics.w = 50 --the width  of the things being put down
@@ -81,9 +82,6 @@ local corner_se_x = 0
 local corner_se_y = 0
 local presspointx = 0
 local presspointy = 0
-
---selected navigation panel
-navigation_panel_open = false
 
 table.insert(shapes, "rectangle")
 table.insert(shapes, "triangle")
@@ -162,7 +160,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		elseif not love.mouse.isDown(1) then
 			presspointgot = false
 		end
-		if love.mouse.isDown(2) then
+		if love.mouse.isDown(2) or love.mouse.isDown(3) then
 			if not scrolling_has_got then
 				scrolling_has_got = true
 				scrolling_x = level_editor_mousex()
@@ -260,7 +258,9 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					grid_lock = false 
 				else 
 					grid_lock = true 
-				end 
+				end
+			elseif pressedk == 'n' then
+				navigation_panel_toggle()
 			elseif pressedk == 'escape' then 
 				editor_state = "menu"
 				level_editor_menu_load( )
@@ -322,6 +322,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			corner_hit_se = false
 			corner_hit_sw = false
 		end
+		navigation_panel_update( dt )
 	elseif editor_state == "menu" then
 		level_editor_menu_update( dt )
 	end
@@ -405,19 +406,23 @@ function level_editor_draw()
 			love.graphics.rectangle('fill',drawing_x,drawing_y,drawing_w,drawing_h)
 		end
 		camera:unset()
-		love.graphics.setColor(0, 0, 0, 0.5)
-		love.graphics.rectangle("fill", 0, 0, 100, 100)
-		love.graphics.setColor(0.3, 0.3, 0.3, 0.47)
-		love.graphics.rectangle("line", 0, 0, 100, 100)
+		navigation_panel_draw()
+		if not navigation_panel_isOpen() then
+			love.graphics.setColor(0, 0, 0, 0.5)
+			love.graphics.rectangle("fill", 0, 0, 100, 100)
+			love.graphics.setColor(0.3, 0.3, 0.3, 0.47)
+			love.graphics.rectangle("line", 0, 0, 100, 100)
+			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.setFont(graphFont)
+			love.graphics.print("Grid Spacing: "..tostring(grid_spacing), 5, 5)
+			love.graphics.print("Camera X: "..tostring(camera.x), 5, 20)
+			love.graphics.print("Camera Y: "..tostring(camera.y), 5, 35)
+			love.graphics.print("Camera SX: "..tostring(camera.scaleX), 5, 50)
+			love.graphics.print("Camera SY: "..tostring(camera.scaleY), 5, 65)
+			love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 80)
+		end
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.setFont(graphFont)
 		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))), (love.graphics.getWidth()-130), 5)	--x and y of player and food
-		love.graphics.print("Grid Spacing: "..tostring(grid_spacing), 5, 5)
-		love.graphics.print("Camera X: "..tostring(camera.x), 5, 20)
-		love.graphics.print("Camera Y: "..tostring(camera.y), 5, 35)
-		love.graphics.print("Camera SX: "..tostring(camera.scaleX), 5, 50)
-		love.graphics.print("Camera SY: "..tostring(camera.scaleY), 5, 65)
-		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 80)
 	elseif editor_state == "menu" then
 		level_editor_menu_draw()
 	end
