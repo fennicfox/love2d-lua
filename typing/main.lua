@@ -1,7 +1,8 @@
 local utf8 = require("utf8")
  
 function love.load()
-	orignal_text = "Type away! -- "
+	orignal_text = "C://Users//Default User >"
+	orignal_text=orignal_text:gsub("//","\\")
     text = orignal_text
 	y = 0
     -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
@@ -11,16 +12,20 @@ function love.load()
 	cursor_x = 0
 	cursor_y = 0
 	cursor_w = 1
-	cursor_h = FONT:getHeight("t")
+	cursor_h = FONT:getHeight("W")
 	cursor_show = true
 	cursor_blink_speed = 0.5
 	cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
-	cursor_letter_width = FONT:getWidth("t")
-	cursor_letter_index = 0
+	cursor_letter_width = FONT:getWidth("W")
+	cursor_letter_index = text:len()
+	enter("Microsoft Windows [Version 10.0.16299.492]")
+	enter("(c) 2017 Microsoft Corporation. All rights reserved.")
+	enter("")
 end
  
 function love.textinput(t)
-    text = text .. t
+	text = string_insert(text, cursor_letter_index, t)
+	cursor_letter_index = cursor_letter_index + 1
 end
  
 function love.update()
@@ -28,14 +33,9 @@ function love.update()
 end
 
 function love.keypressed(key)
-    if not love.keyboard.isDown("lctrl") and key == "backspace" then
-        -- get the byte offset to the last UTF-8 character in the string.
-        local byteoffset = utf8.offset(text, -1)
-		if byteoffset then
-            -- remove the last UTF-8 character.
-			-- string.sub operates on bytes rather than UTF-8 characters, so we couldn't do string.sub(text, 1, -2).
-				text = text:sub(1, byteoffset - 1)
-		end
+	if not love.keyboard.isDown("lctrl") and key == "backspace" and cursor_letter_index > 0 then
+		cursor_letter_index = cursor_letter_index - 1
+		text = string_remove(text, cursor_letter_index)
 	elseif love.keyboard.isDown("lctrl") and key == "backspace" then
 		for i = 0, text:len() do
 			local byteoffset = utf8.offset(text, -1)
@@ -49,17 +49,15 @@ function love.keypressed(key)
 			end
 		end
 	elseif key == "left" then
-		cursor_letter_index = math.min((cursor_letter_index + cursor_letter_width), FONT:getWidth(text))
-		cursor_reset()
+		if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
+		cursor_reset() 
 	elseif key == "right" then
-		cursor_letter_index = math.max((cursor_letter_index - cursor_letter_width), 0)
+		if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
 		cursor_reset()
+	elseif key == "return" then
+		enter(text)
 	end
-	if key == "return" then
-		table.insert(inputs, {text = text, y = y})
-		y = y + 14
-		text = orignal_text
-	end
+	print(cursor_letter_index)
 end
  
 function love.draw()
@@ -80,7 +78,7 @@ function love.draw()
 end
 
 function cursor_blink()
-	cursor_x = FONT:getWidth(text) - cursor_letter_index
+	cursor_x = FONT:getWidth(text:sub(1,cursor_letter_index))
 	cursor_y = y
 	if cursor_show then
 		if love.timer.getTime() >= cursor_blink_finish then
@@ -98,4 +96,23 @@ end
 function cursor_reset()
 	cursor_show = true
 	cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
+end
+
+function string_insert(str, index, char)
+	p1 = str:sub(1, -(str:len()-(index-1)))
+	p2 = str:sub(index+1, str:len())
+	return p1..char..p2
+end
+
+function string_remove(str, index)
+	p1 = str:sub(0, -(str:len()-(index-1)))
+	p2 = str:sub(index+2, str:len())
+	return p1..p2
+end
+
+function enter(t)
+	table.insert(inputs, {text = t, y = y})
+	y = y + 14
+	text = orignal_text
+	cursor_letter_index = orignal_text:len()
 end
