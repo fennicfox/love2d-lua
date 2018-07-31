@@ -1,8 +1,7 @@
 local utf8 = require("utf8")
  
 function love.load()
-	orignal_text = "C://Users//Default User >"
-	orignal_text=orignal_text:gsub("//","\\")
+	orignal_text = "C:/Users/Default User >"
     text = orignal_text
 	y = 0
     -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
@@ -36,27 +35,51 @@ function love.keypressed(key)
 	if not love.keyboard.isDown("lctrl") and key == "backspace" and cursor_letter_index > 0 then
 		cursor_letter_index = cursor_letter_index - 1
 		text = string_remove(text, cursor_letter_index)
-	elseif love.keyboard.isDown("lctrl") and key == "backspace" then
-		for i = 0, text:len() do
-			local byteoffset = utf8.offset(text, -1)
-			if byteoffset then
-				if text:sub(byteoffset-1, byteoffset-1) == " " then
-					text = text:sub(1,-2)
-					break
-				else
-					text = text:sub(1,-2)
-				end
+	elseif love.keyboard.isDown("lctrl") and key == "backspace" and cursor_letter_index > 0 then
+		for i = 0, cursor_letter_index do
+			if cursor_letter_index <= 0 then
+				cursor_letter_index = 0
+				break
 			end
+			text = string_remove(text, cursor_letter_index-1)
+			cursor_letter_index = cursor_letter_index - 1
+			if text:sub(cursor_letter_index, cursor_letter_index) == " " then
+				break
+			end
+		end
+	elseif key == "left" and love.keyboard.isDown("lctrl") then
+		for i = 0, cursor_letter_index do
+			if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
+			if text:sub(cursor_letter_index, cursor_letter_index) == " " then break end
+		end
+	elseif key == "right" and love.keyboard.isDown("lctrl") then
+		for i = cursor_letter_index, text:len() do
+			if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
+			if text:sub(cursor_letter_index, cursor_letter_index) == " " then break end
 		end
 	elseif key == "left" then
 		if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
-		cursor_reset() 
 	elseif key == "right" then
 		if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
-		cursor_reset()
+	elseif key == "delete" and love.keyboard.isDown("lctrl") then
+		for i = cursor_letter_index, text:len() do
+			print("hi")
+			print(text)
+			print(text:sub(cursor_letter_index+1, cursor_letter_index+1))
+			print(text)
+			if text:sub(cursor_letter_index+1, cursor_letter_index+1) == " " then
+				print(true)
+				text = string_remove(text, cursor_letter_index)
+				break
+			end
+			text = string_remove(text, cursor_letter_index)
+		end
+	elseif key == "delete" then
+		if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
 	elseif key == "return" then
 		enter(text)
 	end
+	cursor_reset()
 	print(cursor_letter_index)
 end
  
@@ -99,14 +122,14 @@ function cursor_reset()
 end
 
 function string_insert(str, index, char)
-	p1 = str:sub(1, -(str:len()-(index-1)))
-	p2 = str:sub(index+1, str:len())
+	local p1 = str:sub(1, -(str:len()-(index-1)))
+	local p2 = str:sub(index+1, str:len())
 	return p1..char..p2
 end
 
 function string_remove(str, index)
-	p1 = str:sub(0, -(str:len()-(index-1)))
-	p2 = str:sub(index+2, str:len())
+	local p1 = str:sub(0, -(str:len()-(index-1)))
+	local p2 = str:sub(index+2, str:len())
 	return p1..p2
 end
 
