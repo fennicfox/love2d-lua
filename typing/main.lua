@@ -139,3 +139,24 @@ function enter(t)
 	text = orignal_text
 	cursor_letter_index = orignal_text:len()
 end
+
+function love.mousepressed(x, y)
+	print("=======================")
+	print(FONT:getWidth('C'))
+	print("x = "..x, "y = "..y)
+	for i = 0, text:len() do
+		local prev_char = FONT:getWidth(text:sub(i,i)) / 2
+		local next_char = FONT:getWidth(text:sub(i+1,i+1)) / 2
+		if x >= FONT:getWidth(text:sub(0,i))-prev_char and x <= FONT:getWidth(text:sub(1,i))+next_char and y >= cursor_y and y <= cursor_y+cursor_h then
+			cursor_letter_index = i
+			cursor_reset()
+			break
+		end
+	end
+	
+end
+
+function love.mousereleased(x, y)
+end
+
+function pressing_key()
