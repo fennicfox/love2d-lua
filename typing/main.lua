@@ -97,10 +97,10 @@ function love.keypressed(key)
 		if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
 	elseif key == "return" then
 		enter(text)
+	elseif love.keyboard.isDown('lctrl') and key == "a" then
+		selection_all()
 	elseif love.keyboard.isDown('lctrl') and key == "c" then
-		if math.max(cursor_letter_index,selected_text_i) - math.min(cursor_letter_index, selected_text_i) ~= 0 then
-			love.system.setClipboardText( text:sub(math.min(cursor_letter_index, selected_text_i),math.max(cursor_letter_index,selected_text_i)))
-		end
+		selection_copy()
 	elseif love.keyboard.isDown('lctrl') and key == "v" then
 		text = text..love.system.getClipboardText( )
 		cursor_letter_index = cursor_letter_index + love.system.getClipboardText( ):len()
@@ -234,5 +234,18 @@ function getSelectionWidth(clw, s)
 		return -FONT:getWidth(text:sub(s+1,clw))
 	else
 		return FONT:getWidth(text:sub(clw+1,s))
+	end
+end
+
+function selection_all()
+	selected_text_x = 0
+	selected_text_i = 0
+	selected_text_w = FONT:getWidth(text)
+	cursor_letter_index = text:len()
+end
+
+function selection_copy()
+	if math.max(cursor_letter_index,selected_text_i) - math.min(cursor_letter_index, selected_text_i) ~= 0 then
+		love.system.setClipboardText( text:sub(math.min(cursor_letter_index+1, selected_text_i+1),math.max(cursor_letter_index+1,selected_text_i)))
 	end
 end
