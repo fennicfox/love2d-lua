@@ -42,10 +42,8 @@ end
  
 function love.update()
 	if love.mouse.isDown(1) and txtbox_mbDown then
-		if not doubleclicked and (love.timer.getTime()-previous_click_time > doubleclicktime) then
+		if not doubleclicked then
 			cursor()
-		else
-			doubleclicked = false
 		end
 		selected_text_w = getSelectionWidth(selected_text_i, cursor_letter_index )
 	elseif love.mouse.isDown(1) and not txtbox_mbDown then
@@ -186,10 +184,7 @@ function love.mousepressed(x, y)
 	selected_text_x = getCursorX(cursor_letter_index)
 	selected_text_i = cursor_letter_index
 	if (love.timer.getTime() - doubleclicktime < previous_click_time) and txtbox_mbDown then
-		selected_text_x = 0
-		selected_text_i = 0
-		selected_text_w = FONT:getWidth(text)
-		cursor_letter_index = text:len()
+		selection_all()
 		doubleclicked = true
 	end
 	previous_click_time = love.timer.getTime()
@@ -199,6 +194,9 @@ function love.mousereleased(x, y)
 	pressed = false
 	if txtbox_mbDown then
 		txtbox_mbDown = false
+	end
+	if doubleclicked then
+		doubleclicked = false
 	end
 end
 
