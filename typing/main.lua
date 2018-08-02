@@ -245,7 +245,9 @@ function selection_all()
 end
 
 function selection_copy()
-	if math.max(cursor_letter_index,selected_text_i) - math.min(cursor_letter_index, selected_text_i) ~= 0 then
-		love.system.setClipboardText( text:sub(math.min(cursor_letter_index+1, selected_text_i+1),math.max(cursor_letter_index+1,selected_text_i)))
+	if cursor_letter_index > selected_text_i then
+		love.system.setClipboardText( text:sub(selected_text_i+1,cursor_letter_index))
+	else
+		love.system.setClipboardText( text:sub(cursor_letter_index+1, selected_text_i))
 	end
 end
