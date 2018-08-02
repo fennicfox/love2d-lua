@@ -19,22 +19,25 @@ I'm practicing developing mock games like this one here. In this game, I have a 
 
 ## Agario rip off
 This little mock creation was based on the game [agar.io](http://agar.io/). Unlike Agar.io, it has a procedurally generated world with endless food. This doesn't have online,  or other players, I'm just interested in learning how to create this type of game for experience.
-
 ![Alt Text](https://media.giphy.com/media/QLRHAHDiy9634sCYiH/giphy.gif)
 
 ## Fading text
 A cool fading text effect which transitions to different colours. This could be useful for different games. Again, I'm just learning the language, so I'm just sticking to small ideas.
-
 ![Alt Text](https://media.giphy.com/media/1xOyI9xMWaNr7g2z5J/giphy.gif)
 
 ## Shaders
 Shaders are strange and I'm struggling how to use them. LÖVE 2D shadres are written in GLSL which is the (OpenGL Shading Language).
+
 #### Lighting
 I'm struggling creating lighting in LÖVE 2D but I produced this work relatively quickly. I need to research this more.
 ![Alt Text](https://media.giphy.com/media/8YvGIi2JlpiWXISg70/giphy.gif)
 In the top left, this is a light but it doesn't stick to the player. When I navigate the player around the object, you can see where the light rays should be.
+
 #### Squares shaders
 These are purple drawn squares, however, every single square (apart from the top left) has a shader applied to it. 
 ![Alt Text](https://i.gyazo.com/a4ec582719272d3ea388eb04a63fbbf6.png)
-
 The bottom-middle shaders has a film grain shader applied to it but you can't tell the difference because the picture shown above is a .png, not a .gif.
+
+## Typing 
+I created my own typing system from scratch. It's a lot more tedious than I thought, but is still interesting to understand the mechanics behind selection and cursors. Now I know how it works behind the scenes, (or at least how I've made it work,) I won't be reinventing the wheel again.
+![Alt Text](https://media.giphy.com/media/3Fovc4gCiFtrxnO9vG/giphy.gif)
