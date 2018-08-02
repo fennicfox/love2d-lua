@@ -1,22 +1,35 @@
 local utf8 = require("utf8")
- 
+local orignal_text = "C:/Users/Default User>"
+local text = orignal_text
+local y = 0
+local pressed = false
+local FONT = love.graphics.getFont()
+local inputs = {}
+local cursor_x = 0
+local cursor_y = 0
+local cursor_w = 1
+local cursor_h = FONT:getHeight("W")
+local cursor_show = true
+local cursor_blink_speed = 0.5
+local cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
+local cursor_letter_index = text:len()
+local selected_text_x = 0
+local selected_text_i = 0
+local selected_text_w = 0
+local previous_click_time = 0
+local doubleclicktime = 0.2
+local doubleclicked = false
+local txtbox_mbDown = false
+love.keyboard.setKeyRepeat(true) -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
+
+local shader_selectText = love.graphics.newShader[[
+	vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
+		return vec4 (1-color[0], 1-color[0], 1, 1);
+	}
+	
+]]
+
 function love.load()
-	orignal_text = "C:/Users/Default User >"
-    text = orignal_text
-	y = 0
-    -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
-	love.keyboard.setKeyRepeat(true)
-	FONT = love.graphics.getFont()
-	inputs = {}
-	cursor_x = 0
-	cursor_y = 0
-	cursor_w = 1
-	cursor_h = FONT:getHeight("W")
-	cursor_show = true
-	cursor_blink_speed = 0.5
-	cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
-	cursor_letter_width = FONT:getWidth("W")
-	cursor_letter_index = text:len()
 	enter("Microsoft Windows [Version 10.0.16299.492]")
 	enter("(c) 2017 Microsoft Corporation. All rights reserved.")
 	enter("")
@@ -28,6 +41,17 @@ function love.textinput(t)
 end
  
 function love.update()
+	if love.mouse.isDown(1) and txtbox_mbDown then
+		if not doubleclicked and (love.timer.getTime()-previous_click_time > doubleclicktime) then
+			cursor()
+		else
+			doubleclicked = false
+		end
+		selected_text_w = getSelectionWidth(selected_text_i, cursor_letter_index )
+	elseif love.mouse.isDown(1) and not txtbox_mbDown then
+		selected_text_w = 0
+		selected_text_i = cursor_letter_index
+	end
 	cursor_blink()
 end
 
@@ -63,12 +87,7 @@ function love.keypressed(key)
 		if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
 	elseif key == "delete" and love.keyboard.isDown("lctrl") then
 		for i = cursor_letter_index, text:len() do
-			print("hi")
-			print(text)
-			print(text:sub(cursor_letter_index+1, cursor_letter_index+1))
-			print(text)
 			if text:sub(cursor_letter_index+1, cursor_letter_index+1) == " " then
-				print(true)
 				text = string_remove(text, cursor_letter_index)
 				break
 			end
@@ -78,23 +97,43 @@ function love.keypressed(key)
 		if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
 	elseif key == "return" then
 		enter(text)
+	elseif love.keyboard.isDown('lctrl') and key == "c" then
+		if math.max(cursor_letter_index,selected_text_i) - math.min(cursor_letter_index, selected_text_i) ~= 0 then
+			love.system.setClipboardText( text:sub(math.min(cursor_letter_index, selected_text_i),math.max(cursor_letter_index,selected_text_i)))
+		end
+	elseif love.keyboard.isDown('lctrl') and key == "v" then
+		text = text..love.system.getClipboardText( )
+		cursor_letter_index = cursor_letter_index + love.system.getClipboardText( ):len()
 	end
+
 	cursor_reset()
-	print(cursor_letter_index)
 end
  
 function love.draw()
+	--love.graphics.setShader(shader_selectText)
+	love.graphics.setColor(0,0,1,1)
+	love.graphics.rectangle("fill",selected_text_x,y,selected_text_w, cursor_h)
+	love.graphics.setColor(1,1,1,1)
+
+	--settings the camera to what i'm drawing in the future if you can't fit what's on the page.
 	if y >= love.graphics.getHeight() then
 		love.graphics.push()
 		love.graphics.translate(-0, -((y+14)-love.graphics.getHeight()))
 	end
-	for i, v in ipairs(inputs) do
-		love.graphics.printf(v.text, 0, v.y, love.graphics.getWidth())
-	end
+	--love.graphics.setShader()
+
+	--prints all of the words.
+	for i, v in ipairs(inputs) do love.graphics.printf(v.text, 0, v.y, love.graphics.getWidth()) end
+	
+	--prints the text
 	love.graphics.printf(text, 0, y, love.graphics.getWidth())
+	
+	--moves the camera down when you write more than the page can contain.
 	if y >= love.graphics.getHeight() then
 		love.graphics.pop()
 	end
+
+	--the cursor
 	if cursor_show then
 		love.graphics.rectangle("fill", cursor_x, cursor_y, cursor_w, cursor_h)
 	end
@@ -141,22 +180,59 @@ function enter(t)
 end
 
 function love.mousepressed(x, y)
-	print("=======================")
-	print(FONT:getWidth('C'))
-	print("x = "..x, "y = "..y)
+	pressed = true
+	txtbox_mbDown = selected()
+	cursor()
+	selected_text_x = getCursorX(cursor_letter_index)
+	selected_text_i = cursor_letter_index
+	if (love.timer.getTime() - doubleclicktime < previous_click_time) and txtbox_mbDown then
+		selected_text_x = 0
+		selected_text_i = 0
+		selected_text_w = FONT:getWidth(text)
+		cursor_letter_index = text:len()
+		doubleclicked = true
+	end
+	previous_click_time = love.timer.getTime()
+end
+
+function love.mousereleased(x, y)
+	pressed = false
+	if txtbox_mbDown then
+		txtbox_mbDown = false
+	end
+end
+
+function selected()
+	local mx = love.mouse.getX() 
+	local my = love.mouse.getY()
+	if mx > 0 and mx < FONT:getWidth(text) and my > y and my < y+cursor_h and pressed then
+		return true
+	end
+	return false
+end
+
+function cursor()
+	local mx = love.mouse.getX() 
+	local my = love.mouse.getY()
 	for i = 0, text:len() do
 		local prev_char = FONT:getWidth(text:sub(i,i)) / 2
 		local next_char = FONT:getWidth(text:sub(i+1,i+1)) / 2
-		if x >= FONT:getWidth(text:sub(0,i))-prev_char and x <= FONT:getWidth(text:sub(1,i))+next_char and y >= cursor_y and y <= cursor_y+cursor_h then
+		if mx >= FONT:getWidth(text:sub(0,i))-prev_char and mx <= FONT:getWidth(text:sub(1,i))+next_char and (my >= cursor_y and my <= cursor_y+cursor_h or txtbox_mbDown) then
 			cursor_letter_index = i
 			cursor_reset()
 			break
 		end
 	end
-	
 end
 
-function love.mousereleased(x, y)
+function getCursorX(clw)
+	return FONT:getWidth(text:sub(1,clw))
 end
 
-function pressing_key()
+function getSelectionWidth(clw, s)
+	if clw > s then
+		return -FONT:getWidth(text:sub(s+1,clw))
+	else
+		return FONT:getWidth(text:sub(clw+1,s))
+	end
+end
