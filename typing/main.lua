@@ -14,7 +14,7 @@ local cursor_blink_speed = 0.5
 local cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
 local cursor_letter_index = text:len()
 local selected_text_x = 0
-local selected_text_i = 0
+local selected_text_i = cursor_letter_index
 local selected_text_w = 0
 local previous_click_time = 0
 local doubleclicktime = 0.2
@@ -36,8 +36,15 @@ function love.load()
 end
  
 function love.textinput(t)
+	print(text)
+	if selection_isSelected() then
+		selection_delete()
+	end
+	print(text)
+	print()
 	text = string_insert(text, cursor_letter_index, t)
 	cursor_letter_index = cursor_letter_index + 1
+	selected_text_i = cursor_letter_index
 end
  
 function love.update()
@@ -54,19 +61,29 @@ function love.update()
 end
 
 function love.keypressed(key)
-	if not love.keyboard.isDown("lctrl") and key == "backspace" and cursor_letter_index > 0 then
-		cursor_letter_index = cursor_letter_index - 1
-		text = string_remove(text, cursor_letter_index)
-	elseif love.keyboard.isDown("lctrl") and key == "backspace" and cursor_letter_index > 0 then
-		for i = 0, cursor_letter_index do
-			if cursor_letter_index <= 0 then
-				cursor_letter_index = 0
-				break
-			end
-			text = string_remove(text, cursor_letter_index-1)
+	if not love.keyboard.isDown("lctrl") and key == "backspace" and (cursor_letter_index > 0 or selected_text_i > 1) then
+		if selection_isSelected() then
+			selection_delete()
+		else
 			cursor_letter_index = cursor_letter_index - 1
-			if text:sub(cursor_letter_index, cursor_letter_index) == " " then
-				break
+			selected_text_i = cursor_letter_index
+			text = string_remove(text, cursor_letter_index)
+		end
+	elseif love.keyboard.isDown("lctrl") and key == "backspace" and (cursor_letter_index > 0 or selected_text_i > 1)  then
+		if selection_isSelected() then
+			selection_delete()
+		else
+			for i = 0, cursor_letter_index do
+				if cursor_letter_index <= 0 then
+					cursor_letter_index = 0
+					break
+				end
+				text = string_remove(text, cursor_letter_index-1)
+				cursor_letter_index = cursor_letter_index - 1
+				selected_text_i = cursor_letter_index
+				if text:sub(cursor_letter_index, cursor_letter_index) == " " then
+					break
+				end
 			end
 		end
 	elseif key == "left" and love.keyboard.isDown("lctrl") then
@@ -100,13 +117,12 @@ function love.keypressed(key)
 	elseif love.keyboard.isDown('lctrl') and key == "c" then
 		selection_copy()
 	elseif love.keyboard.isDown('lctrl') and key == "v" then
-		text = text..love.system.getClipboardText( )
-		cursor_letter_index = cursor_letter_index + love.system.getClipboardText( ):len()
+		text_insert(love.system.getClipboardText())
 	end
 
 	cursor_reset()
 end
- 
+
 function love.draw()
 	--love.graphics.setShader(shader_selectText)
 	love.graphics.setColor(0,0,1,1)
@@ -175,6 +191,7 @@ function enter(t)
 	y = y + 14
 	text = orignal_text
 	cursor_letter_index = orignal_text:len()
+	selected_text_i = cursor_letter_index
 end
 
 function love.mousepressed(x, y)
@@ -248,4 +265,32 @@ function selection_copy()
 	else
 		love.system.setClipboardText( text:sub(cursor_letter_index+1, selected_text_i))
 	end
+end
+
+function selection_delete()
+	if selection_isSelected() then
+		text = text:sub(1, math.min(cursor_letter_index, selected_text_i))..text:sub(math.max(cursor_letter_index+1, selected_text_i+1), text:len()+1)
+	end
+	selected_text_w = 0
+	if cursor_letter_index > selected_text_i then
+		cursor_letter_index = selected_text_i
+	else
+		selected_text_i = cursor_letter_index
+	end
+end
+
+function selection_isSelected()
+	print(cursor_letter_index, selected_text_i)
+	if math.max(cursor_letter_index, selected_text_i) - math.min(cursor_letter_index, selected_text_i) > 0 then
+		return true
+	else
+		return false
+	end
+end
+
+function text_insert(str)
+	text = text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..text:sub(math.max(cursor_letter_index+1, selected_text_i+1), text:len()+1)
+	cursor_letter_index = math.min(cursor_letter_index, selected_text_i)+str:len()
+	selected_text_i = cursor_letter_index
+	selected_text_w = 0
 end
