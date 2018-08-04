@@ -36,12 +36,9 @@ function love.load()
 end
  
 function love.textinput(t)
-	print(text)
 	if selection_isSelected() then
 		selection_delete()
 	end
-	print(text)
-	print()
 	text = string_insert(text, cursor_letter_index, t)
 	cursor_letter_index = cursor_letter_index + 1
 	selected_text_i = cursor_letter_index
@@ -101,15 +98,23 @@ function love.keypressed(key)
 	elseif key == "right" then
 		if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
 	elseif key == "delete" and love.keyboard.isDown("lctrl") then
-		for i = cursor_letter_index, text:len() do
-			if text:sub(cursor_letter_index+1, cursor_letter_index+1) == " " then
+		if selection_isSelected() then
+			selection_delete()
+		else
+			for i = cursor_letter_index, text:len() do
+				if text:sub(cursor_letter_index+1, cursor_letter_index+1) == " " then
+					text = string_remove(text, cursor_letter_index)
+					break
+				end
 				text = string_remove(text, cursor_letter_index)
-				break
 			end
-			text = string_remove(text, cursor_letter_index)
 		end
 	elseif key == "delete" then
-		if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
+		if selection_isSelected() then
+			selection_delete()
+		else
+			if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
+		end
 	elseif key == "return" then
 		enter(text)
 	elseif love.keyboard.isDown('lctrl') and key == "a" then
@@ -280,7 +285,6 @@ function selection_delete()
 end
 
 function selection_isSelected()
-	print(cursor_letter_index, selected_text_i)
 	if math.max(cursor_letter_index, selected_text_i) - math.min(cursor_letter_index, selected_text_i) > 0 then
 		return true
 	else
