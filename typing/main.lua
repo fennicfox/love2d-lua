@@ -1,14 +1,15 @@
 local utf8 = require("utf8")
 local orignal_text = ""
 local text = orignal_text
-local y = 0
 local pressed = false
 local FONT = love.graphics.getFont()
 local inputs = {}
-local box_x = 0
-local box_y = 0
-local box_width  = 100
-local box_height = FONT:getHeight("W")
+local box_x = 301
+local box_y = 500
+local box_w  = 100
+local box_h = FONT:getHeight("W")+1
+local box_draw_x = box_x+1
+local box_draw_y = box_y+1
 local cursor_x = box_x+1
 local cursor_y = box_y+1
 local cursor_w = 1
@@ -17,7 +18,7 @@ local cursor_show = true
 local cursor_blink_speed = 0.5
 local cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
 local cursor_letter_index = text:len()
-local selected_text_x = 0
+local selected_text_x = cursor_x
 local selected_text_i = cursor_letter_index
 local selected_text_w = 0
 local previous_click_time = 0
@@ -47,6 +48,7 @@ function love.textinput(t)
 end
  
 function love.update()
+	print(selected_text_x)
 	if love.mouse.isDown(1) and txtbox_mbDown then
 		if not doubleclicked then
 			cursor()
@@ -126,26 +128,26 @@ function love.keypressed(key)
 	elseif love.keyboard.isDown('lctrl') and key == "v" then
 		text_insert(love.system.getClipboardText())
 	end
-
 	cursor_reset()
 end
 
 function love.draw()
+	local display_text = scroll_along_limiter(text)
 	--box limiter drawing
 	love.graphics.setColor(0.25,0.25,0.25,1)
-	love.graphics.rectangle("fill", box_x, box_y, box_width, box_height)
+	love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
 	love.graphics.setColor(0.5,0.5,0.5,1)
-	love.graphics.rectangle("line", box_x, box_y, box_width, box_height)
+	love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
 
 	--love.graphics.setShader(shader_selectText)
 	love.graphics.setColor(0,0,1,1)
-	love.graphics.rectangle("fill",selected_text_x,y,selected_text_w, cursor_h)
+	love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
 	love.graphics.setColor(1,1,1,1)
 
 	--settings the camera to what i'm drawing in the future if you can't fit what's on the page.
-	if y >= love.graphics.getHeight() then
+	if cursor_y >= love.graphics.getHeight() then
 		love.graphics.push()
-		love.graphics.translate(-0, -((y+14)-love.graphics.getHeight()))
+		love.graphics.translate(-0, -((cursor_y+14)-love.graphics.getHeight()))
 	end
 	--love.graphics.setShader()
 
@@ -153,10 +155,10 @@ function love.draw()
 	for i, v in ipairs(inputs) do love.graphics.printf(v.text, 0, v.y, love.graphics.getWidth()) end
 	
 	--prints the text
-	love.graphics.printf(scroll_along_limiter(text), 0, y, love.graphics.getWidth())
+	love.graphics.printf(display_text, box_x+1, cursor_y, love.graphics.getWidth())
 	
 	--moves the camera down when you write more than the page can contain.
-	if y >= love.graphics.getHeight() then
+	if cursor_y >= love.graphics.getHeight() then
 		love.graphics.pop()
 	end
 
@@ -167,8 +169,7 @@ function love.draw()
 end
 
 function cursor_blink()
-	cursor_x = FONT:getWidth(scroll_along_limiter(text):sub(1,cursor_letter_index))
-	cursor_y = y
+	cursor_x = (box_x+1)+FONT:getWidth(scroll_along_limiter(text):sub(1,cursor_letter_index))
 	if cursor_show then
 		if love.timer.getTime() >= cursor_blink_finish then
 			cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
@@ -201,7 +202,7 @@ end
 
 function enter(t)
 	table.insert(inputs, {text = t, y = y})
-	y = y + 14
+	cursor_y = cursor_y + 14
 	text = orignal_text
 	cursor_letter_index = orignal_text:len()
 	selected_text_i = cursor_letter_index
@@ -233,7 +234,7 @@ end
 function selected()
 	local mx = love.mouse.getX() 
 	local my = love.mouse.getY()
-	if mx > 0 and mx < FONT:getWidth(text) and my > y and my < y+cursor_h and pressed then
+	if mx > box_x and mx < box_x+box_w and my > box_y and my < box_y+box_h and pressed then
 		return true
 	end
 	return false
@@ -245,7 +246,7 @@ function cursor()
 	for i = 0, text:len() do
 		local prev_char = FONT:getWidth(text:sub(i,i)) / 2
 		local next_char = FONT:getWidth(text:sub(i+1,i+1)) / 2
-		if mx >= FONT:getWidth(text:sub(0,i))-prev_char and mx <= FONT:getWidth(text:sub(1,i))+next_char and (my >= cursor_y and my <= cursor_y+cursor_h or txtbox_mbDown) then
+		if mx >= box_x+FONT:getWidth(text:sub(0,i))-prev_char and mx <= box_x+FONT:getWidth(text:sub(1,i))+next_char and (my >= box_y and my <= box_y+box_h or txtbox_mbDown) then
 			cursor_letter_index = i
 			cursor_reset()
 			break
@@ -254,7 +255,7 @@ function cursor()
 end
 
 function getCursorX(clw)
-	return FONT:getWidth(text:sub(1,clw))
+	return box_x+FONT:getWidth(text:sub(1,clw))
 end
 
 function getSelectionWidth(clw, s)
@@ -266,9 +267,9 @@ function getSelectionWidth(clw, s)
 end
 
 function selection_all()
-	selected_text_x = 0
+	selected_text_x = box_x+1
 	selected_text_i = 0
-	selected_text_w = FONT:getWidth(text)
+	selected_text_w = FONT:getWidth(scroll_along_limiter(text))
 	cursor_letter_index = text:len()
 end
 
@@ -308,7 +309,7 @@ function text_insert(str)
 end
 
 function scroll_along_limiter(t)
-	if (box_x+1)+FONT:getWidth(t) >= (box_x+1)+box_width then
+	if (box_x+1)+FONT:getWidth(t) >= (box_x+1)+box_w then
 		return scroll_along_limiter(t:sub(2,t:len()))
 	else
 		return t
