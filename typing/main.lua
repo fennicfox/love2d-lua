@@ -1,12 +1,16 @@
 local utf8 = require("utf8")
-local orignal_text = "C:/Users/Default User>"
+local orignal_text = ""
 local text = orignal_text
 local y = 0
 local pressed = false
 local FONT = love.graphics.getFont()
 local inputs = {}
-local cursor_x = 0
-local cursor_y = 0
+local box_x = 0
+local box_y = 0
+local box_width  = 100
+local box_height = FONT:getHeight("W")
+local cursor_x = box_x+1
+local cursor_y = box_y+1
 local cursor_w = 1
 local cursor_h = FONT:getHeight("W")
 local cursor_show = true
@@ -30,9 +34,7 @@ local shader_selectText = love.graphics.newShader[[
 ]]
 
 function love.load()
-	enter("Microsoft Windows [Version 10.0.16299.492]")
-	enter("(c) 2017 Microsoft Corporation. All rights reserved.")
-	enter("")
+
 end
  
 function love.textinput(t)
@@ -129,6 +131,12 @@ function love.keypressed(key)
 end
 
 function love.draw()
+	--box limiter drawing
+	love.graphics.setColor(0.25,0.25,0.25,1)
+	love.graphics.rectangle("fill", box_x, box_y, box_width, box_height)
+	love.graphics.setColor(0.5,0.5,0.5,1)
+	love.graphics.rectangle("line", box_x, box_y, box_width, box_height)
+
 	--love.graphics.setShader(shader_selectText)
 	love.graphics.setColor(0,0,1,1)
 	love.graphics.rectangle("fill",selected_text_x,y,selected_text_w, cursor_h)
@@ -145,7 +153,7 @@ function love.draw()
 	for i, v in ipairs(inputs) do love.graphics.printf(v.text, 0, v.y, love.graphics.getWidth()) end
 	
 	--prints the text
-	love.graphics.printf(text, 0, y, love.graphics.getWidth())
+	love.graphics.printf(scroll_along_limiter(text), 0, y, love.graphics.getWidth())
 	
 	--moves the camera down when you write more than the page can contain.
 	if y >= love.graphics.getHeight() then
@@ -159,7 +167,7 @@ function love.draw()
 end
 
 function cursor_blink()
-	cursor_x = FONT:getWidth(text:sub(1,cursor_letter_index))
+	cursor_x = FONT:getWidth(scroll_along_limiter(text):sub(1,cursor_letter_index))
 	cursor_y = y
 	if cursor_show then
 		if love.timer.getTime() >= cursor_blink_finish then
@@ -297,4 +305,12 @@ function text_insert(str)
 	cursor_letter_index = math.min(cursor_letter_index, selected_text_i)+str:len()
 	selected_text_i = cursor_letter_index
 	selected_text_w = 0
+end
+
+function scroll_along_limiter(t)
+	if (box_x+1)+FONT:getWidth(t) >= (box_x+1)+box_width then
+		return scroll_along_limiter(t:sub(2,t:len()))
+	else
+		return t
+	end
 end
