@@ -27,13 +27,6 @@ local doubleclicked = false
 local txtbox_mbDown = false
 love.keyboard.setKeyRepeat(true) -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
 
-local shader_selectText = love.graphics.newShader[[
-	vec4 effect (vec4 color, Image image, vec2 uvs, vec2 screen_coords){
-		return vec4 (1-color[0], 1-color[0], 1, 1);
-	}
-	
-]]
-
 function love.load()
 
 end
@@ -139,7 +132,6 @@ function love.draw()
 	love.graphics.setColor(0.5,0.5,0.5,1)
 	love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
 
-	--love.graphics.setShader(shader_selectText)
 	love.graphics.setColor(0,0,1,1)
 	love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
 	love.graphics.setColor(1,1,1,1)
@@ -149,7 +141,6 @@ function love.draw()
 		love.graphics.push()
 		love.graphics.translate(-0, -((cursor_y+14)-love.graphics.getHeight()))
 	end
-	--love.graphics.setShader()
 
 	--prints all of the words.
 	for i, v in ipairs(inputs) do love.graphics.printf(v.text, 0, v.y, love.graphics.getWidth()) end
@@ -201,7 +192,7 @@ function string_remove(str, index)
 end
 
 function enter(t)
-	table.insert(inputs, {text = t, y = y})
+	table.insert(inputs, {text = t, y = cursor_y})
 	cursor_y = cursor_y + 14
 	text = orignal_text
 	cursor_letter_index = orignal_text:len()

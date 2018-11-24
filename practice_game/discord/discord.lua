@@ -26,25 +26,17 @@ end
 function discord_update()
     if nextPresenceUpdate < love.timer.getTime() then
         if gamestate == "Playing" or gamestate == "Paused" then
-            if deathsInSession == 0 then
-                presence.details = "Deaths = 0 😎"
-            elseif deathsInSession == 1 or deathsInSession == 2 then
-                presence.details = "Deaths = "..deathsInSession.." 👍"
-            elseif deathsInSession >= 100 then
-                presence.details = "I suck. "..deathsInSession.." deaths! 😂"
-            else
-                presence.details = "Deaths = "..deathsInSession.." 💀"
-            end
+            presence.details = "Deaths: "..deathsInSession.." 💀"
         elseif gamestate == "Level editor" then
             if #editor_graphics == 1 then
                 presence.details = #editor_graphics.. " entity is placed"
             elseif #editor_graphics > 1000 then
-                presence.details = "+1000 entities O_O"
+                presence.details = "+1000 entities"
             else
                 presence.details = #editor_graphics.." entities are placed"
             end
         elseif gamestate == "Main menu" then
-            presence.details = "Zzzzzz"
+            presence.details = "On the main menu..."
         end
         presence.state = gamestate
         discordRPC.updatePresence(presence)

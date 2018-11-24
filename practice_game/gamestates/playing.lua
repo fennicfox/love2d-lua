@@ -90,6 +90,11 @@ function playing_update(dt)
 			camera_yv = -camera_speed
 		end
 		camera:move(camera_xv,camera_yv, dt)
+	else
+		if kdown then
+			frozen = false
+			to_main_menu()
+		end
 	end
 end
 
@@ -115,6 +120,6 @@ function playing_draw(dt)
 	if frozen then
 		love.graphics.setColor(0.2,0.2,0.2,0.5)
 		love.graphics.rectangle("fill",0, 0, love.graphics.getWidth(),love.graphics.getHeight())
-		coroutine.resume(infomessage, 5, "Jeez, you only\ndied "..tostring(p.deathcount).." times.")
+		coroutine.resume(infomessage, 5, "Congratulations!\nYou only died "..tostring(p.deathcount).." times.")
 	end
 end

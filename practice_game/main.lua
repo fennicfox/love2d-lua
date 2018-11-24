@@ -35,6 +35,11 @@ function love.keyreleased( key )
 	pressedk = key
 end
 
+function love.keypressed( key )
+	kdown = true
+	if key == "escape" then click_sfx:play() end
+end
+
 function love.wheelmoved( x, y )
 	if 		y > 0 then  mwheelup = true
 	elseif  y < 0 then  mwheeldown = true
@@ -63,13 +68,10 @@ function love.draw()
 	love.graphics.setFont(graphFont, 12) 
 	love.graphics.setColor(1,1,1,1)
     mpressed   = false
-    kpressed   = false
+	kpressed   = false
+	kdown      = false
     mwheeldown = false
     mwheelup   = false
-end
-
-function love.keypressed( key )
-	if key == "escape" then click_sfx:play() end
 end
 
 function love.resize( w, h )
