@@ -2,15 +2,15 @@ local panel_w           = 250
 local panel_h           = love.graphics.getHeight()
 local panel_open        = false
 local panel_incrementor = 0
-local panel_speed       = 2000
+local panel_speed       = 1000
 
 function navigation_panel_update(dt)
     if panel_open then
         panel_incrementor = math.min(panel_incrementor + (panel_speed * dt), 250)
-        panel_w = math.min(250, panel_incrementor)
+        panel_w = panel_incrementor
     else
         panel_incrementor = math.max(panel_incrementor - (panel_speed * dt), 0)
-        panel_w = math.max(panel_incrementor, 0)
+        panel_w = panel_incrementor
     end
     screen_left = panel_w + 2
 end
