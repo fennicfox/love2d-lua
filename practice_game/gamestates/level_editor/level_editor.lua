@@ -26,10 +26,14 @@
 |  'lctrl' resizes selected objects
 |
 |  'space' or 'r' resets the camera back to 0
-
+|
+|  'n' reveals the navigation pane
+|
 ]]--
 
 require 'gamestates.level_editor.level_editor_navigation_panel'
+require 'gamestates.level_editor.level_editor_resize_shape'
+require 'gamestates.level_editor.le_buttons.le_button'
 
 editor_graphics = {}
 editor_graphics.w = 50 --the width  of the things being put down
@@ -40,12 +44,13 @@ editor_state = "main"
 local shapes = {}
 local shape_selected = 1   --shape index
 
---offsets
-local grid_spacing = 50
-local grid = true
-local grid_lock = true
-local grid_lock_size = editor_graphics.w / 2
+-- Grid Variables
+grid_spacing = 50
+grid = true
+grid_lock = true
+grid_lock_size = editor_graphics.w / 2
 
+-- Settings for the shape being drawn
 local drawing_start_x = 0
 local drawing_start_y = 0
 local drawing_w = editor_graphics.w
@@ -53,42 +58,44 @@ local drawing_h = editor_graphics.h
 local drawing_x = 0
 local drawing_y = 0
 
---for player, selected objects and death zone fading
+-- For player, selected objects and death zone fading
 local flashing_speed = 1 --lower is faster
 local cooldown = false
 local alpha = 0
 
---for scrolling around the universe (not to confuse with zooming)
+-- For scrolling around the universe (not to confuse with zooming)
 local scrolling_x = 0
 local scrolling_y = 0
 local scrolling_has_got = false
 local rmb_x = mousex
 local rmb_y = mousey
 
---for resizing objects
-local cs = 3 --corner size
-local corner_hit = false
-local corner_hit_nw = false
-local corner_hit_ne = false
-local corner_hit_sw = false
-local corner_hit_se = false
-local corner_nw_x = 0
-local corner_nw_y = 0
-local corner_ne_x = 0
-local corner_ne_y = 0
-local corner_sw_x = 0
-local corner_sw_y = 0
-local corner_se_x = 0
-local corner_se_y = 0
-local presspointx = 0
-local presspointy = 0
-
+-- Inserting different shapes names into the table.
 table.insert(shapes, "rectangle")
-table.insert(shapes, "triangle")
 table.insert(shapes, "player")
 table.insert(shapes, "death_zone")
 table.insert(shapes, "win_zone")
+--table.insert(shapes, "triangle")
 
+-- Panel state
+panel_state = "Navigation Panel"
+
+-- Used to make navigation panel push UI to the right
+screen_left = 0
+
+-- Level editor buttons (I made the variable names short because the line was too long)
+local button_navigation = {}
+local b_fc = function() -- Button function
+				 panel_state = "Navigation Panel"
+                 navigation_panel_toggle() 
+			 end 
+local b_t_c = {0.0, 0.0, 0.0, 1.0}          -- Button text colour
+local b_c   = {1.0, 1.0, 1.0, 1.0}          -- Button colour
+local b_b_c = {0.4, 0.4, 0.4, 1.0}          -- Button background colour
+local b_f  = "font/SourceSansPro-Light.ttf" -- Button font
+local b_fs = 24                             -- Button font size
+local wh = love.graphics.getHeight()-15     -- Window Height
+table.insert( button_navigation, le_button:create(screen_left-2, wh, b_t_c,  b_c, b_b_c, b_f, b_fs, "N", b_fc))
 
 function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
 	local object = {
@@ -197,13 +204,13 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					end
 				end
 			end
-		elseif love.mouse.isDown(1) and not drawing_start_got and not love.keyboard.isDown('lctrl') then
+		elseif love.mouse.isDown(1) and not drawing_start_got and not love.keyboard.isDown('lctrl') and level_editor_canPlace() then
 				drawing_start_got = true
 				drawing_start_x = round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size)
 				drawing_start_y = round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size)
 				drawing_x = drawing_start_x
 				drawing_y = drawing_start_y
-		elseif love.mouse.isDown(1) and not love.keyboard.isDown('lctrl') then
+		elseif love.mouse.isDown(1) and not love.keyboard.isDown('lctrl') and level_editor_canPlace()  then
 			if level_editor_mousex() < drawing_start_x then
 				drawing_x = math.min(round(level_editor_mousex(), grid_lock_size), drawing_start_x-editor_graphics.w)
 				drawing_w = (drawing_start_x-drawing_x) + editor_graphics.w
@@ -218,7 +225,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				drawing_y = drawing_start_y
 				drawing_h = math.max(round(level_editor_mousey()-drawing_start_y, grid_lock_size), editor_graphics.h)
 			end
-		elseif drawing_start_got and not love.keyboard.isDown('lctrl') then
+		elseif drawing_start_got and not love.keyboard.isDown('lctrl') and level_editor_canPlace() then
 			drawing_start_got = false
 			if shape_selected == 1 then
 				editor_graphics:createRectangle(drawing_x, drawing_y, drawing_w, drawing_h, 1, 1, 1)
@@ -260,6 +267,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 					grid_lock = true 
 				end
 			elseif pressedk == 'n' then
+				panel_state = "Navigation Panel"
 				navigation_panel_toggle()
 			elseif pressedk == 'escape' then 
 				editor_state = "menu"
@@ -307,7 +315,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		end
 		if love.keyboard.isDown('lctrl') then
 			if love.mouse.isDown(1) then
-				shape_corner_manipulation(dt)
+				level_editor_resize_shape(editor_graphics.selected)
 			else
 				corner_hit = false
 				corner_hit_ne = false
@@ -352,16 +360,16 @@ function level_editor_draw()
 			local xongrid = camera.x - (camera.x % grid_spacing)
 			local yongrid = camera.y - (camera.y % grid_spacing)
 			--lines going down
-			for i = xongrid, (xongrid + (winWidth* camera.scaleX)), grid_spacing do 
+			for i = xongrid, (xongrid + (winWidth* camera.scaleX)+grid_spacing), grid_spacing do 
 				love.graphics.line(i, yongrid, i, yongrid+(winHeight*camera.scaleY)+grid_spacing) -- vertical lines
 			end
 			--lines going across
-			for i = yongrid, (yongrid + (winHeight * camera.scaleY)), grid_spacing do	
+			for i = yongrid, (yongrid + (winHeight * camera.scaleY)+grid_spacing), grid_spacing do	
 				love.graphics.line(xongrid, i, xongrid+(winWidth*camera.scaleX)+grid_spacing, i) -- horizontal lines
 			end
 		end
 		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
-		if not love.keyboard.isDown('lctrl') and not love.mouse.isDown(1) then
+		if not love.keyboard.isDown('lctrl') and not love.mouse.isDown(1) and level_editor_canPlace() then
 			if shape_selected == 3 then --if player is selected
 				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50)
 			elseif shape_selected == 4 then
@@ -389,43 +397,51 @@ function level_editor_draw()
 				end
 			end
 		end
-		if editor_graphics.selected ~= nil then
-			love.graphics.setColor(1, 0.627, 0, alpha) -- default selected object in blender colour
-			love.graphics.rectangle('line', editor_graphics.selected.x, editor_graphics.selected.y, editor_graphics.selected.w, editor_graphics.selected.h)
-			love.graphics.rectangle('line', editor_graphics.selected.x-1, editor_graphics.selected.y-1, editor_graphics.selected.w+2, editor_graphics.selected.h+2)
-			if love.keyboard.isDown('lctrl') then
-				love.graphics.setColor(1, 0, 1, alpha) -- default selected object in blender colour
-				love.graphics.rectangle('fill', editor_graphics.selected.x-cs, editor_graphics.selected.y-cs, cs*2, cs*2)   --top left
-				love.graphics.rectangle('fill', (editor_graphics.selected.x-cs)+editor_graphics.selected.w, editor_graphics.selected.y-cs, cs*2, cs*2) --top right
-				love.graphics.rectangle('fill', editor_graphics.selected.x-cs, (editor_graphics.selected.y-cs)+editor_graphics.selected.h, cs*2, cs*2) --bottom left
-				love.graphics.rectangle('fill', (editor_graphics.selected.x-cs)+editor_graphics.selected.w, (editor_graphics.selected.y-cs)+editor_graphics.selected.h, cs*2, cs*2) --buttom right
-			end
-		end
+		level_editor_resize_shape_draw(editor_graphics.selected)
 		if drawing_start_got then
 			love.graphics.setColor(1,1,1,1)
 			love.graphics.rectangle('fill',drawing_x,drawing_y,drawing_w,drawing_h)
 		end
 		camera:unset()
-		navigation_panel_draw()
-		if not navigation_panel_isOpen() then
-			love.graphics.setColor(0, 0, 0, 0.5)
-			love.graphics.rectangle("fill", 0, 0, 100, 100)
-			love.graphics.setColor(0.3, 0.3, 0.3, 0.47)
-			love.graphics.rectangle("line", 0, 0, 100, 100)
-			love.graphics.setColor(1, 1, 1, 1)
-			love.graphics.setFont(graphFont)
-			love.graphics.print("Grid Spacing: "..tostring(grid_spacing), 5, 5)
-			love.graphics.print("Camera X: "..tostring(camera.x), 5, 20)
-			love.graphics.print("Camera Y: "..tostring(camera.y), 5, 35)
-			love.graphics.print("Camera SX: "..tostring(camera.scaleX), 5, 50)
-			love.graphics.print("Camera SY: "..tostring(camera.scaleY), 5, 65)
-			love.graphics.print("Shape: "..tostring(shapes[shape_selected]), 5, 80)
+
+		-- Draw buttons
+		for i = 1, #button_navigation do
+			button_navigation[i]:changePos(screen_left-2, love.graphics.getHeight()-button_navigation[i].box_wh)
+			button_navigation[i]:show()
 		end
+		navigation_panel_draw()
+		
+		-- Draw selected bar
+		love.graphics.setColor(0, 0, 0, 0.5)
+		love.graphics.rectangle("fill", screen_left, 0, 100, 100)
+		love.graphics.setColor(0.3, 0.3, 0.3, 0.47)
+		love.graphics.rectangle("line", screen_left, 0, 100, 100)
+		love.graphics.setColor(1, 1, 1, 1)
+		love.graphics.setFont(graphFont)
+		love.graphics.print("Grid Spacing: "..tostring(grid_spacing), screen_left+5, 5)
+		love.graphics.print("Camera X: "..tostring(camera.x), screen_left+5, 20)
+		love.graphics.print("Camera Y: "..tostring(camera.y), screen_left+5, 35)
+		love.graphics.print("Camera SX: "..tostring(camera.scaleX), screen_left+5, 50)
+		love.graphics.print("Camera SY: "..tostring(camera.scaleY), screen_left+5, 65)
+		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), screen_left+5, 80)
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))), (love.graphics.getWidth()-130), 5)	--x and y of player and food
 	elseif editor_state == "menu" then
 		level_editor_menu_draw()
 	end
+end
+
+-- If the mouse is over a bit of UI then they can't place objects
+function level_editor_canPlace()
+	if mousex < screen_left then
+		return false
+	end
+	for i = 1, #button_navigation do
+		if button_navigation[i]:mouseIsHovering() then
+			return false
+		end
+	end
+	return true
 end
 
 function level_editor_mousex()
@@ -434,62 +450,4 @@ end
 
 function level_editor_mousey()
 	return camera.y+(mousey*camera.scaleY)
-end
-
-function shape_corner_manipulation(dt)
-	corner_hit = true
-	if (level_editor_mousex() >= editor_graphics.selected.x-cs and								 --top left
-	level_editor_mousey() >=  editor_graphics.selected.y-cs and
-	level_editor_mousex() <= editor_graphics.selected.x+cs and
-	level_editor_mousey() <= editor_graphics.selected.y+cs) or
-	corner_hit_nw and not corner_hit_ne and not corner_hit_se and not corner_hit_sw then
-		corner_hit_nw = true
-		corner_hit_ne = false
-		corner_hit_sw = false
-		corner_hit_se = false
-		editor_graphics.selected.x =  round(math.min(level_editor_mousex(),corner_ne_x-2), grid_lock_size)
-		editor_graphics.selected.w = corner_ne_x - editor_graphics.selected.x
-		editor_graphics.selected.y =  round(math.min(level_editor_mousey(),corner_sw_y-2), grid_lock_size)
-		editor_graphics.selected.h = corner_sw_y - editor_graphics.selected.y
-	elseif (level_editor_mousex() >= (editor_graphics.selected.x-cs)+editor_graphics.selected.w and --top right
-	level_editor_mousey()    >= editor_graphics.selected.y-cs and
-	level_editor_mousex()    <= (editor_graphics.selected.x+cs)+editor_graphics.selected.w and
-	level_editor_mousey()    <= editor_graphics.selected.y+cs) or
-	corner_hit_ne and not corner_hit_nw and not corner_hit_sw and not corner_hit_se then
-		corner_hit_nw = false
-		corner_hit_ne = true
-		corner_hit_sw = false
-		corner_hit_se = false
-		editor_graphics.selected.w = math.max(round(level_editor_mousex()-editor_graphics.selected.x, grid_lock_size), 1)
-		editor_graphics.selected.y =  round(math.min(level_editor_mousey(),corner_se_y-2), grid_lock_size)
-		editor_graphics.selected.h = corner_se_y - editor_graphics.selected.y
-	elseif (level_editor_mousex() >= editor_graphics.selected.x-cs and								--bottom left
-	level_editor_mousey()    >= (editor_graphics.selected.y-cs)+editor_graphics.selected.h and
-	level_editor_mousex()    <= editor_graphics.selected.x+cs and
-	level_editor_mousey()    <= (editor_graphics.selected.y+cs)+editor_graphics.selected.h) or
-	corner_hit_sw and not corner_hit_ne and not corner_hit_nw and not corner_hit_se  then
-		corner_hit_nw = false
-		corner_hit_ne = false
-		corner_hit_sw = true
-		corner_hit_se = false
-		editor_graphics.selected.h = math.max(round(level_editor_mousey()-editor_graphics.selected.y, grid_lock_size), 1)
-		editor_graphics.selected.x =  round(math.min(level_editor_mousex(),corner_se_x-2), grid_lock_size)
-		editor_graphics.selected.w = corner_se_x - editor_graphics.selected.x
-	elseif (level_editor_mousex() >= (editor_graphics.selected.x-cs)+editor_graphics.selected.w and --bottom right
-	level_editor_mousey()    >= (editor_graphics.selected.y-cs)+editor_graphics.selected.h and
-	level_editor_mousex()    <= (editor_graphics.selected.x+cs)+editor_graphics.selected.w and
-	level_editor_mousey()    <= (editor_graphics.selected.y+cs)+editor_graphics.selected.h) or
-	corner_hit_se and not corner_hit_nw and not corner_hit_ne and not corner_hit_sw then
-		corner_hit_nw = false
-		corner_hit_ne = false
-		corner_hit_sw = false
-		corner_hit_se = true
-		editor_graphics.selected.w = math.max(round(level_editor_mousex()-editor_graphics.selected.x, grid_lock_size), 1)
-		editor_graphics.selected.h = math.max(round(level_editor_mousey()-editor_graphics.selected.y, grid_lock_size), 1)
-	else
-		corner_hit_nw = false
-		corner_hit_ne = false
-		corner_hit_sw = false
-		corner_hit_se = false
-	end
 end

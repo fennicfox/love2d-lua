@@ -3,18 +3,18 @@ local elapsed_time = 0
 local saved = false
 
 function level_editor_menu_load(  )
-	local colour 		= { 1, 1, 1 }
-	local newColour 	= { 0.4,0.4,0.4 }
-	local windowWidth 	= love.graphics.getWidth()  /2
-	local windowHeight  = love.graphics.getHeight() /2
-	lvl_button_resume 		= button:create(windowWidth, windowHeight-120, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "resume",      function() editor_state = "main" end)
-	lvl_button_settings 	= button:create(windowWidth, windowHeight-80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",     to_settings						 )
-	lvl_button_open 		= button:create(windowWidth, windowHeight-40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "open",     	 to_open							 )
-	lvl_button_save 		= button:create(windowWidth, windowHeight   , colour, newColour, "font/SourceSansPro-Light.ttf", 32, "save",         to_saving							 )
-	lvl_button_quit 		= button:create(windowWidth, windowHeight+40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit",         to_main_menu                        )
-	lvl_button_dontsave_y   = button:create(windowWidth-80, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "yes",       function() save("y")             end)
-	lvl_button_dontsave_n   = button:create(windowWidth, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "no",           function() save("n")             end)
-	lvl_button_dontsave_c   = button:create(windowWidth+80, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "cancel",    function() save("c")             end)
+	local colour 		  = { 1, 1, 1 }
+	local newColour 	  = { 0.4, 0.4, 0.4 }
+	local windowWidth 	  = love.graphics.getWidth()  /2
+	local windowHeight    = love.graphics.getHeight() /2
+	lvl_button_resume 	  = button:create(windowWidth, windowHeight-120, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "resume",   function() editor_state = "main" end)
+	lvl_button_settings   = button:create(windowWidth, windowHeight-80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "settings",  to_settings                         )
+	lvl_button_open 	  = button:create(windowWidth, windowHeight-40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "open",      to_open	                            )
+	lvl_button_save 	  = button:create(windowWidth, windowHeight   , colour, newColour, "font/SourceSansPro-Light.ttf", 32, "save",      to_saving                           )
+	lvl_button_quit 	  = button:create(windowWidth, windowHeight+40, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "quit",      to_main_menu                        )
+	lvl_button_dontsave_y = button:create(windowWidth-80, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "yes",    function() save("y")             end)
+	lvl_button_dontsave_n = button:create(windowWidth, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "no",        function() save("n")             end)
+	lvl_button_dontsave_c = button:create(windowWidth+80, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "cancel", function() save("c")             end)
 end
 
 function level_editor_menu_draw(  )

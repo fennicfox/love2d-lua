@@ -120,6 +120,6 @@ function playing_draw(dt)
 	if frozen then
 		love.graphics.setColor(0.2,0.2,0.2,0.5)
 		love.graphics.rectangle("fill",0, 0, love.graphics.getWidth(),love.graphics.getHeight())
-		coroutine.resume(infomessage, 5, "Congratulations!\nYou only died "..tostring(p.deathcount).." times.")
+		coroutine.resume(infomessage, 5, "Congratulations!\nYou only died "..tostring(p.deathcount).." times.") --update this to print or create a class that's good at printing
 	end
 end
