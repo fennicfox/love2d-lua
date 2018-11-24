@@ -33,7 +33,7 @@
 
 require 'gamestates.level_editor.level_editor_navigation_panel'
 require 'gamestates.level_editor.level_editor_resize_shape'
-require 'gamestates.level_editor.le_buttons.le_button'
+require 'gamestates.level_editor.le_button'
 
 editor_graphics = {}
 editor_graphics.w = 50 --the width  of the things being put down
