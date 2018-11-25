@@ -1,5 +1,6 @@
 local utf8 = require("utf8")
 local orignal_text = ""
+local after_text = ""
 local text = orignal_text
 local pressed = false
 local FONT = love.graphics.getFont()
@@ -14,6 +15,7 @@ local cursor_x = box_x+1
 local cursor_y = box_y+1
 local cursor_w = 1
 local cursor_h = FONT:getHeight("W")
+local list_y   = 0
 local cursor_show = true
 local cursor_blink_speed = 0.5
 local cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
@@ -21,6 +23,7 @@ local cursor_letter_index = text:len()
 local selected_text_x = cursor_x
 local selected_text_i = cursor_letter_index
 local selected_text_w = 0
+local key_shifting = false -- If user is holding down shift
 local previous_click_time = 0
 local doubleclicktime = 0.2
 local doubleclicked = false
@@ -41,7 +44,7 @@ function love.textinput(t)
 end
  
 function love.update()
-	print(selected_text_x)
+	--print("Selected x: "..selected_text_x)
 	if love.mouse.isDown(1) and txtbox_mbDown then
 		if not doubleclicked then
 			cursor()
@@ -55,65 +58,31 @@ function love.update()
 end
 
 function love.keypressed(key)
+	if love.keyboard.isDown("lshift") then
+		key_shifting = true 
+	else
+		key_shifting = false
+	end
 	if not love.keyboard.isDown("lctrl") and key == "backspace" and (cursor_letter_index > 0 or selected_text_i > 1) then
-		if selection_isSelected() then
-			selection_delete()
-		else
-			cursor_letter_index = cursor_letter_index - 1
-			selected_text_i = cursor_letter_index
-			text = string_remove(text, cursor_letter_index)
-		end
+		cursor_bckSpc()
 	elseif love.keyboard.isDown("lctrl") and key == "backspace" and (cursor_letter_index > 0 or selected_text_i > 1)  then
-		if selection_isSelected() then
-			selection_delete()
-		else
-			for i = 0, cursor_letter_index do
-				if cursor_letter_index <= 0 then
-					cursor_letter_index = 0
-					break
-				end
-				text = string_remove(text, cursor_letter_index-1)
-				cursor_letter_index = cursor_letter_index - 1
-				selected_text_i = cursor_letter_index
-				if text:sub(cursor_letter_index, cursor_letter_index) == " " then
-					break
-				end
-			end
-		end
+		cursor_bckSpcJump()
 	elseif key == "left" and love.keyboard.isDown("lctrl") then
-		for i = 0, cursor_letter_index do
-			if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
-			if text:sub(cursor_letter_index, cursor_letter_index) == " " then break end
-		end
-	elseif key == "right" and love.keyboard.isDown("lctrl") then
-		for i = cursor_letter_index, text:len() do
-			if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
-			if text:sub(cursor_letter_index, cursor_letter_index) == " " then break end
-		end
+		cursor_leftJump()
 	elseif key == "left" then
-		if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
+		cursor_left()
+	elseif key == "right" and love.keyboard.isDown("lctrl") then
+		cursor_rightJump()
 	elseif key == "right" then
-		if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
+		cursor_right()
 	elseif key == "delete" and love.keyboard.isDown("lctrl") then
-		if selection_isSelected() then
-			selection_delete()
-		else
-			for i = cursor_letter_index, text:len() do
-				if text:sub(cursor_letter_index+1, cursor_letter_index+1) == " " then
-					text = string_remove(text, cursor_letter_index)
-					break
-				end
-				text = string_remove(text, cursor_letter_index)
-			end
-		end
+		cursor_deleteJump()
 	elseif key == "delete" then
-		if selection_isSelected() then
-			selection_delete()
-		else
-			if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
-		end
+		cursor_delete()
 	elseif key == "return" then
 		enter(text)
+	elseif key == "f1" then
+		print(cursor_letter_index, selected_text_i)
 	elseif love.keyboard.isDown('lctrl') and key == "a" then
 		selection_all()
 	elseif love.keyboard.isDown('lctrl') and key == "c" then
@@ -122,6 +91,14 @@ function love.keypressed(key)
 		text_insert(love.system.getClipboardText())
 	end
 	cursor_reset()
+	selection_update()
+end
+
+function love.keyreleased(key)
+	if key == "lshift" then
+		txtbox_mbDown = false
+		selection_update()
+	end
 end
 
 function love.draw()
@@ -192,8 +169,8 @@ function string_remove(str, index)
 end
 
 function enter(t)
-	table.insert(inputs, {text = t, y = cursor_y})
-	cursor_y = cursor_y + 14
+	table.insert(inputs, {text = t, y = list_y})
+	list_y = list_y + 14
 	text = orignal_text
 	cursor_letter_index = orignal_text:len()
 	selected_text_i = cursor_letter_index
@@ -245,10 +222,108 @@ function cursor()
 	end
 end
 
+-- Moves the cursor left
+function cursor_left()
+	if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
+	if not key_shifting then
+		selection_reset()
+	else
+		txtbox_mbDown = true
+	end
+end
+
+-- Jumps the cursor left
+function cursor_leftJump()
+	for i = 0, cursor_letter_index do
+		if cursor_letter_index > 0 then cursor_letter_index = cursor_letter_index - 1 end
+		if text:sub(cursor_letter_index, cursor_letter_index) == " " then break end
+	end
+	if not key_shifting then
+		selection_reset()
+	else
+		txtbox_mbDown = true
+	end
+end
+
+-- Moves the cursor right
+function cursor_right()
+	if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
+	if not key_shifting then
+		selection_reset()
+	else
+		txtbox_mbDown = true
+	end
+end
+
+-- Jumps the cursor right
+function cursor_rightJump()
+	for i = cursor_letter_index, text:len() do
+		if cursor_letter_index < text:len() then cursor_letter_index = cursor_letter_index + 1 end
+		if text:sub(cursor_letter_index, cursor_letter_index) == " " then break end
+	end
+	if not key_shifting then
+		selection_reset()
+	else
+		txtbox_mbDown = true
+	end
+end
+
+function cursor_bckSpc()
+	if selection_isSelected() then
+		selection_delete()
+	else
+		cursor_letter_index = cursor_letter_index - 1
+		selected_text_i = cursor_letter_index
+		text = string_remove(text, cursor_letter_index)
+	end
+end
+
+function cursor_bckSpcJump()
+	if selection_isSelected() then
+		selection_delete()
+	else
+		for i = 0, cursor_letter_index do
+			if cursor_letter_index <= 0 then
+				cursor_letter_index = 0
+				break
+			end
+			text = string_remove(text, cursor_letter_index-1)
+			cursor_letter_index = cursor_letter_index - 1
+			selected_text_i = cursor_letter_index
+			if text:sub(cursor_letter_index, cursor_letter_index) == " " then
+				break
+			end
+		end
+	end
+end
+
+function cursor_delete()
+	if selection_isSelected() then
+		selection_delete()
+	else
+		if cursor_letter_index < text:len() then text = string_remove(text, cursor_letter_index) end
+	end
+end
+
+function cursor_deleteJump()
+	if selection_isSelected() then
+		selection_delete()
+	else
+		for i = cursor_letter_index, text:len() do
+			if text:sub(cursor_letter_index+1, cursor_letter_index+1) == " " then
+				text = string_remove(text, cursor_letter_index)
+				break
+			end
+			text = string_remove(text, cursor_letter_index)
+		end
+	end
+end
+
 function getCursorX(clw)
 	return box_x+FONT:getWidth(text:sub(1,clw))
 end
 
+-- returns the selection width (cursor letter index, selected_text_i)
 function getSelectionWidth(clw, s)
 	if clw > s then
 		return -FONT:getWidth(text:sub(s+1,clw))
@@ -284,6 +359,11 @@ function selection_delete()
 	end
 end
 
+function selection_reset()
+	selected_text_w = 0
+	selected_text_i = cursor_letter_index
+end
+
 function selection_isSelected()
 	if math.max(cursor_letter_index, selected_text_i) - math.min(cursor_letter_index, selected_text_i) > 0 then
 		return true
@@ -292,6 +372,20 @@ function selection_isSelected()
 	end
 end
 
+function selection_update()
+	if selection_text_selected():len() >= 1 and cursor_letter_index ~= selected_text_i then
+		selected_text_x = (box_x+1)+FONT:getWidth(text:sub(0,math.min(cursor_letter_index, selected_text_i)))
+		print(selection_text_selected())
+		selected_text_w = FONT:getWidth(selection_text_selected())
+	else
+		selected_text_w = 0
+	end 
+end
+
+function selection_text_selected()
+	return text:sub(math.min(cursor_letter_index, selected_text_i)+1, math.max(cursor_letter_index, selected_text_i))
+end 
+
 function text_insert(str)
 	text = text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..text:sub(math.max(cursor_letter_index+1, selected_text_i+1), text:len()+1)
 	cursor_letter_index = math.min(cursor_letter_index, selected_text_i)+str:len()
@@ -299,6 +393,7 @@ function text_insert(str)
 	selected_text_w = 0
 end
 
+-- The text to be displayed in the input box
 function scroll_along_limiter(t)
 	if (box_x+1)+FONT:getWidth(t) >= (box_x+1)+box_w then
 		return scroll_along_limiter(t:sub(2,t:len()))
