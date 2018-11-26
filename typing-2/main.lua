@@ -8,8 +8,10 @@ function love.load()
     }
 end
 
-function love.update()
-	
+function love.update(dt)
+    for i = 1, #inputs do
+        inputs[i]:update(dt)
+    end
 end
 
 function love.draw()
@@ -18,8 +20,10 @@ function love.draw()
     end
 end
 
-function love.textinput(t)
-
+function love.textinput(str)
+    for i = 1, #inputs do
+        inputs[i]:textinput(str)
+    end
 end
 
 function love.mousepressed()
@@ -35,9 +39,13 @@ function love.mousereleased()
 end
 
 function love.keypressed(key)
-
+    for i = 1, #inputs do
+        inputs[i]:keyPressed(key)
+    end
 end
 
 function love.keyreleased(key)
-
+    for i = 1, #inputs do
+        inputs[i]:keyReleased(key)
+    end
 end
