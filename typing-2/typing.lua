@@ -1,21 +1,14 @@
 local utf8 = require("utf8")
 
-typing = {}
-
 local orignal_text = ""
 local after_text = ""
 local text = orignal_text
 local pressed = false
 local FONT = love.graphics.getFont()
 local inputs = {}
-local box_x = 301
-local box_y = 500
-local box_w  = 100
-local box_h = FONT:getHeight("W")+1
-local box_draw_x = box_x+1
-local box_draw_y = box_y+1
-local cursor_x = box_x+1
-local cursor_y = box_y+1
+
+local cursor_x = 0
+local cursor_y = 0
 local cursor_w = 1
 local cursor_h = FONT:getHeight("W")
 local list_y   = 0
@@ -33,6 +26,53 @@ local doubleclicked = false
 local txtbox_mbDown = false
 love.keyboard.setKeyRepeat(true) -- enable key repeat so backspace can be held down to trigger love.keypressed multiple times.
 
+typing = {}
+function typing:create(x, y, w, h)
+	self.__index = self
+	local metatable = setmetatable({
+		x = x,
+		y = y,
+		w = w,
+		h = h,
+		text,
+		displaying_text
+	}, self)
+	return metatable
+end
+
+function typing:draw()
+	local display_text = self:scroll_along_limiter(text)
+	-- Box drawing
+	love.graphics.setColor(0.25,0.25,0.25,1)
+	love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+	love.graphics.setColor(0.5,0.5,0.5,1)
+	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+	
+	-- Drawing the selected text
+	love.graphics.setColor(0,0,1,1)
+	love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
+	love.graphics.setColor(1,1,1,1)
+	
+	--settings the camera to what i'm drawing in the future if you can't fit what's on the page.
+	if cursor_y >= love.graphics.getHeight() then
+		love.graphics.push()
+		love.graphics.translate(-0, -((cursor_y+14)-love.graphics.getHeight()))
+	end
+	
+	-- Prints the text
+	love.graphics.printf(display_text, self.x+1, cursor_y, love.graphics.getWidth())
+	
+	--moves the camera down when you write more than the page can contain.
+	if cursor_y >= love.graphics.getHeight() then
+		love.graphics.pop()
+	end
+	
+	--the cursor
+	if cursor_show then
+		love.graphics.rectangle("fill", cursor_x, cursor_y, cursor_w, cursor_h)
+	end
+end
+
 function love.textinput(t)
 	if selection_isSelected() then
 		selection_delete()
@@ -41,7 +81,7 @@ function love.textinput(t)
 	cursor_letter_index = cursor_letter_index + 1
 	selected_text_i = cursor_letter_index
 end
- 
+
 function love.update()
 	--print("Selected x: "..selected_text_x)
 	if love.mouse.isDown(1) and txtbox_mbDown then
@@ -100,38 +140,12 @@ function love.keyreleased(key)
 	end
 end
 
-function love.draw()
-	local display_text = scroll_along_limiter(text)
-	--box limiter drawing
-	love.graphics.setColor(0.25,0.25,0.25,1)
-	love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
-	love.graphics.setColor(0.5,0.5,0.5,1)
-	love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
-
-	love.graphics.setColor(0,0,1,1)
-	love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
-	love.graphics.setColor(1,1,1,1)
-
-	--settings the camera to what i'm drawing in the future if you can't fit what's on the page.
-	if cursor_y >= love.graphics.getHeight() then
-		love.graphics.push()
-		love.graphics.translate(-0, -((cursor_y+14)-love.graphics.getHeight()))
-	end
-
-	--prints all of the words.
-	for i, v in ipairs(inputs) do love.graphics.printf(v.text, 0, v.y, love.graphics.getWidth()) end
-	
-	--prints the text
-	love.graphics.printf(display_text, box_x+1, cursor_y, love.graphics.getWidth())
-	
-	--moves the camera down when you write more than the page can contain.
-	if cursor_y >= love.graphics.getHeight() then
-		love.graphics.pop()
-	end
-
-	--the cursor
-	if cursor_show then
-		love.graphics.rectangle("fill", cursor_x, cursor_y, cursor_w, cursor_h)
+-- The text to be displayed in the input box
+function typing:scroll_along_limiter(t)
+	if ((self.x + 1) + FONT:getWidth(t)) >= ((self.x + 1) + self.w) then
+		return scroll_along_limiter(t:sub(2, t:len()))
+	else
+		return t
 	end
 end
 
@@ -175,9 +189,9 @@ function enter(t)
 	selected_text_i = cursor_letter_index
 end
 
-function love.mousepressed(x, y)
+function typing:mouseDown()
 	pressed = true
-	txtbox_mbDown = selected()
+	txtbox_mbDown = self:selected()
 	cursor()
 	selected_text_x = getCursorX(cursor_letter_index)
 	selected_text_i = cursor_letter_index
@@ -188,7 +202,7 @@ function love.mousepressed(x, y)
 	previous_click_time = love.timer.getTime()
 end
 
-function love.mousereleased(x, y)
+function typing:mouseUp()
 	pressed = false
 	if txtbox_mbDown then
 		txtbox_mbDown = false
@@ -198,25 +212,29 @@ function love.mousereleased(x, y)
 	end
 end
 
-function selected()
+-- Whether this text box is selected or not
+function typing:selected()
 	local mx = love.mouse.getX() 
 	local my = love.mouse.getY()
-	if mx > box_x and mx < box_x+box_w and my > box_y and my < box_y+box_h and pressed then
+	if mx > self.x and mx < self.x+self.w and my > self.y and my < self.y+self.h and pressed then
 		return true
+	else
+		return false
 	end
-	return false
 end
 
 function cursor()
 	local mx = love.mouse.getX() 
 	local my = love.mouse.getY()
-	for i = 0, text:len() do
-		local prev_char = FONT:getWidth(text:sub(i,i)) / 2
-		local next_char = FONT:getWidth(text:sub(i+1,i+1)) / 2
-		if mx >= box_x+FONT:getWidth(text:sub(0,i))-prev_char and mx <= box_x+FONT:getWidth(text:sub(1,i))+next_char and (my >= box_y and my <= box_y+box_h or txtbox_mbDown) then
-			cursor_letter_index = i
-			cursor_reset()
-			break
+	for t = 1, #typing do
+		for i = 0, text:len() do
+			local prev_char = FONT:getWidth(text:sub(i,i)) / 2
+			local next_char = FONT:getWidth(text:sub(i+1,i+1)) / 2
+			if mx >= typing[t].x+FONT:getWidth(text:sub(0,i))-prev_char and mx <= typing[t].x+FONT:getWidth(text:sub(1,i))+next_char and (my >= typing[t].y and my <= typing[t].y+typing[t].h or txtbox_mbDown) then
+				cursor_letter_index = i
+				cursor_reset()
+				break
+			end
 		end
 	end
 end
@@ -390,13 +408,4 @@ function text_insert(str)
 	cursor_letter_index = math.min(cursor_letter_index, selected_text_i)+str:len()
 	selected_text_i = cursor_letter_index
 	selected_text_w = 0
-end
-
--- The text to be displayed in the input box
-function scroll_along_limiter(t)
-	if (box_x+1)+FONT:getWidth(t) >= (box_x+1)+box_w then
-		return scroll_along_limiter(t:sub(2,t:len()))
-	else
-		return t
-	end
 end
