@@ -50,6 +50,8 @@ function typing:update(dt)
 		self:mouseDown()
 		focused_input = getTypingIndex(self)
 		txtbox_mbDown = true
+		cursor_y = self.y
+		cursor_reset()
 	end
 	if self.focus then
 		if press then
@@ -103,13 +105,12 @@ function typing:draw()
 end
 
 function typing:textinput(str)
-	if self.focus then
+	if str..self.text == boxTypingLimit(str..self.text, self.w) and self.focus then
 		if selection_isSelected() then
 			selection_delete()
 		end
-		local new_text = self:boxTypingLimit(str..self.text)
-		self.text = self:boxTypingLimit(string_insert(self.text, cursor_letter_index, str))
-		cursor_letter_index = cursor_letter_index + self.text:len()+1 - new_text:len()
+		self.text = string_insert(self.text, cursor_letter_index, str)
+		cursor_letter_index = cursor_letter_index + str:len()
 		selected_text_i = cursor_letter_index
 	end
 end
@@ -146,7 +147,9 @@ function typing:keyPressed(key)
 		elseif love.keyboard.isDown('lctrl') and key == "c" then -- copy
 			selection_copy()
 		elseif love.keyboard.isDown('lctrl') and key == "v" then -- paste
-			self:text_insert(love.system.getClipboardText())
+			if love.system.getClipboardText():len() > self.max_len then
+				self:text_insert(love.system.getClipboardText())
+			end
 		end
 		cursor_reset()
 		selection_update()
@@ -163,7 +166,7 @@ function typing:keyReleased(key)
 end
 
 function typing:setInput(str)
-	self.text = self:boxTypingLimit(str)
+	self.text = boxTypingLimit(str, self.w)
 end
 
 function typing:getInput(str)
@@ -220,12 +223,21 @@ function typing:selected()
 	end
 end
 
--- Returns true if it changed the text
-function typing:boxTypingLimit(str)
-	if FONT:getWidth(str) > self.w then
-		return self:boxTypingLimit(str:sub(0,str:len()-1))
+-- Returns the truncated text
+function boxTypingLimit(str, w)
+	if FONT:getWidth(str) > w then
+		return boxTypingLimit(str:sub(0,str:len()-1), w)
 	else
 		return str
+	end
+end
+
+function find_box_len(str, w, c)
+	print(str, str:len())
+	if str == boxTypingLimit(str, w) then
+		return find_box_len(str..c, w)
+	else
+		return str:len()
 	end
 end
 
@@ -281,7 +293,6 @@ function cursor()
 				local next_char = FONT:getWidth(typing[t].text:sub(i+1,i+1)) / 2
 				if mx >= typing[t].x+FONT:getWidth(typing[t].text:sub(0,i))-prev_char and mx <= typing[t].x+FONT:getWidth(typing[t].text:sub(1,i))+next_char and (my >= typing[t].y and my <= typing[t].y+typing[t].h or txtbox_mbDown) then
 					cursor_letter_index = i
-					--print(typing[t].id)
 					cursor_y = typing[t].y
 					cursor_reset()
 					return
@@ -458,7 +469,7 @@ function selection_text_selected()
 end 
 
 function typing:text_insert(str)
-	--self:setInput(self.text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..self.text:sub(math.max(cursor_letter_index+1, selected_text_i+1), self.text:len()+1))
+	self:setInput(self.text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..self.text:sub(math.max(cursor_letter_index+1, selected_text_i+1), self.text:len()+1))
 	cursor_letter_index = math.min(cursor_letter_index, selected_text_i)+str:len()
 	selected_text_i = cursor_letter_index
 	selected_text_w = 0
