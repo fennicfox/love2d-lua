@@ -7,6 +7,8 @@ local press    = false
 local FONT = love.graphics.getFont()
 local focused_input = nil
 
+local switch = false
+
 local cursor_x = 0
 local cursor_y = 0
 local cursor_w = 1
@@ -35,7 +37,7 @@ function typing:create(x, y, w, h)
 		y = y,
 		w = w,
 		h = h,
-		text = "Insert text here",
+		text = "",
 		focus = false,
 		id = id
 	}, self)
@@ -116,7 +118,9 @@ function typing:textinput(str)
 end
 
 function typing:keyPressed(key)
-	if self.focus then
+	if switch then
+		switch = false
+	elseif self.focus then
 		if love.keyboard.isDown("lshift") then
 			key_shifting = true 
 		else
@@ -140,6 +144,8 @@ function typing:keyPressed(key)
 			cursor_delete()
 		elseif key == "return" then
 			self.focus = false
+		elseif key == "tab" then
+			self:switch()
 		elseif key == "f1" then
 			print(cursor_letter_index, selected_text_i)
 		elseif love.keyboard.isDown('lctrl') and key == "a" then -- selects all
@@ -220,6 +226,22 @@ function typing:selected()
 		return true
 	else
 		return false
+	end
+end
+
+function typing:switch()
+	for i = self.id, #typing do
+		local index = (i % #typing)+1
+		if typing[index] ~= nil then
+			unfocus()
+			typing[index].focus = true
+			cursor_y = typing[index].y
+			focused_input = index
+			switch = true
+			selection_all()
+			cursor_reset()
+			break
+		end
 	end
 end
 

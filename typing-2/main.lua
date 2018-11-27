@@ -4,7 +4,7 @@ function love.load()
     font = love.graphics.getFont()
     inputs = { 
         typing:create(200, 200, 200, font:getHeight("W")+1),
-        typing:create(200, 220, 250, (font:getHeight("W")+1)*2)
+        typing:create(200, 250, 200, (font:getHeight("W")+1))
     }
 end
 
@@ -19,6 +19,8 @@ function love.draw()
     for i = 1, #inputs do
         inputs[i]:draw()
     end
+    love.graphics.print("Name:", 200, 180)
+    love.graphics.print("Phone number:", 200, 230)
     mouse_reset()
 end
 
