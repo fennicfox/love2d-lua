@@ -97,17 +97,20 @@ local b_fs = 24                             -- Button font size
 local wh = love.graphics.getHeight()-15     -- Window Height
 table.insert( button_navigation, le_button:create(screen_left-2, wh, b_t_c,  b_c, b_b_c, b_f, b_fs, "N", b_fc))
 
+navigation_panel_load()
+
 function editor_graphics:createRectangle(x, y, w, h, r, g ,b)
 	local object = {
-	s = "rectangle",
- 	x = x,
-	y = y,
-	w = w,
-	h = h,
-	r = r,
-	g = g,
-	b = b
-}
+		s = "rectangle",
+		x = x,
+		y = y,
+		w = w,
+		h = h,
+		r = r,
+		g = g,
+		b = b
+	}
+	
 	table.insert(editor_graphics, object)
 	setmetatable(object, {__index = self})
 	return object

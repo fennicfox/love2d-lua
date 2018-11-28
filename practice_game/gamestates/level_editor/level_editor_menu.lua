@@ -15,6 +15,7 @@ function level_editor_menu_load(  )
 	lvl_button_dontsave_y = button:create(windowWidth-80, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "yes",    function() save("y")             end)
 	lvl_button_dontsave_n = button:create(windowWidth, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "no",        function() save("n")             end)
 	lvl_button_dontsave_c = button:create(windowWidth+80, windowHeight+80, colour, newColour, "font/SourceSansPro-Light.ttf", 32, "cancel", function() save("c")             end)
+	
 end
 
 function level_editor_menu_draw(  )

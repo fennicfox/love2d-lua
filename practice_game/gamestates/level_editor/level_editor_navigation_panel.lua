@@ -1,8 +1,26 @@
+require 'utilities.typing'
+
 local panel_w           = 250
 local panel_h           = love.graphics.getHeight()
 local panel_open        = false
 local panel_incrementor = 0
 local panel_speed       = 1000
+
+function navigation_panel_load()
+    inputs = {}
+    labels = {}
+    
+    table.insert(labels, {
+        text = "X:", 
+        x = 20, 
+        y = 40
+    })
+    local f = love.graphics.getFont()
+    table.insert(inputs, {
+        name = "X",
+        box  = typing:create(20, 60, 128, f:getHeight()+1)
+    })
+end
 
 function navigation_panel_update(dt)
     if panel_open then
@@ -12,6 +30,21 @@ function navigation_panel_update(dt)
         panel_incrementor = math.max(panel_incrementor - (panel_speed * dt), 0)
         panel_w = panel_incrementor
     end
+    mouse()
+    for i, v in ipairs(inputs) do
+        if v.name == "X" and not v.box.focus and editor_graphics.selected ~= nil then
+            v.box:setInput(editor_graphics.selected.x)
+        end
+        if kdown then
+            v.box:keyPressed(kname)
+        end
+        if kpressed then
+            v.box:keyReleased(pressedk)
+        end
+        v.box:update()
+    end
+    mouse_reset()
+            
     screen_left = panel_w + 2
 end
 
@@ -24,6 +57,15 @@ function navigation_panel_draw()
         love.graphics.line(panel_w,0,panel_w,panel_h)
         love.graphics.setFont(graphFont)
         love.graphics.print(panel_state, ((screen_left)-250)+5, 5)
+
+        for i, v in ipairs(inputs) do
+            v.box:draw()
+        end
+
+        for i, v in ipairs(labels) do
+            love.graphics.setColor(1,1,1,1)
+            love.graphics.print(v.text, v.x, v.y)
+        end
     end
 end
 

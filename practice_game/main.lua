@@ -37,6 +37,7 @@ end
 
 function love.keypressed( key )
 	kdown = true
+	kname = key
 	if key == "escape" then click_sfx:play() end
 end
 
