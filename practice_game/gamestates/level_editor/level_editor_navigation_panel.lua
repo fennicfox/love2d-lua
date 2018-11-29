@@ -40,7 +40,7 @@ function navigation_panel_update(dt)
         if v.name == "X" and not v.box.focus and editor_graphics.selected ~= nil then
             v.box:setInput(editor_graphics.selected.x)
         end
-        if v.box.func_called then
+        if v.box.func_called and v.box.returnedtext:len() > 0 then
             v.func(v.box.returnedtext)
             v.box.func_called = false
         end

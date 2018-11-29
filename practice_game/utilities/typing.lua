@@ -150,9 +150,6 @@ function typing:keyPressed(key)
 		elseif key == "delete" then
 			cursor_delete()
 		elseif key == "return" then
-			print("CALLING_FUNC")
-			self.func_called = true
-			self.returnedtext = self.text
 			unfocus()
 			return
 		elseif key == "tab" then
@@ -166,6 +163,8 @@ function typing:keyPressed(key)
 				self:text_insert(love.system.getClipboardText())
 			end
 		end
+		self.func_called = true
+		self.returnedtext = self.text
 		cursor_reset()
 		selection_update()
 	end
