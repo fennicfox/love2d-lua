@@ -38,7 +38,8 @@ function typing:create(x, y, w, h)
 		h = h,
 		text = "",
 		focus = false,
-		id = id
+		id = id,
+		func_called = false
 	}, self)
 	id = id + 1
 	table.insert( typing, metatable )
@@ -148,7 +149,10 @@ function typing:keyPressed(key)
 		elseif key == "delete" then
 			cursor_delete()
 		elseif key == "return" then
-			self.focus = false
+			print("CALLING_FUNC")
+			func_called = true
+			unfocus()
+			return
 		elseif key == "tab" then
 			self:switch()
 		elseif love.keyboard.isDown('lctrl') and key == "a" then -- selects all
@@ -175,7 +179,7 @@ function typing:keyReleased(key)
 end
 
 function typing:setInput(str)
-	self.text = boxTypingLimit(str, self.w)
+	self.text = boxTypingLimit(tostring(str), self.w)
 end
 
 function typing:getInput(str)
@@ -312,6 +316,7 @@ function cursor()
 	local my = love.mouse.getY()
 	for t = 1, #typing do
 		if typing[t].focus then
+			print(typing[t].text)
 			for i = 0, typing[t].text:len() do
 				local prev_char = FONT:getWidth(typing[t].text:sub(i,i)) / 2
 				local next_char = FONT:getWidth(typing[t].text:sub(i+1,i+1)) / 2

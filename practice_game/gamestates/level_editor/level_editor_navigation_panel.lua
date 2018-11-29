@@ -18,7 +18,13 @@ function navigation_panel_load()
     local f = love.graphics.getFont()
     table.insert(inputs, {
         name = "X",
-        box  = typing:create(20, 60, 128, f:getHeight()+1)
+        box  = typing:create(20, 60, 128, f:getHeight()+1),
+        func = function(text) 
+            if editor_graphics.selected ~= nil then 
+                editor_graphics.selected.x = tonumber(text)
+                print("OUTPUTTING "..text)
+            end 
+        end
     })
 end
 
@@ -34,6 +40,11 @@ function navigation_panel_update(dt)
     for i, v in ipairs(inputs) do
         if v.name == "X" and not v.box.focus and editor_graphics.selected ~= nil then
             v.box:setInput(editor_graphics.selected.x)
+        end
+        if v.box.func_called then
+            v.func(v.box.text)
+            print("OUTPUTTING1 "..text)
+            v.box.func_called = false
         end
         if kdown then
             v.box:keyPressed(kname)
