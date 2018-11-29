@@ -22,7 +22,6 @@ function navigation_panel_load()
         func = function(text) 
             if editor_graphics.selected ~= nil then 
                 editor_graphics.selected.x = tonumber(text)
-                print("OUTPUTTING "..text)
             end 
         end
     })
@@ -42,8 +41,7 @@ function navigation_panel_update(dt)
             v.box:setInput(editor_graphics.selected.x)
         end
         if v.box.func_called then
-            v.func(v.box.text)
-            print("OUTPUTTING1 "..text)
+            v.func(v.box.returnedtext)
             v.box.func_called = false
         end
         if kdown then

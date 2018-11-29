@@ -37,6 +37,7 @@ function typing:create(x, y, w, h)
 		w = w,
 		h = h,
 		text = "",
+		returnedtext = "",
 		focus = false,
 		id = id,
 		func_called = false
@@ -150,7 +151,8 @@ function typing:keyPressed(key)
 			cursor_delete()
 		elseif key == "return" then
 			print("CALLING_FUNC")
-			func_called = true
+			self.func_called = true
+			self.returnedtext = self.text
 			unfocus()
 			return
 		elseif key == "tab" then
