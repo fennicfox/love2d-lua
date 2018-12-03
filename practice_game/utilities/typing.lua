@@ -61,7 +61,7 @@ function typing:update(dt)
 		self.focus = false
 	end
 	if self.focus then
-		if press then
+		if press and not doubleclicked then
 			cursor()
 		end
 		unfocus()
@@ -108,7 +108,7 @@ function typing:draw()
 end
 
 function love.textinput(str)
-	for i = 1, #inputs do
+	for i = 1, #typing do
 		if str..typing[i].text == boxTypingLimit(str..typing[i].text, typing[i].w) and typing[i].focus then
 			if selection_isSelected() then
 				selection_delete()
@@ -155,8 +155,9 @@ function typing:keyPressed(key)
 		elseif love.keyboard.isDown('lctrl') and key == "c" then -- copy
 			selection_copy()
 		elseif love.keyboard.isDown('lctrl') and key == "v" then -- paste
-			if love.system.getClipboardText():len() > self.max_len then
-				self:text_insert(love.system.getClipboardText())
+			local str = tostring(love.system.getClipboardText())
+			if str:len() > boxTypingLimit(self.text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..self.text:sub(math.max(cursor_letter_index+1, selected_text_i+1)),self.w) then
+				self:text_insert(str)
 			end
 		end
 		self.func_called = true
@@ -327,7 +328,6 @@ function cursor()
 	local my = love.mouse.getY()
 	for t = 1, #typing do
 		if typing[t].focus then
-			print(typing[t].text)
 			for i = 0, typing[t].text:len() do
 				local prev_char = FONT:getWidth(typing[t].text:sub(i,i)) / 2
 				local next_char = FONT:getWidth(typing[t].text:sub(i+1,i+1)) / 2
@@ -338,6 +338,10 @@ function cursor()
 					return
 				end
 			end
+			cursor_letter_index = typing[t].text:len()
+			cursor_y = typing[t].y
+			cursor_reset()
+			return
 		end
 	end
 	if not txtbox_mbDown then
@@ -456,9 +460,9 @@ function getSelectionWidth(clw, s)
 end
 
 function selection_all()
-	selected_text_x = typing[focused_input].x + 1
+	selected_text_x = typing[focused_input].x
 	selected_text_i = 0
-	selected_text_w = FONT:getWidth(typing[focused_input]:scroll_along_limiter(typing[focused_input].text))
+	selected_text_w = FONT:getWidth(typing[focused_input].text)
 	cursor_letter_index = typing[focused_input].text:len()
 end
 
