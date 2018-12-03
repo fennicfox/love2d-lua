@@ -3,9 +3,8 @@ local utf8 = require("utf8")
 local released = false
 local pressing = false
 local press    = false
-
-local FONT = love.graphics.getFont()
 local focused_input = nil
+local FONT = love.graphics.getFont()
 
 local switch = false
 
@@ -37,9 +36,13 @@ function typing:create(x, y, w, h)
 		y = y,
 		w = w,
 		h = h,
+		x_default = x,
+		y_default = y,
 		text = "",
+		returnedtext = "",
 		focus = false,
-		id = id
+		id = id,
+		func_called = false
 	}, self)
 	id = id + 1
 	table.insert( typing, metatable )
@@ -54,9 +57,11 @@ function typing:update(dt)
 		txtbox_mbDown = true
 		cursor_y = self.y
 		cursor_reset()
+	elseif press then
+		self.focus = false
 	end
 	if self.focus then
-		if press then
+		if press and not doubleclicked then
 			cursor()
 		end
 		unfocus()
@@ -76,22 +81,18 @@ function typing:update(dt)
 end
 
 function typing:draw()
+	FONT = love.graphics.getFont()
+
 	-- Box drawing
 	love.graphics.setColor(0.25,0.25,0.25,1)
-	love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+	love.graphics.rectangle("fill", self.x-3, self.y, self.w, self.h)
 	love.graphics.setColor(0.5,0.5,0.5,1)
-	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+	love.graphics.rectangle("line", self.x-3, self.y, self.w, self.h)
 	
 	if self.focus then
 		-- Drawing the selection
 		love.graphics.setColor(0,0,1,1)
 		love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
-		
-		--settings the camera to what i'm drawing in the future if you can't fit what's on the page.
-		if cursor_y >= love.graphics.getHeight() then
-			love.graphics.push()
-			love.graphics.translate(-0, -((cursor_y+14)-love.graphics.getHeight()))
-		end
 		
 		--the cursor
 		if cursor_show then
@@ -102,18 +103,20 @@ function typing:draw()
 	
 	love.graphics.setColor(1,1,1,1)
 	-- Prints the text
-	love.graphics.printf(self.text, self.x+1, self.y, self.x+self.w)
+	love.graphics.printf(self.text, self.x, self.y, self.x+self.w)
 
 end
 
-function typing:textinput(str)
-	if str..self.text == boxTypingLimit(str..self.text, self.w) and self.focus then
-		if selection_isSelected() then
-			selection_delete()
+function love.textinput(str)
+	for i = 1, #typing do
+		if str..typing[i].text == boxTypingLimit(str..typing[i].text, typing[i].w) and typing[i].focus then
+			if selection_isSelected() then
+				selection_delete()
+			end
+			typing[i].text = string_insert(typing[i].text, cursor_letter_index, str)
+			cursor_letter_index = cursor_letter_index + str:len()
+			selected_text_i = cursor_letter_index
 		end
-		self.text = string_insert(self.text, cursor_letter_index, str)
-		cursor_letter_index = cursor_letter_index + str:len()
-		selected_text_i = cursor_letter_index
 	end
 end
 
@@ -143,20 +146,22 @@ function typing:keyPressed(key)
 		elseif key == "delete" then
 			cursor_delete()
 		elseif key == "return" then
-			self.focus = false
+			unfocus()
+			return
 		elseif key == "tab" then
 			self:switch()
-		elseif key == "f1" then
-			print(cursor_letter_index, selected_text_i)
 		elseif love.keyboard.isDown('lctrl') and key == "a" then -- selects all
 			selection_all()
 		elseif love.keyboard.isDown('lctrl') and key == "c" then -- copy
 			selection_copy()
 		elseif love.keyboard.isDown('lctrl') and key == "v" then -- paste
-			if love.system.getClipboardText():len() > self.max_len then
-				self:text_insert(love.system.getClipboardText())
+			local str = tostring(love.system.getClipboardText())
+			if str:len() > boxTypingLimit(self.text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..self.text:sub(math.max(cursor_letter_index+1, selected_text_i+1)),self.w) then
+				self:text_insert(str)
 			end
 		end
+		self.func_called = true
+		self.returnedtext = self.text
 		cursor_reset()
 		selection_update()
 	end
@@ -172,7 +177,7 @@ function typing:keyReleased(key)
 end
 
 function typing:setInput(str)
-	self.text = boxTypingLimit(str, self.w)
+	self.text = boxTypingLimit(tostring(str), self.w)
 end
 
 function typing:getInput(str)
@@ -245,6 +250,20 @@ function typing:switch()
 	end
 end
 
+function typing:setCoords(x, y)
+	self.x = x
+	self.y = y
+	cursor_letter_index = self.text:len()
+	selected_text_i = self.text:len()
+end
+
+function typing:setSize(w, h)
+	self.w = w
+	self.h = h
+	cursor_letter_index = self.text:len()
+	selected_text_i = self.text:len()
+end
+
 -- Returns the truncated text
 function boxTypingLimit(str, w)
 	if FONT:getWidth(str) > w then
@@ -255,7 +274,6 @@ function boxTypingLimit(str, w)
 end
 
 function find_box_len(str, w, c)
-	print(str, str:len())
 	if str == boxTypingLimit(str, w) then
 		return find_box_len(str..c, w)
 	else
@@ -264,7 +282,7 @@ function find_box_len(str, w, c)
 end
 
 function cursor_blink()
-	cursor_x = (typing[focused_input].x+1)+FONT:getWidth(typing[focused_input]:scroll_along_limiter(typing[focused_input].text):sub(1,cursor_letter_index))
+	cursor_x = (typing[focused_input].x)+FONT:getWidth(typing[focused_input]:scroll_along_limiter(typing[focused_input].text):sub(1,cursor_letter_index))
 	if cursor_show then
 		if love.timer.getTime() >= cursor_blink_finish then
 			cursor_blink_finish = love.timer.getTime() + cursor_blink_speed
@@ -320,6 +338,10 @@ function cursor()
 					return
 				end
 			end
+			cursor_letter_index = typing[t].text:len()
+			cursor_y = typing[t].y
+			cursor_reset()
+			return
 		end
 	end
 	if not txtbox_mbDown then
@@ -438,9 +460,9 @@ function getSelectionWidth(clw, s)
 end
 
 function selection_all()
-	selected_text_x = typing[focused_input].x + 1
+	selected_text_x = typing[focused_input].x
 	selected_text_i = 0
-	selected_text_w = FONT:getWidth(typing[focused_input]:scroll_along_limiter(typing[focused_input].text))
+	selected_text_w = FONT:getWidth(typing[focused_input].text)
 	cursor_letter_index = typing[focused_input].text:len()
 end
 

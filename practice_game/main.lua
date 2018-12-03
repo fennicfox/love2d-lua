@@ -26,8 +26,8 @@ end
 function love.mousereleased( x, y, button )
 	mpressed = true
 	pressedm = button
-	print("x","y")
-	print(x,y,"\n")
+	--print("x","y")
+	--print(x,y,"\n")
 end
 
 function love.keyreleased( key )
