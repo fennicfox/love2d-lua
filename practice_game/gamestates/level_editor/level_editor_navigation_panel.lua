@@ -1,6 +1,7 @@
 require 'utilities.typing'
 
-local panel_w           = 250
+local PANEL_MAX_W       = 250
+local panel_w           = PANEL_MAX_W
 local panel_h           = love.graphics.getHeight()
 local panel_open        = false
 local panel_incrementor = 0
@@ -37,11 +38,16 @@ function navigation_panel_update(dt)
     end
     mouse()
     for i, v in ipairs(inputs) do
+        v.box:setCoords(((screen_left) - PANEL_MAX_W)+v.box.x_default, v.box.y)
         if v.name == "X" and not v.box.focus and editor_graphics.selected ~= nil then
             v.box:setInput(editor_graphics.selected.x)
         end
-        if v.box.func_called and v.box.returnedtext:len() > 0 then
-            v.func(v.box.returnedtext)
+        if v.box.func_called then
+            if v.box.returnedtext:len() > 0 then
+                v.func(v.box.returnedtext)
+            else
+                v.func(0)
+            end
             v.box.func_called = false
         end
         if kdown then
@@ -65,7 +71,7 @@ function navigation_panel_draw()
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.line(panel_w,0,panel_w,panel_h)
         love.graphics.setFont(graphFont)
-        love.graphics.print(panel_state, ((screen_left)-250)+5, 5)
+        love.graphics.print(panel_state, ((screen_left)-PANEL_MAX_W)+5, 5)
 
         for i, v in ipairs(inputs) do
             v.box:draw()
@@ -73,7 +79,7 @@ function navigation_panel_draw()
 
         for i, v in ipairs(labels) do
             love.graphics.setColor(1,1,1,1)
-            love.graphics.print(v.text, v.x, v.y)
+            love.graphics.print(v.text, ((screen_left)-PANEL_MAX_W)+v.x, v.y)
         end
     end
 end

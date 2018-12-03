@@ -36,6 +36,8 @@ function typing:create(x, y, w, h)
 		y = y,
 		w = w,
 		h = h,
+		x_default = x,
+		y_default = y,
 		text = "",
 		returnedtext = "",
 		focus = false,
@@ -83,20 +85,14 @@ function typing:draw()
 
 	-- Box drawing
 	love.graphics.setColor(0.25,0.25,0.25,1)
-	love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
+	love.graphics.rectangle("fill", self.x-3, self.y, self.w, self.h)
 	love.graphics.setColor(0.5,0.5,0.5,1)
-	love.graphics.rectangle("line", self.x, self.y, self.w, self.h)
+	love.graphics.rectangle("line", self.x-3, self.y, self.w, self.h)
 	
 	if self.focus then
 		-- Drawing the selection
 		love.graphics.setColor(0,0,1,1)
 		love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
-		
-		--settings the camera to what i'm drawing in the future if you can't fit what's on the page.
-		if cursor_y >= love.graphics.getHeight() then
-			love.graphics.push()
-			love.graphics.translate(-0, -((cursor_y+14)-love.graphics.getHeight()))
-		end
 		
 		--the cursor
 		if cursor_show then
@@ -107,7 +103,7 @@ function typing:draw()
 	
 	love.graphics.setColor(1,1,1,1)
 	-- Prints the text
-	love.graphics.printf(self.text, self.x+1, self.y, self.x+self.w)
+	love.graphics.printf(self.text, self.x, self.y, self.x+self.w)
 
 end
 
@@ -253,6 +249,20 @@ function typing:switch()
 	end
 end
 
+function typing:setCoords(x, y)
+	self.x = x
+	self.y = y
+	cursor_letter_index = self.text:len()
+	selected_text_i = self.text:len()
+end
+
+function typing:setSize(w, h)
+	self.w = w
+	self.h = h
+	cursor_letter_index = self.text:len()
+	selected_text_i = self.text:len()
+end
+
 -- Returns the truncated text
 function boxTypingLimit(str, w)
 	if FONT:getWidth(str) > w then
@@ -271,7 +281,7 @@ function find_box_len(str, w, c)
 end
 
 function cursor_blink()
-	cursor_x = (typing[focused_input].x+1)+FONT:getWidth(typing[focused_input]:scroll_along_limiter(typing[focused_input].text):sub(1,cursor_letter_index))
+	cursor_x = (typing[focused_input].x)+FONT:getWidth(typing[focused_input]:scroll_along_limiter(typing[focused_input].text):sub(1,cursor_letter_index))
 	if cursor_show then
 		if love.timer.getTime() >= cursor_blink_finish then
 			cursor_blink_finish = love.timer.getTime() + cursor_blink_speed

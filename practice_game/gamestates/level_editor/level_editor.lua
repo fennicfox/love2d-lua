@@ -192,6 +192,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			end
 			if pressedm == 2 then
 				if mousex == rmb_x and mousey == rmb_y then
+					local hit = false
 					for i, v in ipairs(editor_graphics) do
 						if level_editor_mousex() > v.x and level_editor_mousex() < v.x+v.w and level_editor_mousey() > v.y and level_editor_mousey() < v.y + v.h then
 							editor_graphics.selected = editor_graphics[i]
@@ -203,7 +204,11 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 							corner_sw_y = editor_graphics.selected.y + editor_graphics.selected.h
 							corner_se_x = editor_graphics.selected.x + editor_graphics.selected.w
 							corner_se_y = editor_graphics.selected.y + editor_graphics.selected.h
+							hit = true
 						end
+					end
+					if not hit then 
+						editor_graphics.selected = nil
 					end
 				end
 			end

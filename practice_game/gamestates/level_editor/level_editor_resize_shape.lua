@@ -1,20 +1,20 @@
 --for resizing objects
 local cs = 3 --corner size
-local corner_hit = false
-local corner_hit_nw = false
-local corner_hit_ne = false
-local corner_hit_sw = false
-local corner_hit_se = false
-local corner_nw_x = 0
-local corner_nw_y = 0
-local corner_ne_x = 0
-local corner_ne_y = 0
-local corner_sw_x = 0
-local corner_sw_y = 0
-local corner_se_x = 0
-local corner_se_y = 0
-local presspointx = 0
-local presspointy = 0
+corner_hit = false
+corner_hit_nw = false
+corner_hit_ne = false
+corner_hit_sw = false
+corner_hit_se = false
+corner_nw_x = 0
+corner_nw_y = 0
+corner_ne_x = 0
+corner_ne_y = 0
+corner_sw_x = 0
+corner_sw_y = 0
+corner_se_x = 0
+corner_se_y = 0
+presspointx = 0
+presspointy = 0
 
 function level_editor_resize_shape(selected)
 	corner_hit = true
