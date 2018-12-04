@@ -40,7 +40,7 @@ function navigation_panel_load()
         name = "X",
         box  = typing:create(20, 60, 128, f:getHeight()+1),
         func = function(text) 
-            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" then 
+            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" and string_is_number(text) then 
                 editor_graphics.selected.x = tonumber(text)
             end 
         end
@@ -50,7 +50,7 @@ function navigation_panel_load()
         name = "Y",
         box  = typing:create(20, 110, 128, f:getHeight()+1),
         func = function(text) 
-            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" then 
+            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" and string_is_number(text) then 
                 editor_graphics.selected.y = tonumber(text)
             end 
         end
@@ -60,7 +60,7 @@ function navigation_panel_load()
         name = "W",
         box  = typing:create(20, 160, 128, f:getHeight()+1),
         func = function(text) 
-            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" then 
+            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" and string_is_number(text) then 
                 editor_graphics.selected.w = tonumber(text)
             end 
         end
@@ -70,7 +70,7 @@ function navigation_panel_load()
         name = "H",
         box  = typing:create(20, 210, 128, f:getHeight()+1),
         func = function(text) 
-            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" then 
+            if editor_graphics.selected ~= nil and text ~= nil and text ~= "" and string_is_number(text) then 
                 editor_graphics.selected.h = tonumber(text)
             end 
         end
@@ -135,7 +135,7 @@ function navigation_panel_draw()
         love.graphics.print(panel_state, ((screen_left)-PANEL_MAX_W)+5, 5)
 
         for i, v in ipairs(labels) do
-            love.graphics.setColor(0.2,0.2,0.2,0.66)
+            love.graphics.setColor(0.2, 0.2, 0.2, 0.66)
             love.graphics.rectangle("fill", offset_window_x + (v.x-label_background.x_offset), v.y-label_background.y_offset, label_background.w, label_background.h)
         end
         for i, v in ipairs(inputs) do
@@ -163,4 +163,21 @@ end
 
 function navigation_panel_width()
     return panel_w
+end
+
+function string_is_number( str )
+    local numbers = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"}
+    local equal = false
+    if type(str) == "number" then return true  end
+    if str       == ""       then return false end
+    for i = 1, str:len() do
+        for n = 1, #numbers do
+            if str:sub(i,i) == numbers[n] then
+                equal = true
+            end
+        end
+        if not equal then return false end
+        equal = false
+    end
+    return true
 end
