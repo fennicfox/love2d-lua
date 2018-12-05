@@ -17,9 +17,8 @@ require 'gamestates.level_editor.level_editor_menu'
 require 'discord.discord'
 
 function love.load()
-	-- Using this as the default testing font useful for displaying information when debugging
+	-- Default testing font is useful for displaying information when debugging
 	graphFont 		 = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
-
 	click_sfx		 = love.audio.newSource('sfx/click.ogg',"static")
 	gamestate        = "Main menu"				   
 	selected_level   = "practice_game/default.oli"-- I should replace .oli with .json I didn't know .json existed till recently
@@ -82,11 +81,11 @@ function love.draw()
 	love.graphics.setColor(1,1,1,1)
 
 	-- Everything at the end of love.draw will be processed last. Put data you want to be processed at the end of a step here.
-    mpressed   = false
+	mpressed   = false
 	kpressed   = false
 	kdown      = false
-    mwheeldown = false
-    mwheelup   = false
+	mwheeldown = false
+	mwheelup   = false
 end
 
 -- When the window resizes, it is important that the GUI and general graphics scale with it.
