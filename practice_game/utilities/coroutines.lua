@@ -1,3 +1,4 @@
+-- This whole file is redundant. Just keeping it just in case i might need to use it later
 --this is used if you're calling the coroutine between the camera:set() and camera:unset() functions
 infomessageCAM = coroutine.create(
 	function (time, text)
