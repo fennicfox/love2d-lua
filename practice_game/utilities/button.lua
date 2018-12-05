@@ -3,19 +3,19 @@ button = {}
 function button:create(x, y, colour, newColour, font, fontSize, text, command)
 	self.__index = self
 	local metatable = setmetatable({
-			x 			= 	x or 400,
-			y 			= 	y or 300,
-			colour 		= 	colour, --array {1.0, 1.0, 1.0}
-			colourInit 	= 	colour,
-			newColour	= 	newColour or colour, --array {1.0, 1.0, 1.0}
-			text 		= 	text or 'default text',
-			textWidth 	= 	0,
-			textHeight 	= 	0,
-			titleFont 	= 	love.graphics.newFont(font, fontSize),
-			sfx1 		= 	love.audio.newSource('sfx/hover.ogg', 'static'),
-			sfx2 		= 	love.audio.newSource('sfx/click.ogg', 'static'),
-			hoverSound 	= 	false,
-			command 	=   command
+			x           =   x or 400,
+			y           =   y or 300,
+			colour      =   colour, --array {1.0, 1.0, 1.0}
+			colourInit  =   colour,
+			newColour   =   newColour or colour, --array {1.0, 1.0, 1.0}
+			text        =   text or 'default text',
+			textWidth   =   0,
+			textHeight  =   0,
+			titleFont   =   love.graphics.newFont(font, fontSize),
+			sfx1        =   love.audio.newSource('sfx/hover.ogg', 'static'),
+			sfx2        =   love.audio.newSource('sfx/click.ogg', 'static'),
+			hoverSound  =   false,
+			command     =   command
 	}, self)
 	return metatable
 end
