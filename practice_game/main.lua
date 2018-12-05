@@ -43,7 +43,7 @@ end
 function love.keypressed( key )
 	kdown = true 								 -- True for one step when the player puts their finger on a button
 	kname = key  								 -- The value that the player takes their finger off
-	if key == "escape" then click_sfx:play() end -- Remove this annoying sound in the future
+	if key == "escape" then click_sfx:play() end -- I will remove this annoying sound in the future
 end
 
 function love.wheelmoved( x, y )
@@ -54,12 +54,12 @@ end
 
 -- Processing
 function love.update(dt)
-	discord_update() 							 -- Always displaying discord API
-
 	-- Faster to reference globally like this.
 	mousex = love.mouse.getX()
 	mousey = love.mouse.getY()
-
+	
+	-- Always displaying discord API
+	discord_update()
 	if      gamestate == "Main menu"    	 then  main_menu_update(dt)
 	elseif  gamestate == "Playing"      	 then  playing_update(dt)
 	elseif  gamestate == "Paused"       	 then  paused_update(dt)
