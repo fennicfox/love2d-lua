@@ -105,9 +105,7 @@ end
 -- I've made this function global because it's really useful in all parts of the game
 function round( n, p )
 	local remainder = n % p
-	if remainder > p/2 then
-		return n + (p - remainder)
-	else
-		return n - remainder
+	if    remainder > p/2 then return n + (p - remainder)
+	else  return n - remainder 
 	end
 end
