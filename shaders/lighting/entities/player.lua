@@ -97,37 +97,47 @@ function player:draw_rays(t)
 	love.graphics.setLineWidth(0.01)
 	--love.graphics.setColor(1,0,0)
 	--TOP HALF
+	points1 = {}
+	points2 = {}
 	if cy < centery and cx < centerx then      --NW
 		if gradient2 < 0 then
 			--love.graphics.line(cx, cy, x1,y1)
-			love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
+			--love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
+			points1 = {x1, y1, w, (w*gradient1)+(cy-(gradient1*cx))}
 		else
 			--love.graphics.line(cx, cy, x2, y2)
-			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
+			--love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
+			points1 = {x2, y2, w, (w*gradient2)+(cy-(gradient2*cx))}
 		end
 	elseif cy < centery and cx > centerx then  --NE
 		if gradient1 < 0 then
 			--love.graphics.line(cx, cy, x1,y1)
-			love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
+			--love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
+			points1 = {x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx))}
 		else
 			--love.graphics.line(cx, cy, x2,y2)
-			love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
+			--love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
+			points1 = {x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx))}
 		end
 	elseif cy > centery and cx > centerx then  --SE
 		if gradient2 > 0 then
 			--love.graphics.line(cx, cy, x2,y2)
-			love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
+			--love.graphics.line(x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx)))
+			points1 = {x2, y2, 0, (0*gradient2)+(cy-(gradient2*cx))}
 		else
 			--love.graphics.line(cx, cy, x4,y4)
-			love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
+			--love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
+			points1 = {x4, y4, w, (w*gradient4)+(cy-(gradient4*cx))}
 		end
 	elseif cy > centery and cx < centerx then  --SW
 		if y1 * gradient1 > y3 * gradient3 then
 			--love.graphics.line(cx, cy, x3,y3)
-			love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
+			--love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
+			points1 = {x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx))}
 		else
 			--love.graphics.line(cx, cy, x1,y1)
-			love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
+			--love.graphics.line(x1, y1, w, (w*gradient1)+(cy-(gradient1*cx)))
+			points1 = {x1, y1, w, (w*gradient1)+(cy-(gradient1*cx))}
 		end
 	end
 
@@ -135,36 +145,46 @@ function player:draw_rays(t)
 	if cy < centery and cx < centerx then      --NW
 		if x1 * gradient1 > x3 * gradient3 then
 			--love.graphics.line(cx, cy, x1,y1)
-			love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
+			--love.graphics.line(x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx)))
+			points2 = {x1, y1, 0, (0*gradient1)+(cy-(gradient1*cx))}
 		else
 			--love.graphics.line(cx, cy, x3,y3)
-			love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
+			--love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
+			points2 = {x3, y3, w, (w*gradient3)+(cy-(gradient3*cx))}
 		end
 	elseif cy < centery and cx > centerx then  --NE
 		if x2 * gradient2 < x4 * gradient4 then
 			--love.graphics.line(cx, cy, x2,y2)
-			love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
+			--love.graphics.line(x2, y2, w, (w*gradient2)+(cy-(gradient2*cx)))
+			points2 = {x2, y2, w, (w*gradient2)+(cy-(gradient2*cx))}
 		else
 			--love.graphics.line(cx, cy, x4,y4)
-			love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
+			--love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
+			points2 = {x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx))}
 		end
 	elseif cy > centery and cx > centerx then  --SE
 		if gradient3 > 0 then
 			--love.graphics.line(cx, cy, x3,y3)
-			love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
+			--love.graphics.line(x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx)))
+			points2 = {x3, y3, 0, (0*gradient3)+(cy-(gradient3*cx))}
 		else
 			--love.graphics.line(cx, cy, x4,y4)
-			love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
+			--love.graphics.line(x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx)))
+			points2 = {x4, y4, 0, (0*gradient4)+(cy-(gradient4*cx))}
 		end
 	elseif cy > centery and cx < centerx then  --SW
 		if gradient4 > 0 then
 			--love.graphics.line(cx, cy, x3,y3)
-			love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
+			--love.graphics.line(x3, y3, w, (w*gradient3)+(cy-(gradient3*cx)))
+			points2 = {x3, y3, w, (w*gradient3)+(cy-(gradient3*cx))}
 		else
 			--love.graphics.line(cx, cy, x4,y4)
-			love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
+			--love.graphics.line(x4, y4, w, (w*gradient4)+(cy-(gradient4*cx)))
+			points2 = {x4, y4, w, (w*gradient4)+(cy-(gradient4*cx))}
 		end
 	end
+
+	love.graphics.polygon('fill', points1[1], points1[2], points1[3], points1[4], points2[1], points2[2], points2[3], points2[4], points1[3], points1[4])
 end
 
 function gradient_calculator(x1, y1, x2, y2)
