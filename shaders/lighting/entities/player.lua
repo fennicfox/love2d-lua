@@ -80,21 +80,22 @@ function player:draw_rays(t)
 		print("x2             = "..x2)  --x = my + c
 		print("y2             = "..y2) --y = mx + c
 	end
-
+	
 	--problems with gradients
 	--this might help
 	--https://www.desmos.com/calculator
 	--https://www.youtube.com/watch?v=luz27XsnLz4
-
+	
 	-- c = y - mx
 	-- c = x - my
-
+	
 	-- x = my + c
 	-- y = mx + c
-
+	
 	-- 8.3333333 = 10-(0.166666667*10)
 	-- x = (0.166666667*10)+8.3333333
 	love.graphics.setLineWidth(0.01)
+	--love.graphics.setColor(1,0,0)
 	--TOP HALF
 	if cy < centery and cx < centerx then      --NW
 		if gradient2 < 0 then
