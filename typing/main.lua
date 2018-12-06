@@ -24,12 +24,6 @@ function love.draw()
     mouse_reset()
 end
 
-function love.textinput(str)
-    for i = 1, #inputs do
-        inputs[i]:textinput(str)
-    end
-end
-
 function love.keypressed(key)
     for i = 1, #inputs do
         inputs[i]:keyPressed(key)
