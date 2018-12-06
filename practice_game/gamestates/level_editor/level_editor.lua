@@ -86,9 +86,9 @@ screen_left = 0
 -- Level editor buttons (I made the variable names short because the line was too long)
 local button_navigation = {}
 local b_fc = function() -- Button function
-				 panel_state = "Navigation Panel"
-                 navigation_panel_toggle() 
-			 end 
+				panel_state = "Navigation Panel"
+				navigation_panel_toggle() 
+			end 
 local b_t_c = {0.0, 0.0, 0.0, 1.0}          -- Button text colour
 local b_c   = {1.0, 1.0, 1.0, 1.0}          -- Button colour
 local b_b_c = {0.4, 0.4, 0.4, 1.0}          -- Button background colour
