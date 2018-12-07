@@ -59,7 +59,7 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 
 
 function love.load()
-	p = player:create(50,50,50,100, 1.0, 0.717, 0.298)
+	p = player:create(50,50,20,40, 1.0, 0.717, 0.298)
 	s1 = scenary:create(500,400, 40, 40, 0, 0, 0, 1)
 	s2 = scenary:create(300,500, 40, 40, 0, 0, 0, 1)
 	image_size = 400
@@ -78,7 +78,7 @@ function love.draw()
 	love.graphics.setShader(light_code)
 	light_code:send("screen", {love.graphics.getWidth(), love.graphics.getHeight()})
 	light_code:send("num_lights", NUMBER_OF_LIGHTS)    
-	light_code:send("lights[0].position", {p.x,p.y})
+	light_code:send("lights[0].position", {p.x+(p.w/2),p.y+(p.h/2)})
 	light_code:send("lights[0].diffuse", {p.r, p.g, p.b})
 	light_code:send("lights[0].power", DARKNESS)
 	love.graphics.push()
