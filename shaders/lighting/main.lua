@@ -33,9 +33,9 @@ extern int num_lights;
 
 extern vec2 screen;
 
-const float constant = 1.0;
-const float linear = 0.09;
-const float quadratic = 0.032;
+extern float constant;
+extern float linear;
+extern float quadratic;
 
 vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 	vec4 pixel = Texel(image, uvs);
@@ -59,6 +59,10 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 
 
 function love.load()
+	light_code:send("constant", 1.0)    -- Default is 1.0
+	light_code:send("linear", 0.09)     -- Default is 0.09
+	light_code:send("quadratic", 0.07) -- Default is 0.032
+
 	p = player:create(50,50,20,40, 1.0, 0.717, 0.298)
 	s1 = scenary:create(500,400, 40, 40, 0, 0, 0, 1)
 	s2 = scenary:create(300,500, 40, 40, 0, 0, 0, 1)
@@ -81,10 +85,8 @@ function love.draw()
 	light_code:send("lights[0].position", {p.x+(p.w/2),p.y+(p.h/2)})
 	light_code:send("lights[0].diffuse", {p.r, p.g, p.b})
 	light_code:send("lights[0].power", DARKNESS)
-	love.graphics.push()
-	love.graphics.scale(1.32,2)
-	love.graphics.draw(background)
-	love.graphics.pop()
+	--love.graphics.scale(1.32,2)
+	love.graphics.draw(background, 0, 0 ,0, love.graphics.getWidth()/background:getWidth(), love.graphics.getHeight()/background:getHeight())
 	--light_code:send("radius",120)
 	--light_code:send("player_x", p.x)
 	--light_code:send("player_y", p.y)
