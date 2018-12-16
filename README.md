@@ -1,6 +1,6 @@
 # LÖVE 2D / LUA Workshop
 
-I use this respository for future reference of useful code I have created. The idea of this is to generally learn and mess around in the LÖVE 2D 11.0 engine as well. 
+I use this respository for future reference of useful code I have created. The idea of this is to generally learn and mess around in the LÖVE 2D 11.0 engine as well.
 
 ## Practice Game
 
@@ -21,7 +21,6 @@ I'm practicing developing mock games like this one here. In this game, I have a 
 ### Discord RPC
 
 ![Alt Text](https://i.gyazo.com/23270601dfd5bde618faa1f3314fa338.png)
-
 
 ## Agario rip off
 
@@ -49,7 +48,7 @@ In the top left, this is a light but it doesn't stick to the player. When I navi
 
 ### Squares shaders
 
-These are purple drawn squares, however, every single square (apart from the top left) has a shader applied to it. 
+These are purple drawn squares, however, every single square (apart from the top left) has a shader applied to it.
 
 ![Alt Text](https://i.gyazo.com/a4ec582719272d3ea388eb04a63fbbf6.png)
 
