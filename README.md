@@ -31,9 +31,9 @@ A cool fading text effect which transitions to different colours. This could be 
 Shaders are strange and I'm struggling how to use them. LÖVE 2D shadres are written in GLSL which is the (OpenGL Shading Language).
 
 #### Lighting
-I'm struggling creating lighting in LÖVE 2D but I produced this work relatively quickly. I need to research this more.
+I created this simple lighting engine with [phong's shading algorithm](https://mrl.nyu.edu/~perlin/courses/fall2005ugrad/phong.html). The rays of light casted past the object was made with gradients.
 
-![Alt Text](https://media.giphy.com/media/8YvGIi2JlpiWXISg70/giphy.gif)
+![Alt Text](https://i.gyazo.com/721a1d6f27c8ceab619f5b3ea13af06b.gif)
 
 In the top left, this is a light but it doesn't stick to the player. When I navigate the player around the object, you can see where the light rays should be.
 
@@ -47,4 +47,4 @@ The bottom-middle shaders has a film grain shader applied to it but you can't te
 ## Typing 
 I created my own typing system from scratch. It's a lot more tedious than I thought, but is still interesting to understand the mechanics behind selection and cursors. Now I know how it works behind the scenes, (or at least how I've made it work,) I won't be reinventing the wheel again.
 
-![Alt Text](https://media.giphy.com/media/3Fovc4gCiFtrxnO9vG/giphy.gif)
+![Alt Text](https://i.gyazo.com/2ddb42736ab8efc2aba52dff3366329d.gif)
