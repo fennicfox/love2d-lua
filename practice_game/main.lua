@@ -54,12 +54,14 @@ end
 
 -- Processing
 function love.update(dt)
-	-- Faster to reference globally like this.
+	-- Faster to reference globally like this
 	mousex = love.mouse.getX()
 	mousey = love.mouse.getY()
 	
 	-- Always displaying discord API
 	discord_update()
+
+	-- Updating the game state which should be being processed
 	if      gamestate == "Main menu"         then  main_menu_update(dt)
 	elseif  gamestate == "Playing"           then  playing_update(dt)
 	elseif  gamestate == "Paused"            then  paused_update(dt)
