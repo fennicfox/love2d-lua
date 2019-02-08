@@ -1,21 +1,32 @@
 scenary = {}
+scenary.collision = {}
 
 function scenary:create(x, y, w, h, r, g, b, a)
     self.__index = self
-	return setmetatable({
-		x=x,
-		y=y,
-		w=w,
+    local object = {
+        x=x,
+        y=y,
+        w=w,
         h=h,
         r=r,
         g=g,
         b=b,
         a=a
-	}, self)
+    }
+    table.insert( scenary, object )
+    return setmetatable(object, {__index = self})
 end
 
 function scenary:update(dt)
-    
+    for i, v in ipairs(scenary.collision) do
+        if v.x+v.w > self.x 
+        and v.x < self.x+self.w
+        and v.y+v.h > self.y
+        and v.y < self.y+self.h then
+            v.xvel = -(v.xvel+-1)
+            v.yvel = -(v.yvel+-1)
+        end
+    end
 end
 
 function scenary:draw()

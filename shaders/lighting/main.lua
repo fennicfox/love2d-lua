@@ -62,10 +62,15 @@ function love.load()
 	light_code:send("constant", 1.0)    -- Default is 1.0
 	light_code:send("linear", 0.09)     -- Default is 0.09
 	light_code:send("quadratic", 0.07) -- Default is 0.032
-
+	
+	--creating players and objects
 	p = player:create(50,50,20,40, 1.0, 0.717, 0.298)
 	s1 = scenary:create(500,400, 40, 40, 0, 0, 0, 1)
 	s2 = scenary:create(300,500, 40, 40, 0, 0, 0, 1)
+	
+	--creating collision with player and objects
+	table.insert( scenary.collision, p )
+
 	image_size = 400
 	--background = love.graphics.newImage('images/background_example.png')
 	background = love.graphics.newImage('images/cover.png')
