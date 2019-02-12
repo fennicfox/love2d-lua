@@ -1,4 +1,8 @@
+require "entities.bullet"
+require "entities.scenary"
+
 player = {}
+bullet.collision = scenary
 
 function player:create(x, y, w, h, r, g, b, a)
 	self.__index = self
@@ -29,6 +33,18 @@ function player:update(dt)
 	if love.keyboard.isDown('d') then self.xvel = self.xvel + (self.speed * dt) end
 	if love.keyboard.isDown('w') then self.yvel = self.yvel - (self.speed * dt) end
 	if love.keyboard.isDown('s') then self.yvel = self.yvel + (self.speed * dt) end
+	if mpressed then 
+		bullet:create(self.x+(self.w/2), self.y+(self.h/2), 4, 0, 0, 0, 1)
+	end
+
+	for i, v in pairs(bullet) do
+		if type(v) == "table" and type(i) == "number" then
+			bullet[i]:update(dt)
+			if bullet[i].delete then
+				bullet[i] = nil
+			end
+		end
+	end
 end
 
 function player:physics(dt)
@@ -41,6 +57,12 @@ end
 function player:draw()
 	love.graphics.setColor(self.r,self.g,self.b,self.a)
 	love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+
+	for i, v in pairs(bullet) do
+		if type(v) == "table" and type(i) == "number" then
+			bullet[i]:draw()
+		end
+	end
 end
 
 function player:get_xy()

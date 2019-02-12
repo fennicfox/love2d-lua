@@ -1,6 +1,8 @@
 require "entities.scenary"
 require "entities.player"
 
+mpressed = false
+mreleased = false
 
 local DARKNESS = 42
 local NUMBER_OF_LIGHTS = 1
@@ -105,6 +107,8 @@ function love.draw()
 	love.graphics.setShader()
 	love.graphics.setColor(0.5,1,0)
 	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-55, 0)
+	mreleased = false
+	mpressed  = false
 end
 
 function love.mousepressed(x,y, key)
@@ -112,5 +116,12 @@ function love.mousepressed(x,y, key)
 		print("--------")
 		print("x = "..x)
 		print("y = "..y)
+		mpressed = true
+	end
+end
+
+function love.mousereleased(x,y, key)
+	if key == 1 then
+		mreleased = true
 	end
 end
