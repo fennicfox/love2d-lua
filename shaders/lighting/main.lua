@@ -14,8 +14,10 @@ local NUMBER_OF_LIGHTS = 1
 -- 	float r = 0.62;
 -- 	float g = 0.6;
 -- 	float b = 0.1;
--- 	vec4 effect (vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords){
--- 		float distance = pow( (pow((screen_coords.x - radius),2) + pow((screen_coords.y - radius),2)),0.5);
+-- 	vec4 effect (vec4 color, Image texture, 
+--				vec2 texture_coords, vec2 screen_coords){
+-- 		float distance = pow( (pow((screen_coords.x - radius),2) + 
+--								pow((screen_coords.y - radius),2)),0.5);
 -- 		float scale = .9 + ((distance - 0) / (radius - 0)) * (0 - .9) ;
 -- 		return vec4(r,g,b, scale);
 -- 	}
@@ -49,7 +51,8 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 		vec2 norm_pos = light.position / screen;
 		
 		float distance = length(norm_pos - norm_screen) * light.power;
-		float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
+		float attenuation = 1.0 / (constant + linear * distance + quadratic * 
+														(distance * distance));
 		diffuse += light.diffuse * attenuation;
 	}
 
@@ -72,9 +75,7 @@ function love.load()
 	
 	--creating collision with player and objects
 	table.insert( scenary.collision, p )
-
 	image_size = 400
-	--background = love.graphics.newImage('images/background_example.png')
 	background = love.graphics.newImage('images/cover.png')
 end
 
@@ -87,13 +88,25 @@ end
 
 function love.draw()
 	love.graphics.setShader(light_code)
-	light_code:send("screen", {love.graphics.getWidth(), love.graphics.getHeight()})
+	light_code:send("screen", 
+			{
+				love.graphics.getWidth(), 
+				love.graphics.getHeight()
+			}
+		)
 	light_code:send("num_lights", NUMBER_OF_LIGHTS)    
 	light_code:send("lights[0].position", {p.x+(p.w/2),p.y+(p.h/2)})
 	light_code:send("lights[0].diffuse", {p.r, p.g, p.b})
 	light_code:send("lights[0].power", DARKNESS)
 	--love.graphics.scale(1.32,2)
-	love.graphics.draw(background, 0, 0 ,0, love.graphics.getWidth()/background:getWidth(), love.graphics.getHeight()/background:getHeight())
+	love.graphics.draw(
+			background, 
+			0, 
+			0,
+			0, 
+			love.graphics.getWidth()/background:getWidth(), 
+			love.graphics.getHeight()/background:getHeight()
+		)
 	--light_code:send("radius",120)
 	--light_code:send("player_x", p.x)
 	--light_code:send("player_y", p.y)
@@ -106,7 +119,10 @@ function love.draw()
 	s2:draw()
 	love.graphics.setShader()
 	love.graphics.setColor(0.5,1,0)
-	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), love.graphics.getWidth()-55, 0)
+	love.graphics.print("FPS: "..tostring(love.timer.getFPS( )), 
+			love.graphics.getWidth()-55, 
+			0
+		)
 	mreleased = false
 	mpressed  = false
 end
