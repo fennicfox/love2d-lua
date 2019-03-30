@@ -88,19 +88,19 @@ function typing:draw()
 	love.graphics.rectangle("fill", self.x-3, self.y, self.w, self.h)
 	love.graphics.setColor(0.5,0.5,0.5,1)
 	love.graphics.rectangle("line", self.x-3, self.y, self.w, self.h)
-	
+
 	if self.focus then
 		-- Drawing the selection
 		love.graphics.setColor(0,0,1,1)
 		love.graphics.rectangle("fill",selected_text_x,cursor_y,selected_text_w, cursor_h)
-		
+
 		--the cursor
 		if cursor_show then
 			love.graphics.setColor(1,1,1,1)
 			love.graphics.rectangle("fill", cursor_x, cursor_y, cursor_w, cursor_h)
 		end
 	end
-	
+
 	love.graphics.setColor(1,1,1,1)
 	-- Prints the text
 	love.graphics.printf(self.text, self.x, self.y, self.x+self.w)
@@ -125,7 +125,7 @@ function typing:keyPressed(key)
 		switch = false
 	elseif self.focus then
 		if love.keyboard.isDown("lshift") then
-			key_shifting = true 
+			key_shifting = true
 		else
 			key_shifting = false
 		end
@@ -188,7 +188,7 @@ function typing:focus(str)
 	return self.focus
 end
 
--- The text to be displayed in the input box 
+-- The text to be displayed in the input box
 function typing:scroll_along_limiter(t)
 	if ((self.x + 1) + FONT:getWidth(t)) >= ((self.x + 1) + self.w) then
 		return self:scroll_along_limiter(t:sub(2, t:len()))
@@ -225,7 +225,7 @@ end
 
 -- Whether this text box is selected or not
 function typing:selected()
-	local mx = love.mouse.getX() 
+	local mx = love.mouse.getX()
 	local my = love.mouse.getY()
 	if mx > self.x and mx < self.x+self.w and my > self.y and my < self.y+self.h and press then
 		return true
@@ -324,7 +324,7 @@ end
 
 -- Moves the cursor based on the click and makes sure it hits in the box
 function cursor()
-	local mx = love.mouse.getX() 
+	local mx = love.mouse.getX()
 	local my = love.mouse.getY()
 	for t = 1, #typing do
 		if typing[t].focus then
@@ -505,12 +505,12 @@ function selection_update()
 		selected_text_w = FONT:getWidth(selection_text_selected())
 	else
 		selected_text_w = 0
-	end 
+	end
 end
 
 function selection_text_selected()
 	return typing[focused_input].text:sub(math.min(cursor_letter_index, selected_text_i)+1, math.max(cursor_letter_index, selected_text_i))
-end 
+end
 
 function typing:text_insert(str)
 	self:setInput(self.text:sub(1, math.min(cursor_letter_index, selected_text_i))..str..self.text:sub(math.max(cursor_letter_index+1, selected_text_i+1), self.text:len()+1))
@@ -527,7 +527,7 @@ function unfocus()
 end
 
 function mouse()
-	if love.mouse.isDown(1) and not pressing then 
+	if love.mouse.isDown(1) and not pressing then
 		press = true
 		released = false
 	end
@@ -543,7 +543,7 @@ function mouse()
 end
 
 function mouse_reset()
-	if released or press then 
+	if released or press then
 		if press then
 			press = false
 		elseif released then

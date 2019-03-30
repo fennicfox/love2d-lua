@@ -1,3 +1,11 @@
+
+-- TO DO:
+-- 	- make collisions with blocks better
+-- 	- make a way for the player climb up hills
+-- 	- the player should rotate to the angle that the hills are
+-- 	- need to implement some kind of grapple hook
+
+
 -- Requiring all of these files into the main function.
 -- I might change this to reduce the amount of used or variable conflicts
 require 'utilities.file_system'
@@ -21,29 +29,31 @@ function love.load()
 	graphFont        = love.graphics.newFont('font/SourceSansPro-Bold.ttf', 12)
 	click_sfx        = love.audio.newSource('sfx/click.ogg',"static")
 	gamestate        = "Main menu"
-	selected_level   = "practice_game/default.oli"-- I should replace .oli with .json I didn't know .json existed till recently
-	
+	selected_level   = "practice_game/default.oli"-- replace .oli with .json
+
 	-- Loading starting methods
 	discord_load()
 	main_menu_load()
 end
 
 function love.mousereleased( x, y, button )
-	mpressed = true                              -- True for one step when they release the mouse button
-	pressedm = button                            -- The value that the player takes their finger off the mouse (lmb = 1 rmb = 2)
+	mpressed = true   -- True for one step when they release the mouse button
+	pressedm = button -- btn the player stops pressing (lmb = 1 rmb = 2)
 	--print("x","y")
 	--print(x,y,"\n")
 end
 
 function love.keyreleased( key )
-	kpressed = true                              -- True for one step when the player takes their finger off a button
-	pressedk = key                               -- The value that the player takes their finger off 
+	kpressed = true  -- True for one step if player stops pressing a key
+	pressedk = key   -- The value that the player takes their finger off
 end
 
 function love.keypressed( key )
-	kdown = true                                 -- True for one step when the player puts their finger on a button
-	kname = key                                  -- The value that the player takes their finger off
-	if key == "escape" then click_sfx:play() end -- I will remove this annoying sound in the future
+	kdown = true          -- True for one step when player presses a key
+	kname = key           -- The value that the player takes their finger off
+	if key == "escape" then
+		click_sfx:play()  -- I will remove this annoying sound in the future
+	end
 end
 
 function love.wheelmoved( x, y )
@@ -57,7 +67,7 @@ function love.update(dt)
 	-- Faster to reference globally like this
 	mousex = love.mouse.getX()
 	mousey = love.mouse.getY()
-	
+
 	-- Always displaying discord API
 	discord_update()
 
@@ -71,18 +81,24 @@ end
 
 -- Graphics Processing
 function love.draw()
-	-- Always showing the current game state. This is useful for testing atm. I will change this later
+	local screenWidth = love.graphics.getWidth()
+	local screenHeight = love.graphics.getHeight()
+
+	-- Always showing the current game state.
 	love.graphics.setFont(graphFont, 12)
 	love.graphics.setColor(1,1,1,1)
-	love.graphics.print(gamestate, love.graphics.getWidth()-80, love.graphics.getHeight()-20)
+	love.graphics.print(gamestate, screenWidth-80, screenHeight-20)
+
+	-- The right processing for the right states
 	if      gamestate == "Main menu"         then  main_menu_draw()
 	elseif  gamestate == "Playing"           then  playing_draw()
-	elseif  gamestate == "Paused"            then  paused_draw() 
+	elseif  gamestate == "Paused"            then  paused_draw()
 	elseif  gamestate == "Level editor"      then  level_editor_draw() end
-	love.graphics.setFont(graphFont, 12) 
+	love.graphics.setFont(graphFont, 12)
 	love.graphics.setColor(1,1,1,1)
 
-	-- Everything at the end of love.draw will be processed last. Put data you want to be processed at the end of a step here.
+	-- Everything at the end of love.draw is processed at the end of a cycle
+	-- Put data you want to be processed at the end of a step here.
 	mpressed   = false
 	kpressed   = false
 	kdown      = false
@@ -90,24 +106,25 @@ function love.draw()
 	mwheelup   = false
 end
 
--- When the window resizes, it is important that the GUI and general graphics scale with it.
+-- If the window resizes, it's important that graphics scale with it.
 function love.resize( w, h )
 	if      gamestate == "Main menu"         then main_menu_resize(w, h)
 	elseif  gamestate == "Paused"            then paused_resize(w, h)
-	elseif  gamestate == "Level editor menu" then level_editor_menu_resize(w, h) 
+	elseif  gamestate == "Level editor menu" then level_editor_menu_resize(w, h)
 	end
 end
 
+
 -- Upon quitting it is important that discord quits accordingly too.
--- I should make sure that level editor saves because quitting too.
+-- I should make sure that level editor saves before quitting too.
 function love.quit()
 	discord_quit()
-end 
+end
 
--- I've made this function global because it's really useful in all parts of the game
+-- This function is global because it's really useful in all parts of the game
 function round( n, p )
 	local remainder = n % p
 	if    remainder > p/2 then return n + (p - remainder)
-	else  return n - remainder 
+	else  return n - remainder
 	end
 end
