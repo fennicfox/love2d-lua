@@ -40,7 +40,11 @@ function playing_load()
 											tonumber(temp_table[4]))
 		end
 	end
-	camera:setPosition(p.x-(love.graphics.getWidth()/2),p.y-(love.graphics.getHeight()/2))
+	camera:setPosition(
+		p.x-(love.graphics.getWidth()/2),
+		p.y-(love.graphics.getHeight()/2)
+	)
+	
 	file:close()
 end
 
@@ -107,19 +111,33 @@ function playing_draw(dt)
 	love.graphics.rectangle("fill", love.graphics.getWidth()-130, 0, 130,110)
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.setFont(graphFont)
-	love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( )))..
-			"\n\nYou:\nx: "..math.floor(tostring(p.x))..
-			"\ny: "..math.floor(tostring(p.y))..
-			"\nxvel"..math.floor(tostring(p.xvel))..
-			"\nyvel"..math.floor(tostring(p.yvel)),
-			(love.graphics.getWidth()-130),
-			5
-			)
+	love.graphics.print(
+		"Frames Per Second: "..math.floor(tostring(love.timer.getFPS( )))..
+		"\n\nYou:\nx: "..math.floor(tostring(p.x))..
+		"\ny: "..math.floor(tostring(p.y))..
+		"\nxvel"..math.floor(tostring(p.xvel))..
+		"\nyvel"..math.floor(tostring(p.yvel)),
+		(love.graphics.getWidth()-130),
+		5
+	)
 	love.graphics.setFont(deathFont)
 	love.graphics.print("Death Count: "..tostring(p.deathcount), 10,0)
 	if frozen then
 		love.graphics.setColor(0.2,0.2,0.2,0.5)
-		love.graphics.rectangle("fill",0, 0, love.graphics.getWidth(),love.graphics.getHeight())
-		coroutine.resume(infomessage, 5, "Congratulations!\nYou only died "..tostring(p.deathcount).." times.") --update this to print or create a class that's good at printing
+		love.graphics.rectangle(
+			"fill",
+			0,
+			0,
+			love.graphics.getWidth(),
+			love.graphics.getHeight()
+		)
+
+		--update this to print or create a class that's good at printing
+		coroutine.resume(
+			infomessage,
+			5,
+			"Congratulations!\nYou only died "
+			..tostring(p.deathcount).." times."
+		) 
 	end
 end
