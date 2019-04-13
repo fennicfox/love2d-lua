@@ -54,7 +54,16 @@ function love.draw(dt)
 	if gamestate=="playing" then
 		love.graphics.setColor(1,1,1)
 		local font = love.graphics.setNewFont(12)
-		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))).."\n\nYou:\nx: "..math.floor(tostring(player.x)).."\ny: "..math.floor(tostring(player.y)), (w-175), 5)	--x and y of player and food
+		local timer = math.floor(tostring(love.timer.getFPS( )))
+		local x = math.floor(tostring(player.x))
+		local y = math.floor(tostring(player.y))
+		local printAtX = (w-175)
+		local printAtY = 9
+		love.graphics.print("Frames Per Second: "..timer..
+				"\n\nYou:\nx: "..x..
+				"\ny: "..y, 
+				printAtX, 
+				printAtY)
 		camera:set()
 		draw_player()
 		draw_food()
