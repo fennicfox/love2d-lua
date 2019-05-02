@@ -42,7 +42,7 @@ editor_graphics.selected = nil
 editor_state = "main"
 
 local shapes = {}
-local shape_selected = 1   --shape index
+local shape_selected = 0   --shape index
 
 -- Grid Variables
 grid_spacing = 50
@@ -69,6 +69,12 @@ local scrolling_y = 0
 local scrolling_has_got = false
 local rmb_x = mousex
 local rmb_y = mousey
+
+-- Selection numbers
+local RECTANGLE  = 0;
+local PLAYER     = 1;
+local DEATH_ZONE = 2;
+local WIN_ZONE   = 3;
 
 -- Inserting different shapes names into the table.
 table.insert(shapes, "rectangle")
@@ -166,6 +172,8 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 		if love.mouse.isDown(1) and not presspointgot then
 			presspointx = level_editor_mousex()
 			presspointy = level_editor_mousey()
+			drawing_w = editor_graphics.w
+			drawing_h = editor_graphics.h
 			presspointgot = true
 		elseif not love.mouse.isDown(1) then
 			presspointgot = false
@@ -235,13 +243,13 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			end
 		elseif drawing_start_got and not love.keyboard.isDown('lctrl') and level_editor_canPlace() then
 			drawing_start_got = false
-			if shape_selected == 1 then
+			if shape_selected == RECTANGLE then
 				editor_graphics:createRectangle(drawing_x, drawing_y, drawing_w, drawing_h, 1, 1, 1)
-			elseif shape_selected == 3 then --player
+			elseif shape_selected == PLAYER then --player
 				editor_graphics:createPlayer(round((level_editor_mousex())-(drawing_w/2), grid_lock_size), round((level_editor_mousey())-(drawing_h/2), grid_lock_size), 30, 50, 1, 1, 1)
-			elseif shape_selected == 4 then
+			elseif shape_selected == DEATH_ZONE then
 				editor_graphics:death_zone(drawing_x, drawing_y, drawing_w, drawing_h)
-			elseif shape_selected == 5 then
+			elseif shape_selected == WIN_ZONE then
 				editor_graphics:win_zone(drawing_x, drawing_y, drawing_w, drawing_h)
 			end
 		end
@@ -297,15 +305,11 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 			elseif pressedk == ']' then
 				if grid_spacing ~= 100 then grid_spacing = grid_spacing + 12.5 end
 			elseif pressedk == '.' then 
-				shape_selected = ((shape_selected + 1) % (#shapes+1)) print(shape_selected, #shapes)
-				if shape_selected == 0 then
-					shape_selected = 1
-				end
+				shape_selected = ((shape_selected + 1) % (#shapes))
+				print(shape_selected, #shapes-1)
 			elseif pressedk == ',' then
-				shape_selected = ((shape_selected - 1 )% (#shapes)) print(shape_selected, #shapes)
-				if shape_selected == 0 then
-					shape_selected = #shapes
-				end
+				shape_selected = ((shape_selected - 1 )% (#shapes-1))
+				print(shape_selected, #shapes-1)
 			elseif pressedk == 'space' or pressedk == 'r' then
 				camera.x = 0
 				camera.y = 0
@@ -376,11 +380,11 @@ function level_editor_draw()
 				love.graphics.line(xongrid, i, xongrid+(winWidth*camera.scaleX)+grid_spacing, i) -- horizontal lines
 			end
 		end
-		love.graphics.setColor(0.2, 0.2, 0.2, 0.47)
+		love.graphics.setColor(0.4, 0.4, 0.4, 0.7)
 		if not love.keyboard.isDown('lctrl') and not love.mouse.isDown(1) and level_editor_canPlace() then
-			if shape_selected == 3 then --if player is selected
+			if shape_selected == PLAYER then --if player is selected
 				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50)
-			elseif shape_selected == 4 then
+			elseif shape_selected == DEATH_ZONE or shape_selected == WIN_ZONE then
 				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 			else
 				love.graphics.rectangle('fill', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
@@ -407,8 +411,12 @@ function level_editor_draw()
 		end
 		level_editor_resize_shape_draw(editor_graphics.selected)
 		if drawing_start_got then
+			local drawing_type = "fill"
+			if shape_selected ~= RECTANGLE then
+				drawing_type = "line"
+			end
 			love.graphics.setColor(1,1,1,1)
-			love.graphics.rectangle('fill',drawing_x,drawing_y,drawing_w,drawing_h)
+			love.graphics.rectangle(drawing_type,drawing_x,drawing_y,drawing_w,drawing_h)
 		end
 		camera:unset()
 
@@ -431,7 +439,7 @@ function level_editor_draw()
 		love.graphics.print("Camera Y: "..tostring(camera.y), screen_left+5, 35)
 		love.graphics.print("Camera SX: "..tostring(camera.scaleX), screen_left+5, 50)
 		love.graphics.print("Camera SY: "..tostring(camera.scaleY), screen_left+5, 65)
-		love.graphics.print("Shape: "..tostring(shapes[shape_selected]), screen_left+5, 80)
+		love.graphics.print("Shape: "..tostring(shapes[shape_selected+1]), screen_left+5, 80)
 		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.print("Frames Per Second: "..math.floor(tostring(love.timer.getFPS( ))), (love.graphics.getWidth()-130), 5)	--x and y of player and food
 	elseif editor_state == "menu" then
