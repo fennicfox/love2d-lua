@@ -7,22 +7,6 @@ mreleased = false
 local DARKNESS = 42
 local NUMBER_OF_LIGHTS = 1
 
--- local light_code = love.graphics.newShader([[
--- 	extern int radius;
--- 	extern int player_x;
--- 	extern int player_y;
--- 	float r = 0.62;
--- 	float g = 0.6;
--- 	float b = 0.1;
--- 	vec4 effect (vec4 color, Image texture, 
---				vec2 texture_coords, vec2 screen_coords){
--- 		float distance = pow( (pow((screen_coords.x - radius),2) + 
---								pow((screen_coords.y - radius),2)),0.5);
--- 		float scale = .9 + ((distance - 0) / (radius - 0)) * (0 - .9) ;
--- 		return vec4(r,g,b, scale);
--- 	}
--- ]])
-
 local light_code = love.graphics.newShader([[
 #define NUM_LIGHTS 32
 
@@ -51,7 +35,8 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 		vec2 norm_pos = light.position / screen;
 		
 		float distance = length(norm_pos - norm_screen) * light.power;
-		float attenuation = 1.0 / (constant + linear * distance + quadratic * (distance * distance));
+		float attenuation = 1.0 / (constant + linear * distance + quadratic * 
+				(distance * distance));
 		diffuse += light.diffuse * attenuation;
 	}
 
@@ -63,8 +48,8 @@ vec4 effect(vec4 color, Image image, vec2 uvs, vec2 screen_coords){
 
 
 function love.load()
-	light_code:send("constant", 1.0)    -- Default is 1.0
-	light_code:send("linear", 0.09)     -- Default is 0.09
+	light_code:send("constant", 1.0)   -- Default is 1.0
+	light_code:send("linear", 0.09)    -- Default is 0.09
 	light_code:send("quadratic", 0.07) -- Default is 0.032
 	
 	--creating players and objects
@@ -97,7 +82,7 @@ function love.draw()
 	light_code:send("lights[0].position", {(p.x+(p.w/2)), (p.y+(p.h/2))})
 	light_code:send("lights[0].diffuse", {p.r, p.g, p.b})
 	light_code:send("lights[0].power", DARKNESS)
-	--love.graphics.scale(1.32,2)
+
 	love.graphics.draw(
 			background, 
 			0, 
@@ -106,11 +91,12 @@ function love.draw()
 			love.graphics.getWidth()/background:getWidth(), 
 			love.graphics.getHeight()/background:getHeight()
 		)
-	--light_code:send("radius",120)
-	--light_code:send("player_x", p.x)
-	--light_code:send("player_y", p.y)
+
+
 	
 	p:draw()
+
+	light_code:send("lights[0].diffuse", {0.0, 0.0, 0.0})
 	p:draw_rays(s1)
 	p:draw_rays(s2)
 	s1:draw()
