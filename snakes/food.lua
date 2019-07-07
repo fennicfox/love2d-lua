@@ -7,9 +7,21 @@ function food:load(x, y, r, g, b)
     r = r,
     g = g,
     b = b,
-    radius = 3,
+    radius = nil,
     segments = 40
 }
+    local food_size_chance = math.random()
+    print(food_size_chance)
+    if food_size_chance < .025 then
+        object.radius = 6
+    elseif food_size_chance < .05 then
+        object.radius = 5
+    elseif food_size_chance < .1 then
+        object.radius = 4
+    else
+        object.radius = 3
+    end
+
     table.insert(food, object)
     setmetatable(object, {__index = self})
     return object
