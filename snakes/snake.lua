@@ -48,7 +48,7 @@ function snake:collide_food(scran)
     local d = distance(self.head.x, self.head.y, scran.x, scran.y)
     if d <= (self.head.size*2) then
         scran:respawn(self.head.x, self.head.y)
-        self:feed(scran.radius - 3)
+        self:feed(scran.radius - 2)
     end
 end
 
