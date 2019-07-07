@@ -5,7 +5,7 @@ bullet.MAX_DISTANCE = 1000
 bullet.CIRCLE_RESOLUTION = 50
 
 local function distance(x1, y1, x2, y2)
-    return math.sqrt( ( x2 - x1 )^2 + ( y2 + y1 )^2 )
+    return math.sqrt( ( x2 - x1 )^2 + ( y2 - y1 )^2 )
 end
 
 local function gradient(x1, y1, x2, y2)

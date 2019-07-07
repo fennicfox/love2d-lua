@@ -308,7 +308,7 @@ function level_editor_update(dt) -- love.graphics.polygon( mode, vertices )
 				shape_selected = ((shape_selected + 1) % (#shapes))
 				print(shape_selected, #shapes-1)
 			elseif pressedk == ',' then
-				shape_selected = ((shape_selected - 1 )% (#shapes-1))
+				shape_selected = ((shape_selected - 1) % (#shapes))
 				print(shape_selected, #shapes-1)
 			elseif pressedk == 'space' or pressedk == 'r' then
 				camera.x = 0
@@ -380,13 +380,18 @@ function level_editor_draw()
 				love.graphics.line(xongrid, i, xongrid+(winWidth*camera.scaleX)+grid_spacing, i) -- horizontal lines
 			end
 		end
-		love.graphics.setColor(0.4, 0.4, 0.4, 0.7)
 		if not love.keyboard.isDown('lctrl') and not love.mouse.isDown(1) and level_editor_canPlace() then
 			if shape_selected == PLAYER then --if player is selected
+				love.graphics.setColor(0.4, 0.4, 0.4, 0.7)
 				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), 30, 50)
-			elseif shape_selected == DEATH_ZONE or shape_selected == WIN_ZONE then
+			elseif shape_selected == DEATH_ZONE then
+				love.graphics.setColor(0.8, 0.0, 0.0, 0.7)
+				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
+			elseif shape_selected == WIN_ZONE then
+			love.graphics.setColor(0.0, 0.8, 0.0, 0.7)
 				love.graphics.rectangle('line', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 			else
+				love.graphics.setColor(0.4, 0.4, 0.4, 0.7)
 				love.graphics.rectangle('fill', round((level_editor_mousex())-(editor_graphics.w/2), grid_lock_size), round((level_editor_mousey())-(editor_graphics.h/2), grid_lock_size), editor_graphics.w, editor_graphics.h)
 			end
 		else

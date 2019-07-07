@@ -109,17 +109,17 @@ function playing_draw(dt)
 	camera:unset()
 	love.graphics.setColor(0.2,0.2,0.2,0.5)
 	love.graphics.rectangle("fill", love.graphics.getWidth()-130, 0, 130,110)
+	
 	love.graphics.setColor(1,1,1,1)
 	love.graphics.setFont(graphFont)
 	love.graphics.print(
 		"Frames Per Second: "..math.floor(tostring(love.timer.getFPS( )))..
 		"\n\nYou:\nx: "..math.floor(tostring(p.x))..
-		"\ny: "..math.floor(tostring(p.y))..
-		"\nxvel"..math.floor(tostring(p.xvel))..
-		"\nyvel"..math.floor(tostring(p.yvel)),
+		"\ny: "..math.floor(tostring(p.y)),
 		(love.graphics.getWidth()-130),
 		5
 	)
+
 	love.graphics.setFont(deathFont)
 	love.graphics.print("Death Count: "..tostring(p.deathcount), 10,0)
 	if frozen then

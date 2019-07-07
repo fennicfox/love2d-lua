@@ -85,8 +85,8 @@ function love.draw()
 	local screenHeight = love.graphics.getHeight()
 
 	-- Always showing the current game state.
-	love.graphics.setFont(graphFont, 12)
 	love.graphics.setColor(1,1,1,1)
+	love.graphics.setFont(graphFont, 12)
 	love.graphics.print(gamestate, screenWidth-80, screenHeight-20)
 
 	-- The right processing for the right states
@@ -94,8 +94,6 @@ function love.draw()
 	elseif  gamestate == "Playing"           then  playing_draw()
 	elseif  gamestate == "Paused"            then  paused_draw()
 	elseif  gamestate == "Level editor"      then  level_editor_draw() end
-	love.graphics.setFont(graphFont, 12)
-	love.graphics.setColor(1,1,1,1)
 
 	-- Everything at the end of love.draw is processed at the end of a cycle
 	-- Put data you want to be processed at the end of a step here.

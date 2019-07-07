@@ -1,18 +1,20 @@
 
-function rn()
-	return zero_point( math.random (0, 100000000) )
-end
+-- function rn()
+-- 	return zero_point( math.random (0, 100000000) )
+-- end
 
-function zero_point(n)
-	if n > 1 then
-		return zero_point(n/10)
-	else
-		return n
-	end
-end
+-- function zero_point(n)
+-- 	print(n)
+-- 	if n > 1 then
+-- 		return zero_point(n/10)
+-- 	else
+-- 		return n
+-- 	end
+-- end
 
-x  = 0
-random_c = {rn(),rn(),rn()}
+x = 0
+--random_c = {rn(),rn(),rn()}
+random_c = { math.random(), math.random(), math.random() }
 flashing_speed = 1 --lower is faster
 cooldown = false
 
