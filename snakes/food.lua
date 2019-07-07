@@ -12,11 +12,11 @@ function food:load(x, y, r, g, b)
 }
     local food_size_chance = math.random()
     print(food_size_chance)
-    if food_size_chance < .025 then
+    if food_size_chance < .025 then -- 2.5% chance the food will be of size 6
         object.radius = 6
-    elseif food_size_chance < .05 then
+    elseif food_size_chance < .06 then -- 3.5% chance for food size 5
         object.radius = 5
-    elseif food_size_chance < .1 then
+    elseif food_size_chance < .095 then -- 4.5% chance for food size 4 (or larger)
         object.radius = 4
     else
         object.radius = 3
