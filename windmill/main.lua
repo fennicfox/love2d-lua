@@ -56,7 +56,6 @@ function love.load()
 
     -- Create points randomly and assign to a random point
     createPoints()
-    point_selected = {points[1][1], points[1][2], 1}
 end
 
 function love.update(dt)
@@ -186,6 +185,7 @@ function createPoints()
         points[i] = {}
         points[i] = {math.random(100,700), math.random(100,500), false}
     end
+    point_selected = {points[1][1], points[1][2], 1}
 end
 
 -- Uses determinant to check if the point is on the left, right or on the line
