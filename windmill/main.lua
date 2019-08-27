@@ -191,6 +191,10 @@ end
 -- Uses determinant to check if the point is on the left, right or on the line
 -- [(x2 - x1), (x3 - x1)]
 -- [(y2 - y1), (y3 - y1)]
+-- or
+-- [a b]
+-- [c d]
+-- det = ad - bc
 function checkSide(x1, y1, x2, y2, qx, qy)
     return ((x2 - x1) * (qy - y1)) - ((qx - x1) * (y2 - y1))
 end
