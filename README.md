@@ -40,7 +40,7 @@ Shaders are strange and I'm struggling how to use them. LÖVE 2D shadres are wri
 
 ### Lighting
 
-I created this simple lighting engine with [phong's shading algorithm](https://mrl.nyu.edu/~perlin/courses/fall2005ugrad/phong.html). The rays of light casted past the object was made with gradients.
+I created this simple lighting engine with [phong's shading algorithm](https://mrl.nyu.edu/~perlin/courses/fall2005ugrad/phong.html).
 
 ![Alt Text](https://i.gyazo.com/721a1d6f27c8ceab619f5b3ea13af06b.gif)
 
@@ -71,4 +71,4 @@ I was curious to recreate in this in Love2D. Here are the results.
 
 ![Alt Text](https://i.gyazo.com/cf3df5449a871178a818c92ce8578772.gif)
 
-This idea was also heavily influenced by this YouTube video [3blue1brown](https://youtu.be/M64HUIJFTZM)
+This idea was also heavily influenced by this YouTube video [3Blue1Brown](https://youtu.be/M64HUIJFTZM)
