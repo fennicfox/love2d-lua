@@ -59,3 +59,16 @@ The bottom-middle shaders has a film grain shader applied to it but you can't te
 I created my own typing system from scratch. It's a lot more tedious than I thought, but is still interesting to understand the mechanics behind selection and cursors. Now I know how it works behind the scenes, (or at least how I've made it work,) I won't be reinventing the wheel again.
 
 ![Alt Text](https://i.gyazo.com/2ddb42736ab8efc2aba52dff3366329d.gif)
+
+## The Windmill Problem 
+
+This is based on the [52nd International Mathematical Olympiad (C3)](https://www.imo-official.org/problems/IMO2011SL.pdf) 
+The question is as follows: 
+
+![Alt Text](https://i.gyazo.com/e1a8ee875a3210854a23265cf6e4eb29.png)
+
+I was curious to recreate in this in Love2D. Here are the results.
+
+![Alt Text](https://i.gyazo.com/cf3df5449a871178a818c92ce8578772.gif)
+
+This idea was also heavily influenced by this YouTube video [3blue1brown](https://youtu.be/M64HUIJFTZM)
